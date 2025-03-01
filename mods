@@ -1,2 +1,2 @@
-button1 = tk.Button(frame, text="FreeIssva", command=lambda: (print(1), print(2)))
+button1 = tk.Button(frame, text="FreeIva", command=lambda: (self.start_download, doawload_file = "https://github.com/Sigma106/Use-KSP-ModDepot/edit/main/mods"))
 button1.grid(row=0, column=0, pady=10, padx=20)
