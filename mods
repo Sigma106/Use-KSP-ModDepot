@@ -1,2 +1,4 @@
-button1 = tk.Button(frame, text="FreeIva", command=lambda: print("Button 1 Clicked"))
+button1 = tk.Button(frame, text="FreeIvas", command=lambda: print("Button 1 Clicked"))
 button1.grid(row=0, column=0, pady=10, padx=20)
+
+
