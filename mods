@@ -4,7 +4,7 @@ button1.grid(row=0, column=0, pady=10, padx=20)
 button2 = tk.Button(frame, text="Button 2", command=lambda: print("Button 2 Clicked"))
 button2.grid(row=1, column=0, pady=10, padx=20)
 
-button3 = tk.Button(frame, text="Button 3", command=lambda: print("Button 3 Clicked"))
+button3 = tk.Button(frame, text="Button 33", command=lambda: print("Button 3 Clicked"))
 button3.grid(row=2, column=0, pady=10, padx=20)
 
 button33 = tk.Button(frame, text="Button 3", command=lambda: print("Button 3 Clicked"))
