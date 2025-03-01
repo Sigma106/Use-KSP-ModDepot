@@ -1,2 +1,2 @@
-self.button1 = tk.Button(frame, text="Freeiva", command=lambda: (self.start_download, doawload_file = "https://github.com/FirstPersonKSP/FreeIva/releases/download/0.2.19.0/FreeIva-0.2.19.0.zip"))
-self.button1.grid(row=0, column=0, pady=10, padx=20)
+button1 = tk.Button(frame, text="Freeiva", command=lambda: (self.start_download, doawload_file = "https://github.com/FirstPersonKSP/FreeIva/releases/download/0.2.19.0/FreeIva-0.2.19.0.zip"))
+button1.grid(row=0, column=0, pady=10, padx=20)
