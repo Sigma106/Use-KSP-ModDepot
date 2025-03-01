@@ -6,3 +6,6 @@ button2.grid(row=1, column=0, pady=10, padx=20)
 
 button3 = tk.Button(frame, text="Button 3", command=lambda: print("Button 3 Clicked"))
 button3.grid(row=2, column=0, pady=10, padx=20)
+
+button33 = tk.Button(frame, text="Button 3", command=lambda: print("Button 3 Clicked"))
+button33.grid(row=3, column=0, pady=10, padx=20)
