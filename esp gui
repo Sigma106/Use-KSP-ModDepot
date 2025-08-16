@@ -8,7 +8,7 @@ local espGui = Instance.new("ScreenGui")
 espGui.Name = "ESP"
 espGui.Parent = CoreGui
 
--- Create Background (Draggable Frame)
+-- Create Background
 local bg = Instance.new("Frame")
 bg.Size = UDim2.new(0, 200, 0, 150)
 bg.Position = UDim2.new(0.02, 0, 0.02, 0)
@@ -17,7 +17,7 @@ bg.BorderSizePixel = 2
 bg.BorderColor3 = Color3.fromRGB(100, 100, 100)
 bg.Parent = espGui
 bg.Active = true
-bg.Draggable = true -- Ensure it's draggable
+bg.Draggable = true
 
 -- Create Title
 local title = Instance.new("TextLabel")
@@ -64,4 +64,100 @@ closeButton.Parent = bg
 
 -- ESP Variables
 local espEnabled = false
-local espObjects =
+local espObjects = {}
+
+-- Function to create ESP
+local function createESP(player)
+    local espBox = Instance.new("Frame")
+    espBox.Size = UDim2.new(0, 100, 0, 100)
+    espBox.Position = UDim2.new(0, 0, 0, 0)
+    espBox.BackgroundColor3 = player.TeamColor.Color
+    espBox.BackgroundTransparency = 0.5  -- Set transparency so the player is visible through the box
+    espBox.BorderSizePixel = 2
+    espBox.Parent = espGui
+    espObjects[player] = espBox
+    
+    -- Follow player with ESP box
+    RunService.RenderStepped:Connect(function()
+        local character = player.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local rootPart = character.HumanoidRootPart
+            local screenPos = Camera:WorldToScreenPoint(rootPart.Position)
+
+            if screenPos.Z > 0 then
+                espBox.Visible = true
+                espBox.Position = UDim2.new(0, screenPos.X - espBox.Size.X.Offset / 2, 0, screenPos.Y - espBox.Size.Y.Offset / 2)
+            else
+                espBox.Visible = false
+            end
+        else
+            espBox.Visible = false
+        end
+    end)
+end
+
+-- Function to remove ESP
+local function removeESP(player)
+    if espObjects[player] then
+        espObjects[player]:Destroy()
+        espObjects[player] = nil
+    end
+end
+
+-- Toggle ESP On
+toggleOnButton.MouseButton1Click:Connect(function()
+    espEnabled = true
+    -- Create ESP for all players
+    print("ESP On")
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            createESP(player)
+        end
+    end
+end)
+
+-- Toggle ESP Off
+toggleOffButton.MouseButton1Click:Connect(function()
+    espEnabled = false
+    -- Remove ESP from all players
+    print("ESP Off")
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            removeESP(player)
+        end
+    end
+end)
+
+-- Close the GUI
+closeButton.MouseButton1Click:Connect(function()
+    espEnabled = false
+    -- Remove ESP when the window is closed
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            removeESP(player)
+        end
+    end
+    espGui:Destroy()
+end)
+
+-- Create ESP for new players joining
+Players.PlayerAdded:Connect(function(player)
+    if espEnabled then
+        createESP(player)
+    end
+end)
+
+-- Remove ESP when players leave
+Players.PlayerRemoving:Connect(function(player)
+    removeESP(player)
+end)
+
+-- Initial ESP setup for players already in the game
+for _, player in pairs(Players:GetPlayers()) do
+    if player ~= Players.LocalPlayer then
+        createESP(player)
+    end
+end
+
+-- Debugging: Print confirmation to check if the GUI is created
+print("GUI Loaded!")
