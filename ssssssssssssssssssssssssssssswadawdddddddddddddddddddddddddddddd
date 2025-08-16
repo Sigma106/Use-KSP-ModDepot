@@ -1,0 +1,170 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+local Camera = game:GetService("Workspace").CurrentCamera
+
+-- Create the GUI
+local espGui = Instance.new("ScreenGui")
+espGui.Name = "ESP"
+espGui.Parent = CoreGui
+
+-- Create Background
+local bg = Instance.new("Frame")
+bg.Size = UDim2.new(0, 200, 0, 150)
+bg.Position = UDim2.new(0.02, 0, 0.02, 0)
+bg.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+bg.BorderSizePixel = 2
+bg.BorderColor3 = Color3.fromRGB(100, 100, 100)
+bg.Parent = espGui
+bg.Active = true
+bg.Draggable = true  -- Make it draggable
+
+-- Create Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "ESP"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+title.TextSize = 24
+title.Font = Enum.Font.SourceSans
+title.Parent = bg
+
+-- Create Toggle On Button
+local toggleOnButton = Instance.new("TextButton")
+toggleOnButton.Size = UDim2.new(0.5, 0, 0, 30)
+toggleOnButton.Position = UDim2.new(0, 0, 0.25, 0)
+toggleOnButton.Text = "On"
+toggleOnButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleOnButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+toggleOnButton.TextSize = 20
+toggleOnButton.Font = Enum.Font.SourceSans
+toggleOnButton.Parent = bg
+
+-- Create Toggle Off Button
+local toggleOffButton = Instance.new("TextButton")
+toggleOffButton.Size = UDim2.new(0.5, 0, 0, 30)
+toggleOffButton.Position = UDim2.new(0.5, 0, 0.25, 0)
+toggleOffButton.Text = "Off"
+toggleOffButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleOffButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+toggleOffButton.TextSize = 20
+toggleOffButton.Font = Enum.Font.SourceSans
+toggleOffButton.Parent = bg
+
+-- Create Close Button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 40, 0, 30)
+closeButton.Position = UDim2.new(1, -40, 0, 0)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+closeButton.TextSize = 20
+closeButton.Font = Enum.Font.SourceSans
+closeButton.Parent = bg
+
+-- ESP Variables
+local espEnabled = false
+local espObjects = {}
+
+-- Function to create Cube ESP around the player
+local function createCubeESP(player)
+    local character = player.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+
+    -- Create ESP Box (Cube) based on player's size and position
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        local rootPart = character.HumanoidRootPart
+        local torso = character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso")
+        local head = character:FindFirstChild("Head")
+        local leftLeg = character:FindFirstChild("LeftLeg")
+        local rightLeg = character:FindFirstChild("RightLeg")
+        local leftArm = character:FindFirstChild("LeftUpperArm")
+        local rightArm = character:FindFirstChild("RightUpperArm")
+
+        -- Calculate the size of the box based on the player's scale
+        local boundingBox = humanoid.HipWidth * 2, humanoid.HipHeight * 2, humanoid.HipWidth * 2
+        local espBox = Instance.new("Part")
+        espBox.Size = Vector3.new(boundingBox[1], boundingBox[2], boundingBox[3])
+        espBox.Position = rootPart.Position
+        espBox.Color = player.TeamColor.Color
+        espBox.Anchored = true
+        espBox.CanCollide = false
+        espBox.Transparency = 0.6
+        espBox.Parent = espGui
+
+        -- Make the ESP box follow the player (updates on every frame)
+        RunService.RenderStepped:Connect(function()
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                espBox.CFrame = CFrame.new(character.HumanoidRootPart.Position) * CFrame.new(0, humanoid.HipHeight / 2, 0)
+            end
+        end)
+
+        -- Store ESP Box for this player
+        espObjects[player] = espBox
+    end
+end
+
+-- Function to remove Cube ESP around the player
+local function removeCubeESP(player)
+    if espObjects[player] then
+        espObjects[player]:Destroy()
+        espObjects[player] = nil
+    end
+end
+
+-- Toggle ESP On
+toggleOnButton.MouseButton1Click:Connect(function()
+    espEnabled = true
+    -- Create ESP for all players
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            createCubeESP(player)
+        end
+    end
+end)
+
+-- Toggle ESP Off
+toggleOffButton.MouseButton1Click:Connect(function()
+    espEnabled = false
+    -- Remove ESP from all players
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            removeCubeESP(player)
+        end
+    end
+end)
+
+-- Close the GUI
+closeButton.MouseButton1Click:Connect(function()
+    espEnabled = false
+    -- Remove ESP when the window is closed
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            removeCubeESP(player)
+        end
+    end
+    espGui:Destroy()
+end)
+
+-- Create ESP for new players joining
+Players.PlayerAdded:Connect(function(player)
+    if espEnabled then
+        createCubeESP(player)
+    end
+end)
+
+-- Remove ESP when players leave
+Players.PlayerRemoving:Connect(function(player)
+    removeCubeESP(player)
+end)
+
+-- Initial ESP setup for players already in the game
+for _, player in pairs(Players:GetPlayers()) do
+    if player ~= Players.LocalPlayer then
+        createCubeESP(player)
+    end
+end
+
+-- Debugging: Print confirmation to check if the GUI is created
+print("GUI Loaded!")
