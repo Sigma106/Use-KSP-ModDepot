@@ -1,0 +1,67 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+local Camera = game:GetService("Workspace").CurrentCamera
+
+-- Create the GUI
+local espGui = Instance.new("ScreenGui")
+espGui.Name = "ESP"
+espGui.Parent = CoreGui
+
+-- Create Background (Draggable Frame)
+local bg = Instance.new("Frame")
+bg.Size = UDim2.new(0, 200, 0, 150)
+bg.Position = UDim2.new(0.02, 0, 0.02, 0)
+bg.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+bg.BorderSizePixel = 2
+bg.BorderColor3 = Color3.fromRGB(100, 100, 100)
+bg.Parent = espGui
+bg.Active = true
+bg.Draggable = true -- Ensure it's draggable
+
+-- Create Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "ESP"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+title.TextSize = 24
+title.Font = Enum.Font.SourceSans
+title.Parent = bg
+
+-- Create Toggle On Button
+local toggleOnButton = Instance.new("TextButton")
+toggleOnButton.Size = UDim2.new(0.5, 0, 0, 30)
+toggleOnButton.Position = UDim2.new(0, 0, 0.25, 0)
+toggleOnButton.Text = "On"
+toggleOnButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleOnButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+toggleOnButton.TextSize = 20
+toggleOnButton.Font = Enum.Font.SourceSans
+toggleOnButton.Parent = bg
+
+-- Create Toggle Off Button
+local toggleOffButton = Instance.new("TextButton")
+toggleOffButton.Size = UDim2.new(0.5, 0, 0, 30)
+toggleOffButton.Position = UDim2.new(0.5, 0, 0.25, 0)
+toggleOffButton.Text = "Off"
+toggleOffButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleOffButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+toggleOffButton.TextSize = 20
+toggleOffButton.Font = Enum.Font.SourceSans
+toggleOffButton.Parent = bg
+
+-- Create Close Button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 40, 0, 30)
+closeButton.Position = UDim2.new(1, -40, 0, 0)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+closeButton.TextSize = 20
+closeButton.Font = Enum.Font.SourceSans
+closeButton.Parent = bg
+
+-- ESP Variables
+local espEnabled = false
+local espObjects =
