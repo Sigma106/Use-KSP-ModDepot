@@ -51,7 +51,7 @@ end)
 local titleBar = Instance.new("TextLabel", frame)
 titleBar.Size = UDim2.new(1, 0, 0, 30)
 titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-titleBar.Text = "Spectate GUI (Third Person Follow)"
+titleBar.Text = "Spectate player GUI"
 titleBar.TextColor3 = Color3.new(1,1,1)
 titleBar.Font = Enum.Font.SourceSansBold
 titleBar.TextSize = 18
