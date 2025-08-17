@@ -1,9 +1,16 @@
+
+game:GetService("StarterGui"):SetCore("SendNotification", { 
+	Title = "Script is load";
+	Text = "By green_co0lkid";
+	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
+Duration = 5;
+
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
     Name = "squit game script ez win",
     LoadingTitle = "loading",
-    LoadingSubtitle = "by green_coolkid100",
+    LoadingSubtitle = "by green_co0kid",
     ConfigurationSaving = {
        Enabled = true,
        FolderName = nil, -- Create a custom folder for your hub/game
