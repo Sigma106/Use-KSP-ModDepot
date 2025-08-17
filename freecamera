@@ -7,8 +7,9 @@ local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local Camera = workspace.CurrentCamera
 
+-- Freecam state variables
 local freecamEnabled = false
-local speed = 1
+local speed = 5
 local moveForward, moveBackward, moveLeft, moveRight, moveUp, moveDown = false, false, false, false, false, false
 local cameraPitch, cameraYaw = 0, 0
 
@@ -24,10 +25,184 @@ local function setCharacterFrozen(freeze)
     end
 end
 
--- (GUI creation code omitted for brevity, keep your GUI code as is)
+-- Create GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "FreecamGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
--- MOUSE LOOK FIXED:
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 120)
+frame.Position = UDim2.new(0.5, -150, 0.5, -60)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
 
+local header = Instance.new("Frame")
+header.Size = UDim2.new(1, 0, 0, 35)
+header.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+header.BorderSizePixel = 0
+header.Parent = frame
+
+local title = Instance.new("TextLabel")
+title.Text = "Freecam Controller"
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 22
+title.TextColor3 = Color3.new(1,1,1)
+title.BackgroundTransparency = 1
+title.Size = UDim2.new(1, -50, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = header
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Text = "X"
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.TextSize = 24
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+closeBtn.Size = UDim2.new(0, 40, 0, 30)
+closeBtn.Position = UDim2.new(1, -45, 0, 2)
+closeBtn.Parent = header
+
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Text = "Speed: "..speed
+speedLabel.Font = Enum.Font.SourceSansBold
+speedLabel.TextSize = 20
+speedLabel.TextColor3 = Color3.new(1,1,1)
+speedLabel.BackgroundTransparency = 1
+speedLabel.Size = UDim2.new(0, 120, 0, 30)
+speedLabel.Position = UDim2.new(0, 90, 0, 45)
+speedLabel.Parent = frame
+
+local minusBtn = Instance.new("TextButton")
+minusBtn.Text = "-"
+minusBtn.Font = Enum.Font.SourceSansBold
+minusBtn.TextSize = 30
+minusBtn.TextColor3 = Color3.new(1,1,1)
+minusBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+minusBtn.Size = UDim2.new(0, 40, 0, 40)
+minusBtn.Position = UDim2.new(0, 10, 0, 40)
+minusBtn.Parent = frame
+
+local plusBtn = Instance.new("TextButton")
+plusBtn.Text = "+"
+plusBtn.Font = Enum.Font.SourceSansBold
+plusBtn.TextSize = 30
+plusBtn.TextColor3 = Color3.new(1,1,1)
+plusBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+plusBtn.Size = UDim2.new(0, 40, 0, 40)
+plusBtn.Position = UDim2.new(0, 220, 0, 40)
+plusBtn.Parent = frame
+
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Text = "Toggle Freecam"
+toggleBtn.Font = Enum.Font.SourceSansBold
+toggleBtn.TextSize = 20
+toggleBtn.TextColor3 = Color3.new(1,1,1)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 150)
+toggleBtn.Size = UDim2.new(0, 200, 0, 30)
+toggleBtn.Position = UDim2.new(0, 50, 0, 90)
+toggleBtn.Parent = frame
+
+-- Dragging variables
+local dragging = false
+local dragInput, dragStart, startPos
+
+header.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+header.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+-- Speed button handlers
+minusBtn.MouseButton1Click:Connect(function()
+    speed = math.max(0.1, speed - 0.5)
+    speedLabel.Text = "Speed: "..string.format("%.1f", speed)
+end)
+
+plusBtn.MouseButton1Click:Connect(function()
+    speed = speed + 0.5
+    speedLabel.Text = "Speed: "..string.format("%.1f", speed)
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+    if freecamEnabled then
+        freecamEnabled = false
+        Camera.CameraType = Enum.CameraType.Custom
+        setCharacterFrozen(false)
+    end
+end)
+
+-- Movement flags
+moveForward, moveBackward, moveLeft, moveRight, moveUp, moveDown = false, false, false, false, false, false
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if freecamEnabled then
+        if input.KeyCode == Enum.KeyCode.W or input.KeyCode == Enum.KeyCode.Up then
+            moveForward = true
+        elseif input.KeyCode == Enum.KeyCode.S or input.KeyCode == Enum.KeyCode.Down then
+            moveBackward = true
+        elseif input.KeyCode == Enum.KeyCode.A or input.KeyCode == Enum.KeyCode.Left then
+            moveLeft = true
+        elseif input.KeyCode == Enum.KeyCode.D or input.KeyCode == Enum.KeyCode.Right then
+            moveRight = true
+        elseif input.KeyCode == Enum.KeyCode.E then
+            moveUp = true
+        elseif input.KeyCode == Enum.KeyCode.Q then
+            moveDown = true
+        end
+    end
+end)
+
+UIS.InputEnded:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if freecamEnabled then
+        if input.KeyCode == Enum.KeyCode.W or input.KeyCode == Enum.KeyCode.Up then
+            moveForward = false
+        elseif input.KeyCode == Enum.KeyCode.S or input.KeyCode == Enum.KeyCode.Down then
+            moveBackward = false
+        elseif input.KeyCode == Enum.KeyCode.A or input.KeyCode == Enum.KeyCode.Left then
+            moveLeft = false
+        elseif input.KeyCode == Enum.KeyCode.D or input.KeyCode == Enum.KeyCode.Right then
+            moveRight = false
+        elseif input.KeyCode == Enum.KeyCode.E then
+            moveUp = false
+        elseif input.KeyCode == Enum.KeyCode.Q then
+            moveDown = false
+        end
+    end
+end)
+
+-- Mouse look variables
 local mouseLookEnabled = false
 local lastMousePos = nil
 local sensitivity = 0.2
@@ -37,7 +212,6 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
     if freecamEnabled and input.UserInputType == Enum.UserInputType.MouseButton2 then
         mouseLookEnabled = true
         lastMousePos = UIS:GetMouseLocation()
-        -- Lock mouse so it doesn't leave window
         UIS.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
     end
 end)
@@ -45,7 +219,6 @@ end)
 UIS.InputEnded:Connect(function(input, gameProcessed)
     if freecamEnabled and input.UserInputType == Enum.UserInputType.MouseButton2 then
         mouseLookEnabled = false
-        -- Restore normal mouse behavior
         UIS.MouseBehavior = Enum.MouseBehavior.Default
     end
 end)
@@ -61,9 +234,28 @@ UIS.InputChanged:Connect(function(input, gameProcessed)
     end
 end)
 
--- Movement flags and speed buttons handlers here (keep your existing code)
+-- Toggle freecam button
+toggleBtn.MouseButton1Click:Connect(function()
+    freecamEnabled = not freecamEnabled
+    if freecamEnabled then
+        Camera.CameraType = Enum.CameraType.Scriptable
+        cameraPitch = 0
+        cameraYaw = 0
+        setCharacterFrozen(true)
+        print("[Freecam] Enabled")
+    else
+        Camera.CameraType = Enum.CameraType.Custom
+        setCharacterFrozen(false)
+        -- Reset camera to humanoid root part if possible
+        local root = Character:FindFirstChild("HumanoidRootPart")
+        if root then
+            Camera.CFrame = CFrame.new(root.Position + Vector3.new(0, 5, 10), root.Position)
+        end
+        print("[Freecam] Disabled")
+    end
+end)
 
--- Main loop to update camera position & rotation:
+-- Update camera position and rotation each frame
 RunService.RenderStepped:Connect(function(delta)
     if freecamEnabled then
         local yawCF = CFrame.Angles(0, math.rad(cameraYaw), 0)
