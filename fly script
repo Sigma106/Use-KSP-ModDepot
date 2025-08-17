@@ -1,98 +1,132 @@
--- Fly logic (working version)
-local flying = false
-local flySpeed = 10
-local bv, bg = nil, nil
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+
+-- Головна панель
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 260, 0, 170)
+frame.Position = UDim2.new(0.3, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.Parent = gui
+
+-- Заголовок
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+title.Text = "😎 Fly Menu"
+title.TextColor3 = Color3.new(1,1,1)
+title.Parent = frame
+
+-- Кнопка закриття
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -30, 0, 0)
+closeBtn.Text = "X"
+closeBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.Parent = frame
+
+-- Поле для швидкості
+local speedBox = Instance.new("TextBox")
+speedBox.Size = UDim2.new(0, 80, 0, 30)
+speedBox.Position = UDim2.new(0, 10, 0, 40)
+speedBox.PlaceholderText = "Speed"
+speedBox.Text = "50"
+speedBox.Parent = frame
+
+-- Кнопка Fly
+local flyBtn = Instance.new("TextButton")
+flyBtn.Size = UDim2.new(0, 80, 0, 30)
+flyBtn.Position = UDim2.new(0, 10, 0, 80)
+flyBtn.Text = "Fly 😎"
+flyBtn.Parent = frame
+
+-- Кнопка Stop Fly
+local stopBtn = Instance.new("TextButton")
+stopBtn.Size = UDim2.new(0, 80, 0, 30)
+stopBtn.Position = UDim2.new(0, 100, 0, 80)
+stopBtn.Text = "Stop 🛑"
+stopBtn.Parent = frame
+
+-- Drag функціонал
 local UIS = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
+local dragging, dragStart, startPos
 
-local movement = {
-	F = 0,
-	B = 0,
-	L = 0,
-	R = 0
-}
+title.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
 
-local function updateSpeedLabel()
-	speed.Text = "Speed: " .. flySpeed
-end
+UIS.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
 
-local function startFlying()
-	local char = player.Character or player.CharacterAdded:Wait()
-	local hrp = char:WaitForChild("HumanoidRootPart")
+-- Закриття меню
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
 
-	bv = Instance.new("BodyVelocity")
-	bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
-	bv.Velocity = Vector3.new(0, 0, 0)
-	bv.Parent = hrp
+-- Fly функціонал
+local flying = false
+local speed = tonumber(speedBox.Text) or 50
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+local hum = char:WaitForChild("Humanoid")
+local cam = workspace.CurrentCamera
+local flyConn
 
-	bg = Instance.new("BodyGyro")
-	bg.MaxTorque = Vector3.new(1e5, 1e5, 1e5)
-	bg.CFrame = hrp.CFrame
-	bg.Parent = hrp
+speedBox.FocusLost:Connect(function()
+	local num = tonumber(speedBox.Text)
+	if num then
+		speed = num
+	end
+end)
 
-	RunService:BindToRenderStep("FlyMovement", Enum.RenderPriority.Character.Value + 1, function()
-		local camCF = workspace.CurrentCamera.CFrame
-		local moveVec = Vector3.new(
-			(movement.R - movement.L),
-			0,
-			(movement.B - movement.F)
-		)
+flyBtn.MouseButton1Click:Connect(function()
+	if flying then return end
+	flying = true
 
-		moveVec = camCF:VectorToWorldSpace(moveVec)
+	hum.PlatformStand = true
 
-		bv.Velocity = moveVec.Unit * flySpeed
-		bg.CFrame = camCF
+	local bodyVel = Instance.new("BodyVelocity")
+	bodyVel.MaxForce = Vector3.new(4000, 4000, 4000)
+	bodyVel.Parent = hrp
+
+	flyConn = game:GetService("RunService").RenderStepped:Connect(function()
+		local move = Vector3.new()
+		if UIS:IsKeyDown(Enum.KeyCode.W) then move = move + cam.CFrame.LookVector end
+		if UIS:IsKeyDown(Enum.KeyCode.S) then move = move - cam.CFrame.LookVector end
+		if UIS:IsKeyDown(Enum.KeyCode.A) then move = move - cam.CFrame.RightVector end
+		if UIS:IsKeyDown(Enum.KeyCode.D) then move = move + cam.CFrame.RightVector end
+
+		-- Додаємо рух вгору/вниз по E і R
+		if UIS:IsKeyDown(Enum.KeyCode.E) then
+			move = move + Vector3.new(0, 1, 0)
+		end
+		if UIS:IsKeyDown(Enum.KeyCode.R) then
+			move = move - Vector3.new(0, 1, 0)
+		end
+
+		bodyVel.Velocity = move * speed
 	end)
-end
+end)
 
-local function stopFlying()
-	RunService:UnbindFromRenderStep("FlyMovement")
-	if bv then bv:Destroy() bv = nil end
-	if bg then bg:Destroy() bg = nil end
-end
-
-onoff.Text = "FLY ON"
-
-onoff.MouseButton1Click:Connect(function()
-	flying = not flying
-	if flying then
-		onoff.Text = "FLY OFF"
-		startFlying()
-	else
-		onoff.Text = "FLY ON"
-		stopFlying()
+stopBtn.MouseButton1Click:Connect(function()
+	flying = false
+	if flyConn then flyConn:Disconnect() end
+	if hrp:FindFirstChild("BodyVelocity") then
+		hrp.BodyVelocity:Destroy()
 	end
-end)
 
-plus.MouseButton1Click:Connect(function()
-	flySpeed = flySpeed + 1
-	updateSpeedLabel()
+	hum.PlatformStand = false
 end)
-
-mine.MouseButton1Click:Connect(function()
-	if flySpeed > 1 then
-		flySpeed = flySpeed - 1
-		updateSpeedLabel()
-	end
-end)
-
--- WASD movement binding
-UIS.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.Keyboard then
-		if input.KeyCode == Enum.KeyCode.W then movement.F = 1 end
-		if input.KeyCode == Enum.KeyCode.S then movement.B = 1 end
-		if input.KeyCode == Enum.KeyCode.A then movement.L = 1 end
-		if input.KeyCode == Enum.KeyCode.D then movement.R = 1 end
-	end
-end)
-
-UIS.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.Keyboard then
-		if input.KeyCode == Enum.KeyCode.W then movement.F = 0 end
-		if input.KeyCode == Enum.KeyCode.S then movement.B = 0 end
-		if input.KeyCode == Enum.KeyCode.A then movement.L = 0 end
-		if input.KeyCode == Enum.KeyCode.D then movement.R = 0 end
-	end
-end)
-
-updateSpeedLabel()
