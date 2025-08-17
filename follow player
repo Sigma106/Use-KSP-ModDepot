@@ -1,11 +1,9 @@
--- Roblox Lua full script for player follow GUI with <, > buttons, draggable, close, username & nickname display
-
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
--- Check if GUI already exists, if yes, destroy it to avoid duplicates
+-- Destroy existing GUI to prevent duplicates
 local existingGui = LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("FollowPlayerGui")
 if existingGui then
     existingGui:Destroy()
@@ -17,22 +15,34 @@ screenGui.Name = "FollowPlayerGui"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
--- Create main frame (draggable container)
+-- Create main frame (draggable window)
 local frame = Instance.new("Frame")
 frame.Name = "FollowFrame"
-frame.Size = UDim2.new(0, 300, 0, 120)
-frame.Position = UDim2.new(0.5, -150, 0.8, 0)
+frame.Size = UDim2.new(0, 340, 0, 150)
+frame.Position = UDim2.new(0.5, -170, 0.8, 0)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
-frame.Active = true -- Required for dragging
+frame.Active = true -- for dragging
 frame.Draggable = true
 frame.Parent = screenGui
+
+-- Title bar for dragging and label
+local titleBar = Instance.new("TextLabel")
+titleBar.Size = UDim2.new(1, 0, 0, 30)
+titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+titleBar.Text = "Player Spectate Window"
+titleBar.TextColor3 = Color3.new(1, 1, 1)
+titleBar.Font = Enum.Font.SourceSansBold
+titleBar.TextSize = 18
+titleBar.Parent = frame
+titleBar.Active = true
+titleBar.Draggable = true
 
 -- Player info label
 local playerInfo = Instance.new("TextLabel")
 playerInfo.Name = "PlayerInfo"
 playerInfo.Size = UDim2.new(1, -20, 0, 40)
-playerInfo.Position = UDim2.new(0, 10, 0, 10)
+playerInfo.Position = UDim2.new(0, 10, 0, 40)
 playerInfo.BackgroundTransparency = 1
 playerInfo.TextColor3 = Color3.new(1, 1, 1)
 playerInfo.Font = Enum.Font.SourceSansBold
@@ -41,29 +51,34 @@ playerInfo.Text = "Loading players..."
 playerInfo.TextWrapped = true
 playerInfo.Parent = frame
 
--- Button creation function
-local function createButton(name, text, posX)
+-- Button creation helper
+local function createButton(name, text, posX, posY, width, height)
     local btn = Instance.new("TextButton")
     btn.Name = name
-    btn.Size = UDim2.new(0, 50, 0, 40)
-    btn.Position = UDim2.new(0, posX, 0, 60)
+    btn.Size = UDim2.new(0, width or 60, 0, height or 40)
+    btn.Position = UDim2.new(0, posX, 0, posY)
     btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
     btn.TextColor3 = Color3.new(1, 1, 1)
     btn.Font = Enum.Font.SourceSansBold
-    btn.TextSize = 24
+    btn.TextSize = 20
     btn.Text = text
     btn.Parent = frame
     return btn
 end
 
-local prevBtn = createButton("PrevBtn", "<", 10)
-local nextBtn = createButton("NextBtn", ">", 110)
-local closeBtn = createButton("CloseBtn", "Close", 210)
+-- Buttons
+local toggleBtn = createButton("ToggleBtn", "OFF", 10, 90, 60, 40)
+local prevBtn = createButton("PrevBtn", "<", 80, 90, 50, 40)
+local nextBtn = createButton("NextBtn", ">", 140, 90, 50, 40)
+local firstPersonBtn = createButton("FirstPersonBtn", "1st Person", 200, 90, 120, 40)
+local closeBtn = createButton("CloseBtn", "Close", 270, 10, 60, 20)
 
--- Variables to track player list and index
+-- Variables
 local playerList = {}
 local currentIndex = 1
 local followConnection = nil
+local spectateOn = false
+local spectateMode = "ThirdPerson" -- or "FirstPerson"
 
 -- Update player list excluding local player
 local function updatePlayerList()
@@ -80,17 +95,15 @@ local function updatePlayerList()
     end
 end
 
--- Update label with followed player's info
 local function updateLabel()
     if currentIndex == 0 or #playerList == 0 then
         playerInfo.Text = "No other players to follow."
         return
     end
     local targetPlayer = playerList[currentIndex]
-    playerInfo.Text = string.format("Following: %s (%s)", targetPlayer.Name, targetPlayer.DisplayName)
+    playerInfo.Text = string.format("Following: %s (%s) | Mode: %s", targetPlayer.Name, targetPlayer.DisplayName, spectateMode)
 end
 
--- Stop camera follow and reset camera
 local function stopFollow()
     if followConnection then
         followConnection:Disconnect()
@@ -99,7 +112,6 @@ local function stopFollow()
     Camera.CameraType = Enum.CameraType.Custom
 end
 
--- Follow player camera with offset behind and above
 local function followPlayer(player)
     stopFollow()
     if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
@@ -111,7 +123,16 @@ local function followPlayer(player)
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             local hrp = player.Character.HumanoidRootPart
             Camera.CameraType = Enum.CameraType.Scriptable
-            Camera.CFrame = hrp.CFrame * CFrame.new(0, 5, 10) * CFrame.Angles(math.rad(-20), math.rad(180), 0)
+            if spectateMode == "ThirdPerson" then
+                Camera.CFrame = hrp.CFrame * CFrame.new(0, 5, 10) * CFrame.Angles(math.rad(-20), math.rad(180), 0)
+            elseif spectateMode == "FirstPerson" then
+                local head = player.Character:FindFirstChild("Head")
+                if head then
+                    Camera.CFrame = head.CFrame * CFrame.new(0, 0, 0)
+                else
+                    Camera.CFrame = hrp.CFrame
+                end
+            end
         else
             stopFollow()
             playerInfo.Text = "Lost target player."
@@ -119,7 +140,6 @@ local function followPlayer(player)
     end)
 end
 
--- Cycle through players with direction (+1 or -1)
 local function cyclePlayer(direction)
     if #playerList == 0 then return end
     currentIndex = currentIndex + direction
@@ -129,36 +149,58 @@ local function cyclePlayer(direction)
         currentIndex = 1
     end
     updateLabel()
-    followPlayer(playerList[currentIndex])
+    if spectateOn then
+        followPlayer(playerList[currentIndex])
+    end
 end
 
--- Close button handler
+local function toggleSpectate()
+    spectateOn = not spectateOn
+    toggleBtn.Text = spectateOn and "ON" or "OFF"
+    if spectateOn then
+        if currentIndex == 0 or #playerList == 0 then
+            playerInfo.Text = "No other players to follow."
+            return
+        end
+        updateLabel()
+        followPlayer(playerList[currentIndex])
+    else
+        stopFollow()
+        playerInfo.Text = "Spectate OFF"
+    end
+end
+
+local function setSpectateMode(mode)
+    spectateMode = mode
+    if spectateOn and currentIndex > 0 and playerList[currentIndex] then
+        updateLabel()
+        followPlayer(playerList[currentIndex])
+    end
+end
+
 local function closeGui()
     stopFollow()
     screenGui.Enabled = false
 end
 
--- Initialize player list and start following first player
+-- Initial setup
 updatePlayerList()
 if #playerList > 0 then
     updateLabel()
-    followPlayer(playerList[currentIndex])
 else
     playerInfo.Text = "No other players to follow."
 end
 
 -- Connect buttons
-prevBtn.MouseButton1Click:Connect(function()
-    cyclePlayer(-1)
+toggleBtn.MouseButton1Click:Connect(toggleSpectate)
+prevBtn.MouseButton1Click:Connect(function() cyclePlayer(-1) end)
+nextBtn.MouseButton1Click:Connect(function() cyclePlayer(1) end)
+firstPersonBtn.MouseButton1Click:Connect(function()
+    setSpectateMode("FirstPerson")
 end)
-
-nextBtn.MouseButton1Click:Connect(function()
-    cyclePlayer(1)
-end)
-
 closeBtn.MouseButton1Click:Connect(closeGui)
 
--- Update player list on players added/removed
+-- Update player list dynamically
 Players.PlayerAdded:Connect(function()
     updatePlayerList()
 end)
@@ -168,10 +210,14 @@ Players.PlayerRemoving:Connect(function()
     if #playerList == 0 then
         currentIndex = 0
         playerInfo.Text = "No other players to follow."
-        closeGui()
+        stopFollow()
+        spectateOn = false
+        toggleBtn.Text = "OFF"
     elseif currentIndex > #playerList then
         currentIndex = 1
         updateLabel()
-        followPlayer(playerList[currentIndex])
+        if spectateOn then
+            followPlayer(playerList[currentIndex])
+        end
     end
 end)
