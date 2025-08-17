@@ -10,8 +10,8 @@ local Frame = Instance.new("Frame")
 Frame.Parent = main
 Frame.BackgroundColor3 = Color3.fromRGB(34, 34, 34) -- dark grey
 Frame.BorderColor3 = Color3.fromRGB(187, 187, 187) -- light grey
-Frame.Position = UDim2.new(0.1, 0, 0.38, 0)
-Frame.Size = UDim2.new(0, 190, 0, 100)
+Frame.Position = UDim2.new(0.1, 0, 0.3, 0)
+Frame.Size = UDim2.new(0, 200, 0, 130) -- bigger height to fit all buttons
 Frame.Active = true
 
 local TitleBar = Instance.new("Frame")
@@ -34,7 +34,6 @@ TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleLabel.TextScaled = true
 TitleLabel.TextWrapped = true
 
--- Close button
 local closebutton = Instance.new("TextButton")
 closebutton.Name = "Close"
 closebutton.Parent = TitleBar
@@ -52,7 +51,6 @@ closebutton.MouseButton1Click:Connect(function()
 	main:Destroy()
 end)
 
--- Function to style buttons uniformly
 local function styleButton(btn)
 	btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	btn.BorderColor3 = Color3.fromRGB(187, 187, 187)
@@ -62,100 +60,99 @@ local function styleButton(btn)
 	btn.AutoButtonColor = true
 end
 
--- Create buttons
+-- Buttons
 
 local up = Instance.new("TextButton")
 up.Name = "up"
 up.Parent = Frame
-up.Position = UDim2.new(0, 0, 0.30, 0)
-up.Size = UDim2.new(0, 44, 0, 28)
+up.Position = UDim2.new(0, 8, 0, 40)
+up.Size = UDim2.new(0, 50, 0, 28)
 up.Text = "UP"
 styleButton(up)
 
 local down = Instance.new("TextButton")
 down.Name = "down"
 down.Parent = Frame
-down.Position = UDim2.new(0, 48, 0.30, 0)
-down.Size = UDim2.new(0, 44, 0, 28)
+down.Position = UDim2.new(0, 68, 0, 40)
+down.Size = UDim2.new(0, 50, 0, 28)
 down.Text = "DOWN"
 styleButton(down)
 
 local onoff = Instance.new("TextButton")
 onoff.Name = "onoff"
 onoff.Parent = Frame
-onoff.Position = UDim2.new(0, 96, 0.30, 0)
-onoff.Size = UDim2.new(0, 88, 0, 28)
+onoff.Position = UDim2.new(0, 128, 0, 40)
+onoff.Size = UDim2.new(0, 64, 0, 28)
 onoff.Text = "FLY ON"
 styleButton(onoff)
-
-local plus = Instance.new("TextButton")
-plus.Name = "plus"
-plus.Parent = Frame
-plus.Position = UDim2.new(0, 96, 0.65, 0)
-plus.Size = UDim2.new(0, 44, 0, 28)
-plus.Text = "+"
-styleButton(plus)
 
 local mine = Instance.new("TextButton")
 mine.Name = "mine"
 mine.Parent = Frame
-mine.Position = UDim2.new(0, 48, 0.65, 0)
-mine.Size = UDim2.new(0, 44, 0, 28)
+mine.Position = UDim2.new(0, 8, 0, 80)
+mine.Size = UDim2.new(0, 50, 0, 28)
 mine.Text = "-"
 styleButton(mine)
+
+local plus = Instance.new("TextButton")
+plus.Name = "plus"
+plus.Parent = Frame
+plus.Position = UDim2.new(0, 68, 0, 80)
+plus.Size = UDim2.new(0, 50, 0, 28)
+plus.Text = "+"
+styleButton(plus)
 
 local speed = Instance.new("TextLabel")
 speed.Name = "speed"
 speed.Parent = Frame
 speed.BackgroundTransparency = 1
-speed.Position = UDim2.new(0, 0, 0.65, 0)
-speed.Size = UDim2.new(0, 44, 0, 28)
+speed.Position = UDim2.new(0, 128, 0, 80)
+speed.Size = UDim2.new(0, 64, 0, 28)
 speed.Font = Enum.Font.SourceSansBold
 speed.Text = "Speed: 10"
 speed.TextColor3 = Color3.fromRGB(255, 255, 255)
 speed.TextScaled = true
 speed.TextWrapped = true
 
--- You can add minimize buttons or other controls here if needed
-
--- Manual drag script
+-- Dragging logic
 local dragging = false
 local dragInput
 local dragStart
 local startPos
 
 local function update(input)
-    local delta = input.Position - dragStart
-    Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	local delta = input.Position - dragStart
+	Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
 TitleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = Frame.Position
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = Frame.Position
 
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
 end)
 
 TitleBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
-    end
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        update(input)
-    end
+	if input == dragInput and dragging then
+		update(input)
+	end
 end)
 
--- Example fly functionality (simplified)
+-- Fly logic (simplified)
+
 local flying = false
 local flySpeed = 10
 
@@ -185,11 +182,11 @@ mine.MouseButton1Click:Connect(function()
 end)
 
 up.MouseButton1Click:Connect(function()
-	-- Implement what happens when UP is clicked (like move character up)
+	-- Implement your UP functionality here
 end)
 
 down.MouseButton1Click:Connect(function()
-	-- Implement what happens when DOWN is clicked (like move character down)
+	-- Implement your DOWN functionality here
 end)
 
 updateSpeedLabel()
