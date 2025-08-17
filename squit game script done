@@ -13,6 +13,7 @@ if game.PlaceId ~= 126875106476593 then
 			Icon = "rbxthumb://type=Asset&id=18404603666&w=150&h=150"})
 		Duration = 5;
 	end
+	return -- Stop script if not in the correct place
 end
 
 
