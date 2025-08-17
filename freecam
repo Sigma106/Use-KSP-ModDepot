@@ -1,140 +1,150 @@
--- LocalScript (StarterPlayer > StarterPlayerScripts)
+-- LocalScript inside StarterPlayer > StarterPlayerScripts
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 -- Create GUI
-local ScreenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
-ScreenGui.Name = "TeleportGUI"
-ScreenGui.ResetOnSpawn = false
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
-local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 300, 0, 400)
-MainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
-MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-MainFrame.BorderSizePixel = 0
-MainFrame.Active = true
-MainFrame.Draggable = true
-MainFrame.Parent = ScreenGui
+-- Main Frame (Window)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 300, 0, 400)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+-- Add border
+local stroke = Instance.new("UIStroke", mainFrame)
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(100, 100, 100)
 
 -- Title Bar
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, -40, 0, 30)
-Title.Position = UDim2.new(0, 0, 0, 0)
-Title.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-Title.Text = "Teleport Menu"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 16
-Title.Font = Enum.Font.SourceSansBold
-Title.TextXAlignment = Enum.TextXAlignment.Left
-Title.PaddingLeft = UDim.new(0, 10)
-Title.Parent = MainFrame
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 30)
+titleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+titleBar.Parent = mainFrame
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -30, 1, 0)
+titleLabel.Position = UDim2.new(0, 5, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Teleport Menu"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.TextSize = 16
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = titleBar
 
 -- Close Button
-local CloseButton = Instance.new("TextButton")
-CloseButton.Size = UDim2.new(0, 40, 0, 30)
-CloseButton.Position = UDim2.new(1, -40, 0, 0)
-CloseButton.Text = "X"
-CloseButton.TextColor3 = Color3.fromRGB(255, 0, 0)
-CloseButton.TextSize = 20
-CloseButton.Font = Enum.Font.SourceSansBold
-CloseButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-CloseButton.Parent = MainFrame
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 30, 1, 0)
+closeButton.Position = UDim2.new(1, -30, 0, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(60, 0, 0)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Font = Enum.Font.SourceSansBold
+closeButton.TextSize = 16
+closeButton.Parent = titleBar
 
--- Player Count Label
-local CountLabel = Instance.new("TextLabel")
-CountLabel.Size = UDim2.new(1, 0, 0, 25)
-CountLabel.Position = UDim2.new(0, 0, 0, 35)
-CountLabel.BackgroundTransparency = 1
-CountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-CountLabel.TextSize = 14
-CountLabel.Font = Enum.Font.SourceSans
-CountLabel.Text = "Players: 0"
-CountLabel.Parent = MainFrame
+-- Player count
+local countLabel = Instance.new("TextLabel")
+countLabel.Size = UDim2.new(1, -20, 0, 20)
+countLabel.Position = UDim2.new(0, 10, 0, 35)
+countLabel.BackgroundTransparency = 1
+countLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+countLabel.Font = Enum.Font.SourceSans
+countLabel.TextSize = 14
+countLabel.Text = "Players: 0"
+countLabel.Parent = mainFrame
 
--- Scrolling Player List
-local PlayerList = Instance.new("ScrollingFrame")
-PlayerList.Size = UDim2.new(1, -20, 1, -130)
-PlayerList.Position = UDim2.new(0, 10, 0, 65)
-PlayerList.CanvasSize = UDim2.new(0, 0, 0, 0)
-PlayerList.ScrollBarThickness = 6
-PlayerList.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-PlayerList.BorderSizePixel = 0
-PlayerList.Parent = MainFrame
+-- Scrolling player list
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, -20, 1, -140)
+scrollFrame.Position = UDim2.new(0, 10, 0, 60)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+scrollFrame.BorderSizePixel = 0
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollFrame.ScrollBarThickness = 6
+scrollFrame.Parent = mainFrame
 
--- UI List Layout
-local ListLayout = Instance.new("UIListLayout")
-ListLayout.SortOrder = Enum.SortOrder.Name
-ListLayout.Padding = UDim.new(0, 4)
-ListLayout.Parent = PlayerList
+local listLayout = Instance.new("UIListLayout")
+listLayout.Parent = scrollFrame
+listLayout.SortOrder = Enum.SortOrder.Name
+listLayout.Padding = UDim.new(0, 5)
 
 -- Teleport Button
-local TeleportButton = Instance.new("TextButton")
-TeleportButton.Size = UDim2.new(1, -20, 0, 40)
-TeleportButton.Position = UDim2.new(0, 10, 1, -45)
-TeleportButton.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
-TeleportButton.Text = "Teleport to Selected"
-TeleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-TeleportButton.TextSize = 16
-TeleportButton.Font = Enum.Font.SourceSansBold
-TeleportButton.Parent = MainFrame
+local teleportButton = Instance.new("TextButton")
+teleportButton.Size = UDim2.new(1, -20, 0, 40)
+teleportButton.Position = UDim2.new(0, 10, 1, -45)
+teleportButton.BackgroundColor3 = Color3.fromRGB(0, 100, 0)
+teleportButton.Text = "Teleport to Selected"
+teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+teleportButton.Font = Enum.Font.SourceSansBold
+teleportButton.TextSize = 16
+teleportButton.Parent = mainFrame
 
 -- Variables
 local selectedPlayer = nil
 
--- Function to update player list
-local function UpdatePlayerList()
-	PlayerList:ClearAllChildren()
+-- Update player list
+local function updatePlayerList()
+	scrollFrame:ClearAllChildren()
 	selectedPlayer = nil
+
 	local players = Players:GetPlayers()
-	CountLabel.Text = "Players: " .. tostring(#players)
+	countLabel.Text = "Players: " .. tostring(#players)
 
-	for _, player in ipairs(players) do
+	for _, player in pairs(players) do
 		if player ~= LocalPlayer then
-			local Button = Instance.new("TextButton")
-			Button.Size = UDim2.new(1, 0, 0, 30)
-			Button.Text = player.Name
-			Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-			Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-			Button.Font = Enum.Font.SourceSans
-			Button.TextSize = 14
-			Button.Parent = PlayerList
+			local playerButton = Instance.new("TextButton")
+			playerButton.Size = UDim2.new(1, 0, 0, 30)
+			playerButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+			playerButton.Text = player.Name
+			playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+			playerButton.Font = Enum.Font.SourceSans
+			playerButton.TextSize = 14
+			playerButton.Parent = scrollFrame
 
-			Button.MouseButton1Click:Connect(function()
-				for _, other in ipairs(PlayerList:GetChildren()) do
-					if other:IsA("TextButton") then
-						other.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+			playerButton.MouseButton1Click:Connect(function()
+				for _, btn in pairs(scrollFrame:GetChildren()) do
+					if btn:IsA("TextButton") then
+						btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 					end
 				end
-				Button.BackgroundColor3 = Color3.fromRGB(100, 100, 150)
+				playerButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
 				selectedPlayer = player
 			end)
 		end
 	end
 
-	-- Adjust Canvas Size
 	task.wait()
-	PlayerList.CanvasSize = UDim2.new(0, 0, 0, ListLayout.AbsoluteContentSize.Y)
+	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
 end
 
--- Teleport function
-TeleportButton.MouseButton1Click:Connect(function()
+-- Teleport logic
+teleportButton.MouseButton1Click:Connect(function()
 	if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-		local root = selectedPlayer.Character.HumanoidRootPart
+		local targetPos = selectedPlayer.Character.HumanoidRootPart.Position
 		local myChar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-		local myRoot = myChar:WaitForChild("HumanoidRootPart")
-		myRoot.CFrame = root.CFrame + Vector3.new(2, 0, 0) -- Slight offset to avoid collision
+		local myHRP = myChar:WaitForChild("HumanoidRootPart")
+		myHRP.CFrame = CFrame.new(targetPos + Vector3.new(3, 0, 0)) -- Offset to avoid overlap
 	end
 end)
 
--- Close Button Functionality
-CloseButton.MouseButton1Click:Connect(function()
-	ScreenGui.Enabled = false
+-- Close button logic
+closeButton.MouseButton1Click:Connect(function()
+	mainFrame.Visible = false
 end)
 
--- Player join/leave detection
-Players.PlayerAdded:Connect(UpdatePlayerList)
-Players.PlayerRemoving:Connect(UpdatePlayerList)
+-- Update when players join/leave
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
 
--- Initial List Update
-UpdatePlayerList()
+-- Initial population
+updatePlayerList()
