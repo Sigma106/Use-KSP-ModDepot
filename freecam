@@ -11,34 +11,32 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "UserInfoGUI"
 screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
--- Main frame (panel)
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 350, 0, 380)
-frame.Position = UDim2.new(0.5, -175, 0.5, -190)
+frame.Size = UDim2.new(0, 320, 0, 380)
+frame.Position = UDim2.new(0.5, -160, 0.5, -190)
 frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 frame.BorderSizePixel = 0
 frame.Parent = screenGui
 
--- Header bar for dragging
-local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 40)
-header.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-header.BorderSizePixel = 0
-header.Parent = frame
+-- Panel bar (drag handle)
+local panelBar = Instance.new("Frame")
+panelBar.Size = UDim2.new(1, 0, 0, 40)
+panelBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+panelBar.BorderSizePixel = 0
+panelBar.Parent = frame
 
--- Title label on header
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Size = UDim2.new(1, -50, 1, 0)
 titleLabel.Position = UDim2.new(0, 10, 0, 0)
 titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "Player Teleport"
+titleLabel.Text = "Player Teleport GUI"
 titleLabel.TextColor3 = Color3.new(1,1,1)
 titleLabel.Font = Enum.Font.SourceSansBold
-titleLabel.TextSize = 22
+titleLabel.TextSize = 20
 titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-titleLabel.Parent = header
+titleLabel.Parent = panelBar
 
--- Close button
+-- Close button on panel bar
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 40, 0, 30)
 closeBtn.Position = UDim2.new(1, -45, 0, 5)
@@ -47,14 +45,14 @@ closeBtn.Text = "X"
 closeBtn.TextColor3 = Color3.new(1, 1, 1)
 closeBtn.Font = Enum.Font.SourceSansBold
 closeBtn.TextSize = 24
-closeBtn.Parent = header
+closeBtn.Parent = panelBar
 closeBtn.MouseButton1Click:Connect(function()
     screenGui:Destroy()
 end)
 
--- Drag logic (only on header)
+-- Dragging logic for panelBar only
 local dragging, dragInput, dragStart, startPos
-header.InputBegan:Connect(function(input)
+panelBar.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
         dragStart = input.Position
@@ -66,7 +64,7 @@ header.InputBegan:Connect(function(input)
         end)
     end
 end)
-header.InputChanged:Connect(function(input)
+panelBar.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement then
         dragInput = input
     end
@@ -75,46 +73,46 @@ UIS.InputChanged:Connect(function(input)
     if dragging and input == dragInput then
         local delta = input.Position - dragStart
         frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
-                                   startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+                                  startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
 end)
 
 -- Username input box
 local inputBox = Instance.new("TextBox")
-inputBox.PlaceholderText = "Enter player username and press Enter"
-inputBox.Size = UDim2.new(0, 230, 0, 40)
+inputBox.PlaceholderText = "Type username and press Enter"
+inputBox.Size = UDim2.new(1, -40, 0, 40)
 inputBox.Position = UDim2.new(0, 10, 0, 60)
 inputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-inputBox.TextColor3 = Color3.new(1, 1, 1)
+inputBox.TextColor3 = Color3.new(1,1,1)
 inputBox.ClearTextOnFocus = false
 inputBox.Text = ""
 inputBox.Font = Enum.Font.SourceSans
 inputBox.TextSize = 20
 inputBox.Parent = frame
 
--- Teleport button next to input
+-- Teleport button below input
 local teleportBtn = Instance.new("TextButton")
-teleportBtn.Size = UDim2.new(0, 90, 0, 40)
-teleportBtn.Position = UDim2.new(0, 250, 0, 60)
-teleportBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+teleportBtn.Size = UDim2.new(0, 100, 0, 40)
+teleportBtn.Position = UDim2.new(1, -110, 0, 110)
+teleportBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0)
 teleportBtn.Text = "Teleport"
 teleportBtn.TextColor3 = Color3.new(1, 1, 1)
 teleportBtn.Font = Enum.Font.SourceSansBold
-teleportBtn.TextSize = 20
+teleportBtn.TextSize = 18
 teleportBtn.Parent = frame
 
 -- Avatar image
 local avatarImage = Instance.new("ImageLabel")
 avatarImage.Size = UDim2.new(0, 120, 0, 120)
-avatarImage.Position = UDim2.new(0.5, -60, 0, 120)
-avatarImage.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+avatarImage.Position = UDim2.new(0.5, -60, 0, 160)
+avatarImage.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 avatarImage.BorderSizePixel = 0
 avatarImage.Parent = frame
 
--- DisplayName label
+-- Display name label
 local displayNameLabel = Instance.new("TextLabel")
 displayNameLabel.Size = UDim2.new(1, -20, 0, 30)
-displayNameLabel.Position = UDim2.new(0, 10, 0, 260)
+displayNameLabel.Position = UDim2.new(0, 10, 0, 290)
 displayNameLabel.BackgroundTransparency = 1
 displayNameLabel.TextColor3 = Color3.new(1, 1, 1)
 displayNameLabel.Font = Enum.Font.SourceSansBold
@@ -126,9 +124,9 @@ displayNameLabel.Parent = frame
 -- Username label
 local usernameLabel = Instance.new("TextLabel")
 usernameLabel.Size = UDim2.new(1, -20, 0, 25)
-usernameLabel.Position = UDim2.new(0, 10, 0, 295)
+usernameLabel.Position = UDim2.new(0, 10, 0, 320)
 usernameLabel.BackgroundTransparency = 1
-usernameLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+usernameLabel.TextColor3 = Color3.new(0.7, 0.7, 0.7)
 usernameLabel.Font = Enum.Font.SourceSans
 usernameLabel.TextSize = 18
 usernameLabel.TextXAlignment = Enum.TextXAlignment.Center
@@ -180,4 +178,3 @@ teleportBtn.MouseButton1Click:Connect(function()
         warn("Selected player not available or their character not loaded.")
     end
 end)
-
