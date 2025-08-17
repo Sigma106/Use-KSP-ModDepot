@@ -120,17 +120,17 @@ local Button533 = othersscripton:CreateButton({
     end,
 })
 
-local Button3 = visuals:CreateButton({
-    Name = "shaders", -- Button label
-    Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/randomstring0/pshade-ultimate/refs/heads/main/src/cd.lua'))()
-    end,
-})
-
 local Button01 = visuals:CreateButton({
     Name = "esp", -- Button label
     Callback = function()
        loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/esp%20gui%20on%20off'))()
     end
+})
+
+local Button3 = visuals:CreateButton({
+    Name = "shaders", -- Button label
+    Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/randomstring0/pshade-ultimate/refs/heads/main/src/cd.lua'))()
+    end,
 })
 
