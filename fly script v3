@@ -273,6 +273,40 @@ closebutton.MouseButton1Down:connect(function()
 	main.Frame.Visible = false
 end)
 
+plus.MouseButton1Down:connect(function()
+	if speeds <= 6 then
+		speeds += 1
+		speed.Text = tostring(speeds)
+	end
+end)
+
+mine.MouseButton1Down:connect(function()
+	if speeds > 1 then
+		speeds -= 1
+		speed.Text = tostring(speeds)
+	end
+end)
+
+up.MouseButton1Down:connect(function()
+	local chr = game.Players.LocalPlayer.Character
+	local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+	if hum then
+		chr.HumanoidRootPart.CFrame = chr.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0)
+	end
+end)
+
+down.MouseButton1Down:connect(function()
+	local chr = game.Players.LocalPlayer.Character
+	local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+	if hum then
+		chr.HumanoidRootPart.CFrame = chr.HumanoidRootPart.CFrame + Vector3.new(0, -5, 0)
+	end
+end)
+
+closebutton.MouseButton1Down:connect(function()
+	main.Frame.Visible = false
+end)
+
 mini.MouseButton1Down:connect(function()
 	mini.Visible = false
 	mini2.Visible = true
