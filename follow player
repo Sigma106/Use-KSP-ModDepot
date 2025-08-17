@@ -1,9 +1,15 @@
--- Roblox Lua full script for player follow GUI with <, > buttons, draggable, close, and username/nickname display
+-- Roblox Lua full script for player follow GUI with <, > buttons, draggable, close, username & nickname display
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
+
+-- Check if GUI already exists, if yes, destroy it to avoid duplicates
+local existingGui = LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("FollowPlayerGui")
+if existingGui then
+    existingGui:Destroy()
+end
 
 -- Create ScreenGui
 local screenGui = Instance.new("ScreenGui")
