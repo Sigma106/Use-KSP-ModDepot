@@ -1,6 +1,6 @@
 if game.PlaceId ~= 104937784445732 then
 	game:GetService("StarterGui"):SetCore("SendNotification", { 
-		Title = "This game is not 🦑Squid Game 3 [Final Games]";
+		Title = "Wrong Game Detected!";
 		Text = "By green_co0lkid";
 		Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
 	Duration = 5;
