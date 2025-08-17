@@ -1,77 +1,171 @@
--- Load Rayfield
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
 
--- Create Window
-local Window = Rayfield:CreateWindow({
-  Name = "Teleport GUI",
-  LoadingTitle = "Teleport Interface",
-  LoadingSubtitle = "Select & Teleport",
-  ConfigurationSaving = { Enabled = false },
-  Discord = { Enabled = false },
-  KeySystem = false
-})
-
--- Create Tab and Section
-local TeleportTab = Window:CreateTab("Teleport")
-local TPSection = TeleportTab:CreateSection("Player Teleport")
-
--- Helper to get player list strings
-local function getPlayerStrings()
-  local list = {}
-  for _, plr in ipairs(game.Players:GetPlayers()) do
-    if plr ~= game.Players.LocalPlayer then
-      table.insert(list, plr.DisplayName .. " [@" .. plr.Name .. "]")
-    end
-  end
-  return list
+-- Remove existing GUI if any
+if LocalPlayer.PlayerGui:FindFirstChild("TeleportGUI") then
+    LocalPlayer.PlayerGui.TeleportGUI:Destroy()
 end
 
--- Create Dropdown
-local PlayerDropdown = TPSection:CreateDropdown({
-  Name = "Select Player",
-  Options = getPlayerStrings(),
-  CurrentOption = {},  -- start with none selected
-  MultipleOptions = false,
-  Flag = "PlayerDropdown",
-  Callback = function(option)
-    -- Option is a table, e.g. {"Nick [@username]"}
-    print("Selected:", option[1])
-  end
-})
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGUI"
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
--- Teleport Button
-TPSection:CreateButton({
-  Name = "Teleport",
-  Callback = function()
-    local selected = PlayerDropdown.CurrentOption[1]
-    if not selected then
-      Rayfield:Notify({Title = "Error", Content = "No player selected", Duration = 2})
-      return
+-- Main frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 400)
+frame.Position = UDim2.new(0.5, -150, 0.5, -200)
+frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+-- Make frame draggable
+local dragging, dragInput, dragStart, startPos
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
     end
+end)
 
-    local username = selected:match("%[@(.-)%]")
-    local target = game.Players:FindFirstChild(username)
-    if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-      local myHRP = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-      if myHRP then
-        myHRP.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(2,0,0)
-        Rayfield:Notify({Title = "Teleported", Content = "To " .. selected, Duration = 2})
-      end
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                  startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 35)
+title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+title.Text = "Teleport Menu"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 20
+title.Parent = frame
+
+-- Close button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 35, 0, 35)
+closeBtn.Position = UDim2.new(1, -35, 0, 0)
+closeBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.TextSize = 24
+closeBtn.Parent = frame
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+-- Player count label
+local countLabel = Instance.new("TextLabel")
+countLabel.Size = UDim2.new(1, -20, 0, 25)
+countLabel.Position = UDim2.new(0, 10, 0, 40)
+countLabel.BackgroundTransparency = 1
+countLabel.TextColor3 = Color3.new(1, 1, 1)
+countLabel.Font = Enum.Font.SourceSans
+countLabel.TextSize = 16
+countLabel.TextXAlignment = Enum.TextXAlignment.Left
+countLabel.Parent = frame
+
+-- ScrollingFrame to list players
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1, -20, 1, -130)
+scroll.Position = UDim2.new(0, 10, 0, 70)
+scroll.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+scroll.BorderSizePixel = 0
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 8
+scroll.Parent = frame
+
+local listLayout = Instance.new("UIListLayout")
+listLayout.Padding = UDim.new(0, 5)
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.Parent = scroll
+
+-- Teleport button
+local teleportBtn = Instance.new("TextButton")
+teleportBtn.Size = UDim2.new(1, -20, 0, 40)
+teleportBtn.Position = UDim2.new(0, 10, 1, -50)
+teleportBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0)
+teleportBtn.Text = "Teleport"
+teleportBtn.TextColor3 = Color3.new(1, 1, 1)
+teleportBtn.Font = Enum.Font.SourceSansBold
+teleportBtn.TextSize = 18
+teleportBtn.Parent = frame
+
+local selectedPlayer = nil
+
+-- Update scroll canvas size properly
+listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    scroll.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 10)
+end)
+
+-- Function to refresh player list
+local function refreshPlayers()
+    scroll:ClearAllChildren()
+    selectedPlayer = nil
+    local players = Players:GetPlayers()
+    countLabel.Text = "Players in server: ".. tostring(#players)
+
+    for _, plr in ipairs(players) do
+        if plr ~= LocalPlayer then
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1, 0, 0, 35)
+            btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+            btn.TextColor3 = Color3.new(1, 1, 1)
+            btn.Font = Enum.Font.SourceSans
+            btn.TextSize = 16
+            btn.Text = plr.DisplayName .. " [@" .. plr.Name .. "]"
+            btn.Parent = scroll
+
+            btn.MouseButton1Click:Connect(function()
+                -- Deselect others
+                for _, otherBtn in pairs(scroll:GetChildren()) do
+                    if otherBtn:IsA("TextButton") then
+                        otherBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+                    end
+                end
+                btn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+                selectedPlayer = plr
+            end)
+        end
+    end
+end
+
+-- Teleport functionality
+teleportBtn.MouseButton1Click:Connect(function()
+    if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = selectedPlayer.Character.HumanoidRootPart
+        local myChar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local myHRP = myChar:FindFirstChild("HumanoidRootPart")
+        if myHRP then
+            myHRP.CFrame = hrp.CFrame + Vector3.new(3, 0, 0)
+        end
     else
-      Rayfield:Notify({Title = "Failed", Content = "Player not found or not loaded", Duration = 2})
+        warn("No player selected or player character not loaded")
     end
-  end
-})
-
--- Update dropdown on player join/leave
-game.Players.PlayerAdded:Connect(function()
-  PlayerDropdown:Set({})
-  PlayerDropdown:Set(getPlayerStrings())
-  PlayerDropdown:Refresh(getPlayerStrings())
 end)
 
-game.Players.PlayerRemoving:Connect(function()
-  PlayerDropdown:Set({})
-  PlayerDropdown:Set(getPlayerStrings())
-  PlayerDropdown:Refresh(getPlayerStrings())
-end)
+-- Refresh when players join or leave
+Players.PlayerAdded:Connect(refreshPlayers)
+Players.PlayerRemoving:Connect(refreshPlayers)
+
+-- Initial populate
+refreshPlayers()
