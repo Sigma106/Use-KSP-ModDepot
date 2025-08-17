@@ -22,8 +22,8 @@ frame.Size = UDim2.new(0, 340, 0, 150)
 frame.Position = UDim2.new(0.5, -170, 0.8, 0)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
-frame.Active = true -- for dragging
-frame.Draggable = true
+frame.Active = true       -- Make frame active to receive input
+frame.Draggable = true    -- Make frame draggable
 frame.Parent = screenGui
 
 -- Title bar for dragging and label
@@ -35,8 +35,8 @@ titleBar.TextColor3 = Color3.new(1, 1, 1)
 titleBar.Font = Enum.Font.SourceSansBold
 titleBar.TextSize = 18
 titleBar.Parent = frame
-titleBar.Active = true
-titleBar.Draggable = true
+titleBar.Active = false       -- IMPORTANT: false so it doesn’t block frame dragging
+titleBar.Draggable = false    -- IMPORTANT: false
 
 -- Player info label
 local playerInfo = Instance.new("TextLabel")
