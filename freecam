@@ -8,18 +8,16 @@ if LocalPlayer.PlayerGui:FindFirstChild("TeleportGUI") then
     LocalPlayer.PlayerGui.TeleportGUI:Destroy()
 end
 
--- Create GUI
+-- Create ScreenGui
 local screenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
 screenGui.Name = "TeleportGUI"
 screenGui.ResetOnSpawn = false
 
 -- Main draggable frame
-local frame = Instance.new("Frame")
+local frame = Instance.new("Frame", screenGui)
 frame.Size = UDim2.new(0, 300, 0, 400)
 frame.Position = UDim2.new(0.5, -150, 0.5, -200)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-frame.BorderSizePixel = 0
-frame.Parent = screenGui
 
 -- Manual dragging
 local dragging, dragStart, startPos
@@ -43,16 +41,15 @@ UIS.InputChanged:Connect(function(input)
     end
 end)
 
--- Title
+-- UI Elements
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 30)
 title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 title.Text = "Teleport Menu"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 16
+title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.SourceSansBold
+title.TextSize = 16
 
--- Close Button
 local close = Instance.new("TextButton", frame)
 close.Size = UDim2.new(0, 30, 0, 30)
 close.Position = UDim2.new(1, -30, 0, 0)
@@ -63,42 +60,37 @@ close.MouseButton1Click:Connect(function()
     screenGui:Destroy()
 end)
 
--- Player count label
 local countLabel = Instance.new("TextLabel", frame)
 countLabel.Position = UDim2.new(0, 10, 0, 35)
 countLabel.Size = UDim2.new(1, -20, 0, 20)
 countLabel.BackgroundTransparency = 1
-countLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-countLabel.TextSize = 14
+countLabel.TextColor3 = Color3.new(1,1,1)
 countLabel.Font = Enum.Font.SourceSans
+countLabel.TextSize = 14
 countLabel.Text = "Players: 0"
 
--- Scrolling list
 local scroll = Instance.new("ScrollingFrame", frame)
 scroll.Position = UDim2.new(0, 10, 0, 60)
 scroll.Size = UDim2.new(1, -20, 1, -120)
 scroll.CanvasSize = UDim2.fromOffset(0, 0)
 scroll.ScrollBarThickness = 6
 scroll.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-scroll.BorderSizePixel = 0
 scroll.ClipsDescendants = true
 
 local listLayout = Instance.new("UIListLayout", scroll)
-listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 listLayout.Padding = UDim.new(0, 5)
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
--- Teleport button
 local teleport = Instance.new("TextButton", frame)
 teleport.Size = UDim2.new(1, -20, 0, 40)
 teleport.Position = UDim2.new(0, 10, 1, -50)
 teleport.BackgroundColor3 = Color3.fromRGB(0, 100, 0)
 teleport.Text = "Teleport to Selected"
-teleport.TextColor3 = Color3.fromRGB(255, 255, 255)
-teleport.TextSize = 16
+teleport.TextColor3 = Color3.new(1,1,1)
 teleport.Font = Enum.Font.SourceSansBold
+teleport.TextSize = 16
 
--- Selection and teleport
-local selectedPlayer = nil
+-- Helper: update scroll size
 local function updateCanvas()
     task.defer(function()
         scroll.CanvasSize = UDim2.fromOffset(0, listLayout.AbsoluteContentSize.Y)
@@ -107,19 +99,21 @@ end
 
 listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
 
+-- Populate players
+local selectedPlayer
 local function updatePlayers()
     scroll:ClearAllChildren()
     selectedPlayer = nil
 
-    local playerList = Players:GetPlayers()
-    countLabel.Text = "Players: " .. tostring(#playerList)
+    local all = Players:GetPlayers()
+    countLabel.Text = "Players: " .. tostring(#all)
 
-    for _, plr in ipairs(playerList) do
+    for _, plr in ipairs(all) do
         if plr ~= LocalPlayer then
             local btn = Instance.new("TextButton")
             btn.Size = UDim2.new(1, 0, 0, 40)
             btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            btn.TextColor3 = Color3.new(1,1,1)
             btn.Font = Enum.Font.SourceSans
             btn.TextSize = 14
             btn.TextXAlignment = Enum.TextXAlignment.Left
@@ -150,7 +144,6 @@ teleport.MouseButton1Click:Connect(function()
     end
 end)
 
--- Connect events
 Players.PlayerAdded:Connect(updatePlayers)
 Players.PlayerRemoving:Connect(updatePlayers)
 updatePlayers()
