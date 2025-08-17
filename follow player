@@ -51,7 +51,7 @@ end)
 local titleBar = Instance.new("TextLabel", frame)
 titleBar.Size = UDim2.new(1, 0, 0, 30)
 titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-titleBar.Text = "Spectate GUI (Drag Anywhere)"
+titleBar.Text = "Spectate GUI (Third Person Follow)"
 titleBar.TextColor3 = Color3.new(1,1,1)
 titleBar.Font = Enum.Font.SourceSansBold
 titleBar.TextSize = 18
@@ -108,7 +108,7 @@ local function stop()
     Camera.CameraType = Enum.CameraType.Custom
 end
 
--- Start spectating in Third Person
+-- Start third-person spectate (fixed behind player)
 local function follow(target)
     stop()
     if not target.Character then return end
@@ -119,7 +119,8 @@ local function follow(target)
         if not root then return end
 
         Camera.CameraType = Enum.CameraType.Scriptable
-        Camera.CFrame = root.CFrame * CFrame.new(0, 5, 10) * CFrame.Angles(math.rad(-20), math.rad(180), 0)
+        local camOffset = root.CFrame.LookVector * -10 + Vector3.new(0, 5, 0)
+        Camera.CFrame = CFrame.new(root.Position + camOffset, root.Position)
     end)
 end
 
