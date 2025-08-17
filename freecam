@@ -1,5 +1,5 @@
 local Players = game:GetService("Players")
-local PlayersService = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 
 -- Remove old GUI if exists
@@ -11,19 +11,58 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "UserInfoGUI"
 screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
--- Main frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 250)
-frame.Position = UDim2.new(0.5, -150, 0.5, -125)
+frame.Size = UDim2.new(0, 300, 0, 320)
+frame.Position = UDim2.new(0.5, -150, 0.5, -160)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Parent = screenGui
 
--- Input box
+-- Make frame draggable
+local dragging, dragInput, dragStart, startPos
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+UIS.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                  startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- Close button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 35, 0, 35)
+closeBtn.Position = UDim2.new(1, -35, 0, 0)
+closeBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.TextSize = 24
+closeBtn.Parent = frame
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
 local inputBox = Instance.new("TextBox")
 inputBox.PlaceholderText = "Type username and press Enter"
 inputBox.Size = UDim2.new(1, -20, 0, 40)
-inputBox.Position = UDim2.new(0, 10, 0, 20)
+inputBox.Position = UDim2.new(0, 10, 0, 50)
 inputBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 inputBox.TextColor3 = Color3.new(1,1,1)
 inputBox.ClearTextOnFocus = false
@@ -32,18 +71,16 @@ inputBox.Font = Enum.Font.SourceSans
 inputBox.TextSize = 20
 inputBox.Parent = frame
 
--- Avatar Image
 local avatarImage = Instance.new("ImageLabel")
 avatarImage.Size = UDim2.new(0, 100, 0, 100)
-avatarImage.Position = UDim2.new(0.5, -50, 0, 70)
+avatarImage.Position = UDim2.new(0.5, -50, 0, 100)
 avatarImage.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 avatarImage.BorderSizePixel = 0
 avatarImage.Parent = frame
 
--- Display name label
 local displayNameLabel = Instance.new("TextLabel")
 displayNameLabel.Size = UDim2.new(1, -20, 0, 25)
-displayNameLabel.Position = UDim2.new(0, 10, 0, 180)
+displayNameLabel.Position = UDim2.new(0, 10, 0, 210)
 displayNameLabel.BackgroundTransparency = 1
 displayNameLabel.TextColor3 = Color3.new(1, 1, 1)
 displayNameLabel.Font = Enum.Font.SourceSansBold
@@ -52,10 +89,9 @@ displayNameLabel.TextXAlignment = Enum.TextXAlignment.Center
 displayNameLabel.Text = ""
 displayNameLabel.Parent = frame
 
--- Username label
 local usernameLabel = Instance.new("TextLabel")
 usernameLabel.Size = UDim2.new(1, -20, 0, 20)
-usernameLabel.Position = UDim2.new(0, 10, 0, 210)
+usernameLabel.Position = UDim2.new(0, 10, 0, 240)
 usernameLabel.BackgroundTransparency = 1
 usernameLabel.TextColor3 = Color3.new(0.7, 0.7, 0.7)
 usernameLabel.Font = Enum.Font.SourceSans
@@ -64,29 +100,36 @@ usernameLabel.TextXAlignment = Enum.TextXAlignment.Center
 usernameLabel.Text = ""
 usernameLabel.Parent = frame
 
--- Function to update the GUI with player info by username
+local teleportBtn = Instance.new("TextButton")
+teleportBtn.Size = UDim2.new(1, -40, 0, 40)
+teleportBtn.Position = UDim2.new(0, 20, 1, -60)
+teleportBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0)
+teleportBtn.Text = "Teleport"
+teleportBtn.TextColor3 = Color3.new(1, 1, 1)
+teleportBtn.Font = Enum.Font.SourceSansBold
+teleportBtn.TextSize = 18
+teleportBtn.Parent = frame
+
+local selectedPlayer = nil
+
 local function updatePlayerInfo(username)
-    -- Try find player locally first
     local target = Players:FindFirstChild(username)
 
-    -- If player not found locally, try Roblox API for userId & avatar (optional)
     if not target then
-        -- We can’t get nickname directly if player offline
-        -- Just show username and placeholder avatar in this case
         avatarImage.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
         displayNameLabel.Text = "Player not found"
         usernameLabel.Text = username
+        selectedPlayer = nil
         return
     end
 
-    -- Update display name and username
     displayNameLabel.Text = target.DisplayName
     usernameLabel.Text = "@" .. target.Name
 
-    -- Set avatar image using Roblox thumbnail API
     local userId = target.UserId
     local thumbUrl = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
     avatarImage.Image = thumbUrl
+    selectedPlayer = target
 end
 
 inputBox.FocusLost:Connect(function(enterPressed)
@@ -95,5 +138,20 @@ inputBox.FocusLost:Connect(function(enterPressed)
         if text ~= "" then
             updatePlayerInfo(text)
         end
+    end
+end)
+
+teleportBtn.MouseButton1Click:Connect(function()
+    if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = selectedPlayer.Character.HumanoidRootPart
+        local myChar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local myHRP = myChar:FindFirstChild("HumanoidRootPart")
+        if myHRP then
+            myHRP.CFrame = hrp.CFrame + Vector3.new(3, 0, 0)
+        else
+            warn("Your character's HumanoidRootPart not found.")
+        end
+    else
+        warn("Selected player not available or their character not loaded.")
     end
 end)
