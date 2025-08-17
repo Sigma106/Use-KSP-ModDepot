@@ -1,0 +1,139 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+local gui = script.Parent
+local playerInfoLabel = gui:WaitForChild("PlayerInfo")
+local prevBtn = gui:WaitForChild("PrevBtn")
+local nextBtn = gui:WaitForChild("NextBtn")
+local closeBtn = gui:WaitForChild("CloseBtn")
+local frame = gui
+
+-- Make the frame draggable
+frame.Active = true
+frame.Draggable = true
+
+local playerList = {}
+local currentIndex = 1
+local followConnection = nil
+
+-- Function to update player list except local player
+local function updatePlayerList()
+    playerList = {}
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            table.insert(playerList, player)
+        end
+    end
+    -- Reset currentIndex if out of bounds
+    if #playerList == 0 then
+        currentIndex = 0
+    elseif currentIndex > #playerList then
+        currentIndex = 1
+    end
+end
+
+-- Function to update GUI label
+local function updateLabel()
+    if currentIndex == 0 or #playerList == 0 then
+        playerInfoLabel.Text = "No other players"
+        return
+    end
+    local targetPlayer = playerList[currentIndex]
+    local displayName = targetPlayer.DisplayName or targetPlayer.Name
+    playerInfoLabel.Text = string.format("Following: %s (%s)", targetPlayer.Name, displayName)
+end
+
+-- Function to follow player camera
+local function followPlayer(player)
+    if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
+        return
+    end
+
+    if followConnection then
+        followConnection:Disconnect()
+    end
+
+    followConnection = RunService.RenderStepped:Connect(function()
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local hrp = player.Character.HumanoidRootPart
+            Camera.CameraType = Enum.CameraType.Scriptable
+            Camera.CFrame = hrp.CFrame * CFrame.new(0, 5, 10) * CFrame.Angles(math.rad(-20), math.rad(180), 0)
+        else
+            -- Stop follow if player disappears
+            followConnection:Disconnect()
+            followConnection = nil
+            Camera.CameraType = Enum.CameraType.Custom
+            playerInfoLabel.Text = "Lost target player."
+        end
+    end)
+end
+
+-- Cycle player
+local function cyclePlayer(direction)
+    if #playerList == 0 then return end
+    currentIndex = currentIndex + direction
+    if currentIndex < 1 then
+        currentIndex = #playerList
+    elseif currentIndex > #playerList then
+        currentIndex = 1
+    end
+    updateLabel()
+    followPlayer(playerList[currentIndex])
+end
+
+-- Close GUI and stop follow
+local function closeGui()
+    if followConnection then
+        followConnection:Disconnect()
+        followConnection = nil
+    end
+    Camera.CameraType = Enum.CameraType.Custom
+    gui.Enabled = false
+end
+
+-- Initialize
+updatePlayerList()
+
+-- If no players to follow, disable buttons
+if #playerList == 0 then
+    playerInfoLabel.Text = "No other players to follow."
+else
+    updateLabel()
+    followPlayer(playerList[currentIndex])
+end
+
+-- Connect buttons
+prevBtn.MouseButton1Click:Connect(function()
+    cyclePlayer(-1)
+end)
+
+nextBtn.MouseButton1Click:Connect(function()
+    cyclePlayer(1)
+end)
+
+closeBtn.MouseButton1Click:Connect(closeGui)
+
+-- Update player list on player added/removed
+Players.PlayerAdded:Connect(function()
+    updatePlayerList()
+    if currentIndex == 0 and #playerList > 0 then
+        currentIndex = 1
+        updateLabel()
+        followPlayer(playerList[currentIndex])
+    end
+end)
+
+Players.PlayerRemoving:Connect(function()
+    updatePlayerList()
+    if #playerList == 0 then
+        currentIndex = 0
+        playerInfoLabel.Text = "No other players to follow."
+        closeGui()
+    elseif currentIndex > #playerList then
+        currentIndex = 1
+        updateLabel()
+        followPlayer(playerList[currentIndex])
+    end
+end)
