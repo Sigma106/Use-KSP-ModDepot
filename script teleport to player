@@ -1,0 +1,182 @@
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Remove old GUI if exists
+if LocalPlayer.PlayerGui:FindFirstChild("UserInfoGUI") then
+    LocalPlayer.PlayerGui.UserInfoGUI:Destroy()
+end
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "UserInfoGUI"
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Main frame (panel)
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 350, 0, 380)
+frame.Position = UDim2.new(0.5, -175, 0.5, -190)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+-- Header bar for dragging
+local header = Instance.new("Frame")
+header.Size = UDim2.new(1, 0, 0, 40)
+header.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+header.BorderSizePixel = 0
+header.Parent = frame
+
+-- Title label on header
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -50, 1, 0)
+titleLabel.Position = UDim2.new(0, 10, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Player Teleport"
+titleLabel.TextColor3 = Color3.new(1,1,1)
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.TextSize = 22
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = header
+
+-- Close button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 40, 0, 30)
+closeBtn.Position = UDim2.new(1, -45, 0, 5)
+closeBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.TextSize = 24
+closeBtn.Parent = header
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+-- Drag logic (only on header)
+local dragging, dragInput, dragStart, startPos
+header.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+header.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+UIS.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                   startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- Username input box
+local inputBox = Instance.new("TextBox")
+inputBox.PlaceholderText = "Enter player username and press Enter"
+inputBox.Size = UDim2.new(0, 230, 0, 40)
+inputBox.Position = UDim2.new(0, 10, 0, 60)
+inputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+inputBox.TextColor3 = Color3.new(1, 1, 1)
+inputBox.ClearTextOnFocus = false
+inputBox.Text = ""
+inputBox.Font = Enum.Font.SourceSans
+inputBox.TextSize = 20
+inputBox.Parent = frame
+
+-- Teleport button next to input
+local teleportBtn = Instance.new("TextButton")
+teleportBtn.Size = UDim2.new(0, 90, 0, 40)
+teleportBtn.Position = UDim2.new(0, 250, 0, 60)
+teleportBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+teleportBtn.Text = "Teleport"
+teleportBtn.TextColor3 = Color3.new(1, 1, 1)
+teleportBtn.Font = Enum.Font.SourceSansBold
+teleportBtn.TextSize = 20
+teleportBtn.Parent = frame
+
+-- Avatar image
+local avatarImage = Instance.new("ImageLabel")
+avatarImage.Size = UDim2.new(0, 120, 0, 120)
+avatarImage.Position = UDim2.new(0.5, -60, 0, 120)
+avatarImage.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+avatarImage.BorderSizePixel = 0
+avatarImage.Parent = frame
+
+-- DisplayName label
+local displayNameLabel = Instance.new("TextLabel")
+displayNameLabel.Size = UDim2.new(1, -20, 0, 30)
+displayNameLabel.Position = UDim2.new(0, 10, 0, 260)
+displayNameLabel.BackgroundTransparency = 1
+displayNameLabel.TextColor3 = Color3.new(1, 1, 1)
+displayNameLabel.Font = Enum.Font.SourceSansBold
+displayNameLabel.TextSize = 22
+displayNameLabel.TextXAlignment = Enum.TextXAlignment.Center
+displayNameLabel.Text = ""
+displayNameLabel.Parent = frame
+
+-- Username label
+local usernameLabel = Instance.new("TextLabel")
+usernameLabel.Size = UDim2.new(1, -20, 0, 25)
+usernameLabel.Position = UDim2.new(0, 10, 0, 295)
+usernameLabel.BackgroundTransparency = 1
+usernameLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+usernameLabel.Font = Enum.Font.SourceSans
+usernameLabel.TextSize = 18
+usernameLabel.TextXAlignment = Enum.TextXAlignment.Center
+usernameLabel.Text = ""
+usernameLabel.Parent = frame
+
+local selectedPlayer = nil
+
+local function updatePlayerInfo(username)
+    local target = Players:FindFirstChild(username)
+
+    if not target then
+        avatarImage.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+        displayNameLabel.Text = "Player not found"
+        usernameLabel.Text = username
+        selectedPlayer = nil
+        return
+    end
+
+    displayNameLabel.Text = target.DisplayName
+    usernameLabel.Text = "@" .. target.Name
+
+    local userId = target.UserId
+    local thumbUrl = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size120x120)
+    avatarImage.Image = thumbUrl
+    selectedPlayer = target
+end
+
+inputBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local text = inputBox.Text:match("^%s*(.-)%s*$") -- trim spaces
+        if text ~= "" then
+            updatePlayerInfo(text)
+        end
+    end
+end)
+
+teleportBtn.MouseButton1Click:Connect(function()
+    if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = selectedPlayer.Character.HumanoidRootPart
+        local myChar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local myHRP = myChar:FindFirstChild("HumanoidRootPart")
+        if myHRP then
+            myHRP.CFrame = hrp.CFrame + Vector3.new(3, 0, 0)
+        else
+            warn("Your character's HumanoidRootPart not found.")
+        end
+    else
+        warn("Selected player not available or their character not loaded.")
+    end
+end)
