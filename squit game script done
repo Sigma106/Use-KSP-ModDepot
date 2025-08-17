@@ -1,8 +1,17 @@
 if game.PlaceId ~= 126875106476593 then
+	if game.PlaceId ~= 104937784445732 then
+		game:GetService("StarterGui"):SetCore("SendNotification", { 
+			Title = "Start the game";
+			Text = "By green_co0lkid";
+			Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150",
+			Duration = 5;
+		return -- Stop script if not in the correct game
+	end
+
 	game:GetService("StarterGui"):SetCore("SendNotification", { 
 		Title = "Wrong Game Detected!";
 		Text = "By green_co0lkid";
-		Icon = "rbxthumb://type=Asset&id=13200674664&w=150&h=150"})
+		Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
 	Duration = 5;
 	return -- Stop script if not in the correct place
 end
