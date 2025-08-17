@@ -1,171 +1,66 @@
-local UserInputService = game:GetService("UserInputService")
-
-local player = game.Players.LocalPlayer
-local main = Instance.new("ScreenGui")
-main.Name = "main"
-main.Parent = player:WaitForChild("PlayerGui")
-main.ResetOnSpawn = false
-
-local Frame = Instance.new("Frame")
-Frame.Parent = main
-Frame.BackgroundColor3 = Color3.fromRGB(34, 34, 34) -- dark grey
-Frame.BorderColor3 = Color3.fromRGB(187, 187, 187) -- light grey
-Frame.Position = UDim2.new(0.1, 0, 0.3, 0)
-Frame.Size = UDim2.new(0, 200, 0, 130) -- bigger height to fit all buttons
-Frame.Active = true
-
-local TitleBar = Instance.new("Frame")
-TitleBar.Name = "TitleBar"
-TitleBar.Parent = Frame
-TitleBar.BackgroundColor3 = Color3.fromRGB(17, 17, 17) -- black
-TitleBar.BorderColor3 = Color3.fromRGB(187, 187, 187)
-TitleBar.Size = UDim2.new(1, 0, 0, 28)
-TitleBar.Position = UDim2.new(0, 0, 0, 0)
-TitleBar.Active = true
-
-local TitleLabel = Instance.new("TextLabel")
-TitleLabel.Parent = TitleBar
-TitleLabel.BackgroundTransparency = 1
-TitleLabel.Position = UDim2.new(0.25, 0, 0, 0)
-TitleLabel.Size = UDim2.new(0.5, 0, 1, 0)
-TitleLabel.Font = Enum.Font.SourceSansBold
-TitleLabel.Text = "FLY GUI V3"
-TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleLabel.TextScaled = true
-TitleLabel.TextWrapped = true
-
-local closebutton = Instance.new("TextButton")
-closebutton.Name = "Close"
-closebutton.Parent = TitleBar
-closebutton.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
-closebutton.BorderColor3 = Color3.fromRGB(187, 187, 187)
-closebutton.Position = UDim2.new(1, -44, 0, 0)
-closebutton.Size = UDim2.new(0, 44, 0, 28)
-closebutton.Font = Enum.Font.SourceSansBold
-closebutton.Text = "X"
-closebutton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closebutton.TextSize = 24
-closebutton.AutoButtonColor = true
-
-closebutton.MouseButton1Click:Connect(function()
-	main:Destroy()
-end)
-
-local function styleButton(btn)
-	btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	btn.BorderColor3 = Color3.fromRGB(187, 187, 187)
-	btn.Font = Enum.Font.SourceSans
-	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-	btn.TextSize = 14
-	btn.AutoButtonColor = true
-end
-
--- Buttons
-
-local up = Instance.new("TextButton")
-up.Name = "up"
-up.Parent = Frame
-up.Position = UDim2.new(0, 8, 0, 40)
-up.Size = UDim2.new(0, 50, 0, 28)
-up.Text = "UP"
-styleButton(up)
-
-local down = Instance.new("TextButton")
-down.Name = "down"
-down.Parent = Frame
-down.Position = UDim2.new(0, 68, 0, 40)
-down.Size = UDim2.new(0, 50, 0, 28)
-down.Text = "DOWN"
-styleButton(down)
-
-local onoff = Instance.new("TextButton")
-onoff.Name = "onoff"
-onoff.Parent = Frame
-onoff.Position = UDim2.new(0, 128, 0, 40)
-onoff.Size = UDim2.new(0, 64, 0, 28)
-onoff.Text = "FLY ON"
-styleButton(onoff)
-
-local mine = Instance.new("TextButton")
-mine.Name = "mine"
-mine.Parent = Frame
-mine.Position = UDim2.new(0, 8, 0, 80)
-mine.Size = UDim2.new(0, 50, 0, 28)
-mine.Text = "-"
-styleButton(mine)
-
-local plus = Instance.new("TextButton")
-plus.Name = "plus"
-plus.Parent = Frame
-plus.Position = UDim2.new(0, 68, 0, 80)
-plus.Size = UDim2.new(0, 50, 0, 28)
-plus.Text = "+"
-styleButton(plus)
-
-local speed = Instance.new("TextLabel")
-speed.Name = "speed"
-speed.Parent = Frame
-speed.BackgroundTransparency = 1
-speed.Position = UDim2.new(0, 128, 0, 80)
-speed.Size = UDim2.new(0, 64, 0, 28)
-speed.Font = Enum.Font.SourceSansBold
-speed.Text = "Speed: 10"
-speed.TextColor3 = Color3.fromRGB(255, 255, 255)
-speed.TextScaled = true
-speed.TextWrapped = true
-
--- Dragging logic
-local dragging = false
-local dragInput
-local dragStart
-local startPos
-
-local function update(input)
-	local delta = input.Position - dragStart
-	Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-
-TitleBar.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = true
-		dragStart = input.Position
-		startPos = Frame.Position
-
-		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then
-				dragging = false
-			end
-		end)
-	end
-end)
-
-TitleBar.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement then
-		dragInput = input
-	end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-	if input == dragInput and dragging then
-		update(input)
-	end
-end)
-
--- Fly logic (simplified)
-
+-- Fly logic (working version)
 local flying = false
 local flySpeed = 10
+local bv, bg = nil, nil
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local movement = {
+	F = 0,
+	B = 0,
+	L = 0,
+	R = 0
+}
 
 local function updateSpeedLabel()
-	speed.Text = "Speed: "..flySpeed
+	speed.Text = "Speed: " .. flySpeed
 end
+
+local function startFlying()
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hrp = char:WaitForChild("HumanoidRootPart")
+
+	bv = Instance.new("BodyVelocity")
+	bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+	bv.Velocity = Vector3.new(0, 0, 0)
+	bv.Parent = hrp
+
+	bg = Instance.new("BodyGyro")
+	bg.MaxTorque = Vector3.new(1e5, 1e5, 1e5)
+	bg.CFrame = hrp.CFrame
+	bg.Parent = hrp
+
+	RunService:BindToRenderStep("FlyMovement", Enum.RenderPriority.Character.Value + 1, function()
+		local camCF = workspace.CurrentCamera.CFrame
+		local moveVec = Vector3.new(
+			(movement.R - movement.L),
+			0,
+			(movement.B - movement.F)
+		)
+
+		moveVec = camCF:VectorToWorldSpace(moveVec)
+
+		bv.Velocity = moveVec.Unit * flySpeed
+		bg.CFrame = camCF
+	end)
+end
+
+local function stopFlying()
+	RunService:UnbindFromRenderStep("FlyMovement")
+	if bv then bv:Destroy() bv = nil end
+	if bg then bg:Destroy() bg = nil end
+end
+
+onoff.Text = "FLY ON"
 
 onoff.MouseButton1Click:Connect(function()
 	flying = not flying
 	if flying then
 		onoff.Text = "FLY OFF"
+		startFlying()
 	else
 		onoff.Text = "FLY ON"
+		stopFlying()
 	end
 end)
 
@@ -181,12 +76,23 @@ mine.MouseButton1Click:Connect(function()
 	end
 end)
 
-up.MouseButton1Click:Connect(function()
-	-- Implement your UP functionality here
+-- WASD movement binding
+UIS.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.Keyboard then
+		if input.KeyCode == Enum.KeyCode.W then movement.F = 1 end
+		if input.KeyCode == Enum.KeyCode.S then movement.B = 1 end
+		if input.KeyCode == Enum.KeyCode.A then movement.L = 1 end
+		if input.KeyCode == Enum.KeyCode.D then movement.R = 1 end
+	end
 end)
 
-down.MouseButton1Click:Connect(function()
-	-- Implement your DOWN functionality here
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.Keyboard then
+		if input.KeyCode == Enum.KeyCode.W then movement.F = 0 end
+		if input.KeyCode == Enum.KeyCode.S then movement.B = 0 end
+		if input.KeyCode == Enum.KeyCode.A then movement.L = 0 end
+		if input.KeyCode == Enum.KeyCode.D then movement.R = 0 end
+	end
 end)
 
 updateSpeedLabel()
