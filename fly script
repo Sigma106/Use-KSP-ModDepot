@@ -14,6 +14,8 @@ title.Size = UDim2.new(1, 0, 0, 30)
 title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 title.Text = "😎 Fly Menu"
 title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 20
 title.Parent = frame
 
 -- Кнопка закриття
@@ -31,13 +33,35 @@ speedBox.Size = UDim2.new(0, 80, 0, 30)
 speedBox.Position = UDim2.new(0, 10, 0, 40)
 speedBox.PlaceholderText = "Speed"
 speedBox.Text = "50"
+speedBox.Font = Enum.Font.SourceSans
+speedBox.TextSize = 18
 speedBox.Parent = frame
+
+-- Кнопка Зменшити швидкість (-)
+local minusBtn = Instance.new("TextButton")
+minusBtn.Size = UDim2.new(0, 30, 0, 30)
+minusBtn.Position = UDim2.new(0, 100, 0, 40)
+minusBtn.Text = "-"
+minusBtn.Font = Enum.Font.SourceSansBold
+minusBtn.TextSize = 22
+minusBtn.Parent = frame
+
+-- Кнопка Збільшити швидкість (+)
+local plusBtn = Instance.new("TextButton")
+plusBtn.Size = UDim2.new(0, 30, 0, 30)
+plusBtn.Position = UDim2.new(0, 140, 0, 40)
+plusBtn.Text = "+"
+plusBtn.Font = Enum.Font.SourceSansBold
+plusBtn.TextSize = 22
+plusBtn.Parent = frame
 
 -- Кнопка Fly
 local flyBtn = Instance.new("TextButton")
 flyBtn.Size = UDim2.new(0, 80, 0, 30)
 flyBtn.Position = UDim2.new(0, 10, 0, 80)
-flyBtn.Text = "Fly 😎"
+flyBtn.Text = "Fly gui"
+flyBtn.Font = Enum.Font.SourceSans
+flyBtn.TextSize = 18
 flyBtn.Parent = frame
 
 -- Кнопка Stop Fly
@@ -45,6 +69,8 @@ local stopBtn = Instance.new("TextButton")
 stopBtn.Size = UDim2.new(0, 80, 0, 30)
 stopBtn.Position = UDim2.new(0, 100, 0, 80)
 stopBtn.Text = "Stop 🛑"
+stopBtn.Font = Enum.Font.SourceSans
+stopBtn.TextSize = 18
 stopBtn.Parent = frame
 
 -- Drag функціонал
@@ -85,6 +111,7 @@ local hum = char:WaitForChild("Humanoid")
 local cam = workspace.CurrentCamera
 local flyConn
 
+-- Оновлення швидкості при ручному вводі
 speedBox.FocusLost:Connect(function()
 	local num = tonumber(speedBox.Text)
 	if num then
@@ -92,6 +119,19 @@ speedBox.FocusLost:Connect(function()
 	end
 end)
 
+-- Зменшити швидкість
+minusBtn.MouseButton1Click:Connect(function()
+	speed = math.max(0, speed - 10)
+	speedBox.Text = tostring(speed)
+end)
+
+-- Збільшити швидкість
+plusBtn.MouseButton1Click:Connect(function()
+	speed = speed + 10
+	speedBox.Text = tostring(speed)
+end)
+
+-- Почати політ
 flyBtn.MouseButton1Click:Connect(function()
 	if flying then return end
 	flying = true
@@ -100,6 +140,7 @@ flyBtn.MouseButton1Click:Connect(function()
 
 	local bodyVel = Instance.new("BodyVelocity")
 	bodyVel.MaxForce = Vector3.new(4000, 4000, 4000)
+	bodyVel.Velocity = Vector3.new(0, 0, 0)
 	bodyVel.Parent = hrp
 
 	flyConn = game:GetService("RunService").RenderStepped:Connect(function()
@@ -109,18 +150,15 @@ flyBtn.MouseButton1Click:Connect(function()
 		if UIS:IsKeyDown(Enum.KeyCode.A) then move = move - cam.CFrame.RightVector end
 		if UIS:IsKeyDown(Enum.KeyCode.D) then move = move + cam.CFrame.RightVector end
 
-		-- Додаємо рух вгору/вниз по E і R
-		if UIS:IsKeyDown(Enum.KeyCode.E) then
-			move = move + Vector3.new(0, 1, 0)
-		end
-		if UIS:IsKeyDown(Enum.KeyCode.R) then
-			move = move - Vector3.new(0, 1, 0)
-		end
+		-- Вгору / вниз
+		if UIS:IsKeyDown(Enum.KeyCode.E) then move = move + Vector3.new(0, 1, 0) end
+		if UIS:IsKeyDown(Enum.KeyCode.R) then move = move - Vector3.new(0, 1, 0) end
 
-		bodyVel.Velocity = move * speed
+		bodyVel.Velocity = move.Unit * speed
 	end)
 end)
 
+-- Зупинити політ
 stopBtn.MouseButton1Click:Connect(function()
 	flying = false
 	if flyConn then flyConn:Disconnect() end
