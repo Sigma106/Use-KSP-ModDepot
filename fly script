@@ -3,7 +3,7 @@ local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 
 -- Головна панель
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 260, 0, 170)
+frame.Size = UDim2.new(0, 260, 0, 180)
 frame.Position = UDim2.new(0.3, 0, 0.3, 0)
 frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 frame.Parent = gui
@@ -35,6 +35,7 @@ speedBox.PlaceholderText = "Speed"
 speedBox.Text = "50"
 speedBox.Font = Enum.Font.SourceSans
 speedBox.TextSize = 18
+speedBox.ClearTextOnFocus = false
 speedBox.Parent = frame
 
 -- Кнопка Зменшити швидкість (-)
@@ -44,6 +45,8 @@ minusBtn.Position = UDim2.new(0, 100, 0, 40)
 minusBtn.Text = "-"
 minusBtn.Font = Enum.Font.SourceSansBold
 minusBtn.TextSize = 22
+minusBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+minusBtn.TextColor3 = Color3.new(1,1,1)
 minusBtn.Parent = frame
 
 -- Кнопка Збільшити швидкість (+)
@@ -53,13 +56,15 @@ plusBtn.Position = UDim2.new(0, 140, 0, 40)
 plusBtn.Text = "+"
 plusBtn.Font = Enum.Font.SourceSansBold
 plusBtn.TextSize = 22
+plusBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+plusBtn.TextColor3 = Color3.new(1,1,1)
 plusBtn.Parent = frame
 
 -- Кнопка Fly
 local flyBtn = Instance.new("TextButton")
 flyBtn.Size = UDim2.new(0, 80, 0, 30)
 flyBtn.Position = UDim2.new(0, 10, 0, 80)
-flyBtn.Text = "Fly gui"
+flyBtn.Text = "Fly"
 flyBtn.Font = Enum.Font.SourceSans
 flyBtn.TextSize = 18
 flyBtn.Parent = frame
@@ -150,11 +155,14 @@ flyBtn.MouseButton1Click:Connect(function()
 		if UIS:IsKeyDown(Enum.KeyCode.A) then move = move - cam.CFrame.RightVector end
 		if UIS:IsKeyDown(Enum.KeyCode.D) then move = move + cam.CFrame.RightVector end
 
-		-- Вгору / вниз
 		if UIS:IsKeyDown(Enum.KeyCode.E) then move = move + Vector3.new(0, 1, 0) end
 		if UIS:IsKeyDown(Enum.KeyCode.R) then move = move - Vector3.new(0, 1, 0) end
 
-		bodyVel.Velocity = move.Unit * speed
+		if move.Magnitude > 0 then
+			bodyVel.Velocity = move.Unit * speed
+		else
+			bodyVel.Velocity = Vector3.zero
+		end
 	end)
 end)
 
@@ -165,6 +173,5 @@ stopBtn.MouseButton1Click:Connect(function()
 	if hrp:FindFirstChild("BodyVelocity") then
 		hrp.BodyVelocity:Destroy()
 	end
-
 	hum.PlatformStand = false
 end)
