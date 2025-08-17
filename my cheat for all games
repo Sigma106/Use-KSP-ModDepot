@@ -91,9 +91,9 @@ end)
 
 
 local Button = PlayerTab:CreateButton({
-    Name = "fly gui", -- Button label
+    Name = "fly", -- Button label
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fly%20script"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
     end,
 })
 
