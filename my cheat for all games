@@ -1,136 +1,208 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
 
-local Window = Rayfield:CreateWindow({
-    Name = "green collkid menu",
-    LoadingTitle = "loading",
-    LoadingSubtitle = "by green_coolkid100",
-    ConfigurationSaving = {
-       Enabled = true,
-       FolderName = nil, -- Create a custom folder for your hub/game
-       FileName = "Big Hub"
-    },
-    Discord = {
-       Enabled = false,
-       Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
-       RememberJoins = true -- Set this to false to make them join the discord every time they load it up
-    },
-    KeySystem = false, -- Set this to true to use our key system
-    KeySettings = {
-       Title = "Untitled",
-       Subtitle = "Key System",
-       Note = "No method of obtaining the key is provided",
-       FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-       SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-       GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-       Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
-    }
- })
+-- Remove old GUI if exists
+if LocalPlayer.PlayerGui:FindFirstChild("UserInfoGUI") then
+    LocalPlayer.PlayerGui.UserInfoGUI:Destroy()
+end
 
- local PlayerTab = Window:CreateTab("Player", 7992557358) -- Title, Image
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "UserInfoGUI"
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
-local othersscripton = Window:CreateTab("others scripts", 9405930424) -- Title, Image
+-- Main frame (panel)
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 350, 0, 380)
+frame.Position = UDim2.new(0.5, -175, 0.5, -190)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
 
-local visuals = Window:CreateTab("visual", 6523858394) -- Title, Image
+-- Header bar for dragging
+local header = Instance.new("Frame")
+header.Size = UDim2.new(1, 0, 0, 40)
+header.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+header.BorderSizePixel = 0
+header.Parent = frame
 
--- WalkSpeed Slider
-local Slider = PlayerTab:CreateSlider({
-    Name = "WalkSpeed",
-    Range = {1, 100},
-    Increment = 1,
-    Suffix = "Speed",
-    CurrentValue = 10,
-    Flag = "Slider1",
-    Callback = function(Value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid.WalkSpeed = Value
-        end
-    end,
-})
+-- Title label on header
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -50, 1, 0)
+titleLabel.Position = UDim2.new(0, 10, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Player Teleport"
+titleLabel.TextColor3 = Color3.new(1,1,1)
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.TextSize = 22
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = header
 
--- JumpHeight Slider
-local Slider = PlayerTab:CreateSlider({
-    Name = "Jump Height",
-    Range = {10, 500},
-    Increment = 1,
-    Suffix = "Height",
-    CurrentValue = 10,
-    Flag = "Slider3", -- A flag is the identifier for the configuration file
-    Callback = function(Value)
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
-    end,
-})
-
-local Buttonnoclip = PlayerTab:CreateButton({
-    Name = "noclip", -- Button label
-    Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/efeefefewewfewfefffffffffffffffffff'))()
-    end,
-})
-
-local Button0 = PlayerTab:CreateButton({
-    Name = "tp tool", -- Button label
-    Callback = function()
-        local Tele = Instance.new("Tool", game.Players.LocalPlayer.Backpack)
-Tele.RequiresHandle = false
-Tele.RobloxLocked = true
-Tele.Name = "TPTool"
-Tele.ToolTip = "Teleport Tool"
-Tele.Equipped:connect(function(Mouse)
-	Mouse.Button1Down:connect(function()
-		if Mouse.Target then
-			game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name).HumanoidRootPart.CFrame = (CFrame.new(Mouse.Hit.x, Mouse.Hit.y + 5, Mouse.Hit.z))
-		end
-	end)
+-- Close button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 40, 0, 30)
+closeBtn.Position = UDim2.new(1, -45, 0, 5)
+closeBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.TextSize = 24
+closeBtn.Parent = header
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
 end)
-    end,
-})
 
-
-
-local Button = PlayerTab:CreateButton({
-    Name = "fly", -- Button label
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
-    end,
-})
-
-
-
-local Button1 = othersscripton:CreateButton({
-    Name = "Infinite Yield", -- Button label
-    Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
-    end,
-})
-
-local Button3 = othersscripton:CreateButton({
-    Name = "18+ pack", -- Button label
-    Callback = function()
-        loadstring(game:HttpGet("https://pastebin.com/raw/FWwdST5Y"))()
-    end,
-})
-
-local Button533 = othersscripton:CreateButton({
-    Name = "ban and kick script not work on all servers", -- Button label
-    Callback = function()
-        loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
-    end,
-})
-
-local Button01 = visuals:CreateButton({
-    Name = "esp", -- Button label
-    Callback = function()
-       loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/esp%20gui%20on%20off'))()
+-- Drag logic (only on header)
+local dragging, dragInput, dragStart, startPos
+header.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
     end
-})
+end)
+header.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+UIS.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                   startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
 
-local Button3 = visuals:CreateButton({
-    Name = "shaders", -- Button label
-    Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/randomstring0/pshade-ultimate/refs/heads/main/src/cd.lua'))()
-    end,
-})
+-- Username input box
+local inputBox = Instance.new("TextBox")
+inputBox.PlaceholderText = "Enter player username and press Enter"
+inputBox.Size = UDim2.new(0, 230, 0, 40)
+inputBox.Position = UDim2.new(0, 10, 0, 60)
+inputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+inputBox.TextColor3 = Color3.new(1, 1, 1)
+inputBox.ClearTextOnFocus = false
+inputBox.Text = ""
+inputBox.Font = Enum.Font.SourceSans
+inputBox.TextSize = 20
+inputBox.Parent = frame
 
+-- Teleport button next to input
+local teleportBtn = Instance.new("TextButton")
+teleportBtn.Size = UDim2.new(0, 90, 0, 40)
+teleportBtn.Position = UDim2.new(0, 250, 0, 60)
+teleportBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+teleportBtn.Text = "Teleport"
+teleportBtn.TextColor3 = Color3.new(1, 1, 1)
+teleportBtn.Font = Enum.Font.SourceSansBold
+teleportBtn.TextSize = 20
+teleportBtn.Parent = frame
+
+-- Avatar image
+local avatarImage = Instance.new("ImageLabel")
+avatarImage.Size = UDim2.new(0, 120, 0, 120)
+avatarImage.Position = UDim2.new(0.5, -60, 0, 120)
+avatarImage.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+avatarImage.BorderSizePixel = 0
+avatarImage.Parent = frame
+
+-- DisplayName label
+local displayNameLabel = Instance.new("TextLabel")
+displayNameLabel.Size = UDim2.new(1, -20, 0, 30)
+displayNameLabel.Position = UDim2.new(0, 10, 0, 260)
+displayNameLabel.BackgroundTransparency = 1
+displayNameLabel.TextColor3 = Color3.new(1, 1, 1)
+displayNameLabel.Font = Enum.Font.SourceSansBold
+displayNameLabel.TextSize = 22
+displayNameLabel.TextXAlignment = Enum.TextXAlignment.Center
+displayNameLabel.Text = ""
+displayNameLabel.Parent = frame
+
+-- Username label
+local usernameLabel = Instance.new("TextLabel")
+usernameLabel.Size = UDim2.new(1, -20, 0, 25)
+usernameLabel.Position = UDim2.new(0, 10, 0, 295)
+usernameLabel.BackgroundTransparency = 1
+usernameLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+usernameLabel.Font = Enum.Font.SourceSans
+usernameLabel.TextSize = 18
+usernameLabel.TextXAlignment = Enum.TextXAlignment.Center
+usernameLabel.Text = ""
+usernameLabel.Parent = frame
+
+local selectedPlayer = nil
+
+local function updatePlayerInfo(username)
+    print("[updatePlayerInfo] Looking for player with username:", username)
+    local target = Players:FindFirstChild(username)
+
+    if not target then
+        print("[updatePlayerInfo] Player not found:", username)
+        avatarImage.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+        displayNameLabel.Text = "Player not found"
+        usernameLabel.Text = username
+        selectedPlayer = nil
+        return
+    end
+
+    print("[updatePlayerInfo] Player found:", target.Name)
+    displayNameLabel.Text = target.DisplayName
+    usernameLabel.Text = "@" .. target.Name
+
+    local userId = target.UserId
+    local success, thumbUrl = pcall(function()
+        return Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size120x120)
+    end)
+
+    if success and thumbUrl then
+        avatarImage.Image = thumbUrl
+        print("[updatePlayerInfo] Avatar loaded")
+    else
+        print("[updatePlayerInfo] Failed to load avatar")
+        avatarImage.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+    end
+    selectedPlayer = target
+end
+
+inputBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local text = inputBox.Text:match("^%s*(.-)%s*$") -- trim spaces
+        if text ~= "" then
+            updatePlayerInfo(text)
+        end
+    end
+end)
+
+teleportBtn.MouseButton1Click:Connect(function()
+    if not selectedPlayer then
+        print("[Teleport] No player selected!")
+        return
+    end
+
+    if not selectedPlayer.Character then
+        print("[Teleport] Selected player's character not loaded!")
+        return
+    end
+
+    local hrp = selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then
+        print("[Teleport] Selected player's HumanoidRootPart not found!")
+        return
+    end
+
+    local myChar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local myHRP = myChar:FindFirstChild("HumanoidRootPart")
+
+    if not myHRP then
+        print("[Teleport] Your HumanoidRootPart not found!")
+        return
+    end
+
+    print("[Teleport] Teleporting to", selectedPlayer.Name)
+    myHRP.CFrame = hrp.CFrame + Vector3.new(3, 0, 0)
+end)
