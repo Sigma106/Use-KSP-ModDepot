@@ -7,12 +7,10 @@ if LocalPlayer.PlayerGui:FindFirstChild("TeleportGUI") then
     LocalPlayer.PlayerGui.TeleportGUI:Destroy()
 end
 
--- Create ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "TeleportGUI"
 screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
--- Main frame
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 300, 0, 400)
 frame.Position = UDim2.new(0.5, -150, 0.5, -200)
@@ -20,7 +18,7 @@ frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 frame.BorderSizePixel = 0
 frame.Parent = screenGui
 
--- Make frame draggable
+-- Draggable frame
 local dragging, dragInput, dragStart, startPos
 frame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -34,13 +32,11 @@ frame.InputBegan:Connect(function(input)
         end)
     end
 end)
-
 frame.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement then
         dragInput = input
     end
 end)
-
 UIS.InputChanged:Connect(function(input)
     if dragging and input == dragInput then
         local delta = input.Position - dragStart
@@ -49,7 +45,6 @@ UIS.InputChanged:Connect(function(input)
     end
 end)
 
--- Title
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 35)
 title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
@@ -59,7 +54,6 @@ title.Font = Enum.Font.SourceSansBold
 title.TextSize = 20
 title.Parent = frame
 
--- Close button
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 35, 0, 35)
 closeBtn.Position = UDim2.new(1, -35, 0, 0)
@@ -73,7 +67,6 @@ closeBtn.MouseButton1Click:Connect(function()
     screenGui:Destroy()
 end)
 
--- Player count label
 local countLabel = Instance.new("TextLabel")
 countLabel.Size = UDim2.new(1, -20, 0, 25)
 countLabel.Position = UDim2.new(0, 10, 0, 40)
@@ -84,7 +77,6 @@ countLabel.TextSize = 16
 countLabel.TextXAlignment = Enum.TextXAlignment.Left
 countLabel.Parent = frame
 
--- ScrollingFrame to list players
 local scroll = Instance.new("ScrollingFrame")
 scroll.Size = UDim2.new(1, -20, 1, -130)
 scroll.Position = UDim2.new(0, 10, 0, 70)
@@ -99,7 +91,11 @@ listLayout.Padding = UDim.new(0, 5)
 listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 listLayout.Parent = scroll
 
--- Teleport button
+-- Update CanvasSize when list changes
+listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    scroll.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 10)
+end)
+
 local teleportBtn = Instance.new("TextButton")
 teleportBtn.Size = UDim2.new(1, -20, 0, 40)
 teleportBtn.Position = UDim2.new(0, 10, 1, -50)
@@ -112,17 +108,17 @@ teleportBtn.Parent = frame
 
 local selectedPlayer = nil
 
--- Update scroll canvas size properly
-listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    scroll.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 10)
-end)
-
--- Function to refresh player list
 local function refreshPlayers()
-    scroll:ClearAllChildren()
+    -- Clear previous buttons (except UIListLayout)
+    for _, child in ipairs(scroll:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
     selectedPlayer = nil
+
     local players = Players:GetPlayers()
-    countLabel.Text = "Players in server: ".. tostring(#players)
+    countLabel.Text = "Players in server: " .. tostring(#players)
 
     for _, plr in ipairs(players) do
         if plr ~= LocalPlayer then
@@ -136,8 +132,8 @@ local function refreshPlayers()
             btn.Parent = scroll
 
             btn.MouseButton1Click:Connect(function()
-                -- Deselect others
-                for _, otherBtn in pairs(scroll:GetChildren()) do
+                -- Deselect all buttons
+                for _, otherBtn in ipairs(scroll:GetChildren()) do
                     if otherBtn:IsA("TextButton") then
                         otherBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
                     end
@@ -149,7 +145,6 @@ local function refreshPlayers()
     end
 end
 
--- Teleport functionality
 teleportBtn.MouseButton1Click:Connect(function()
     if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
         local hrp = selectedPlayer.Character.HumanoidRootPart
@@ -157,15 +152,15 @@ teleportBtn.MouseButton1Click:Connect(function()
         local myHRP = myChar:FindFirstChild("HumanoidRootPart")
         if myHRP then
             myHRP.CFrame = hrp.CFrame + Vector3.new(3, 0, 0)
+        else
+            warn("Your character's HumanoidRootPart not found.")
         end
     else
-        warn("No player selected or player character not loaded")
+        warn("Selected player not available or their character not loaded.")
     end
 end)
 
--- Refresh when players join or leave
 Players.PlayerAdded:Connect(refreshPlayers)
 Players.PlayerRemoving:Connect(refreshPlayers)
 
--- Initial populate
 refreshPlayers()
