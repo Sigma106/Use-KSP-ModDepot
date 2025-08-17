@@ -1,3 +1,12 @@
+if game.PlaceId ~= 104937784445732 then
+	game:GetService("StarterGui"):SetCore("SendNotification", { 
+		Title = "This game is not 🦑Squid Game 3 [Final Games]";
+		Text = "By green_co0lkid";
+		Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
+	Duration = 5;
+    return -- Stop script if not in the correct place
+end
+
 
 game:GetService("StarterGui"):SetCore("SendNotification", { 
 	Title = "Script is load";
