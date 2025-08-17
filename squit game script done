@@ -32,6 +32,8 @@ local hide_and_seek_game = Window:CreateTab("hide and seek game") -- Title, Imag
 
 local jump_rope_game = Window:CreateTab("jump rope game") -- Title, Image
 
+local teleportsTab = Window:CreateTab("teleports")
+
 local Buttonteleport = PlayerTab:CreateButton({
     Name = "teleport to player gui", -- Button label
     Callback = function()
@@ -109,5 +111,22 @@ local Button1 = hide_and_seek_game:CreateButton({
     end,
 })
 
+local Buttontopig = teleportsTab:CreateButton({
+    Name = "Teleport to pig", -- Button label
+    Callback = function()
+        local player = game.Players.LocalPlayer -- Get the local player
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(-1,38,-1)
+        end
+    end,
+})
 
-
+local Butto1414n6 = teleportsTab:CreateButton({
+    Name = "Teleport to beds room", -- Button label
+    Callback = function()
+        local player = game.Players.LocalPlayer -- Get the local player
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(1,12,1)
+        end
+    end,
+})
