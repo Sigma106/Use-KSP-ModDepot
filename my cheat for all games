@@ -64,6 +64,13 @@ local Slider = PlayerTab:CreateSlider({
     end,
 })
 
+local Buttonfollowplayers = PlayerTab:CreateButton({
+    Name = "epectate players", -- Button label
+    Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/follow%20player'))() 
+    end,
+})
+
 local Buttonteleport = PlayerTab:CreateButton({
     Name = "teleport to player gui", -- Button label
     Callback = function()
@@ -101,7 +108,7 @@ end)
 local Button = PlayerTab:CreateButton({
     Name = "fly FlyGuiV3", -- Button label
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fly%20script%20v3"))()
     end,
 })
 
