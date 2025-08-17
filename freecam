@@ -1,10 +1,11 @@
+-- Services
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
 
--- Remove old UI if re-executed
+-- Remove existing GUI
 if LocalPlayer.PlayerGui:FindFirstChild("TeleportGUI") then
-	LocalPlayer.PlayerGui.TeleportGUI:Destroy()
+    LocalPlayer.PlayerGui.TeleportGUI:Destroy()
 end
 
 -- Create GUI
@@ -23,22 +24,23 @@ frame.Parent = screenGui
 -- Manual dragging
 local dragging, dragStart, startPos
 frame.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = true
-		dragStart = input.Position
-		startPos = frame.Position
-	end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+    end
 end)
 frame.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = false
-	end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
 end)
 UIS.InputChanged:Connect(function(input)
-	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-		local delta = input.Position - dragStart
-		frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-	end
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                   startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
 end)
 
 -- Title
@@ -58,7 +60,7 @@ close.Text = "X"
 close.BackgroundColor3 = Color3.fromRGB(120, 0, 0)
 close.TextColor3 = Color3.new(1,1,1)
 close.MouseButton1Click:Connect(function()
-	screenGui:Destroy()
+    screenGui:Destroy()
 end)
 
 -- Player count label
@@ -71,20 +73,17 @@ countLabel.TextSize = 14
 countLabel.Font = Enum.Font.SourceSans
 countLabel.Text = "Players: 0"
 
--- Scrollable list
+-- Scrolling list
 local scroll = Instance.new("ScrollingFrame", frame)
 scroll.Position = UDim2.new(0, 10, 0, 60)
 scroll.Size = UDim2.new(1, -20, 1, -120)
-scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.CanvasSize = UDim2.fromOffset(0, 0)
 scroll.ScrollBarThickness = 6
 scroll.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 scroll.BorderSizePixel = 0
 scroll.ClipsDescendants = true
-scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
--- Add layout
-local listLayout = Instance.new("UIListLayout")
-listLayout.Parent = scroll
+local listLayout = Instance.new("UIListLayout", scroll)
 listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 listLayout.Padding = UDim.new(0, 5)
 
@@ -98,55 +97,60 @@ teleport.TextColor3 = Color3.fromRGB(255, 255, 255)
 teleport.TextSize = 16
 teleport.Font = Enum.Font.SourceSansBold
 
--- Handle selection and teleport
+-- Selection and teleport
 local selectedPlayer = nil
-
-local function updatePlayers()
-	scroll:ClearAllChildren()
-	selectedPlayer = nil
-
-	local playerList = Players:GetPlayers()
-	countLabel.Text = "Players: " .. tostring(#playerList)
-
-	for _, plr in ipairs(playerList) do
-		if plr ~= LocalPlayer then
-			local playerButton = Instance.new("TextButton")
-			playerButton.Size = UDim2.new(1, 0, 0, 40)
-			playerButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-			playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-			playerButton.Font = Enum.Font.SourceSans
-			playerButton.TextSize = 14
-			playerButton.TextXAlignment = Enum.TextXAlignment.Left
-			playerButton.Text = plr.DisplayName .. "  [@" .. plr.Name .. "]"
-			playerButton.Parent = scroll
-
-			playerButton.MouseButton1Click:Connect(function()
-				for _, other in ipairs(scroll:GetChildren()) do
-					if other:IsA("TextButton") then
-						other.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-					end
-				end
-				playerButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-				selectedPlayer = plr
-			end)
-		end
-	end
-
-	task.wait() -- Yield to let UI layout update
-	scroll.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
+local function updateCanvas()
+    task.defer(function()
+        scroll.CanvasSize = UDim2.fromOffset(0, listLayout.AbsoluteContentSize.Y)
+    end)
 end
 
--- Teleport function
+listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+
+local function updatePlayers()
+    scroll:ClearAllChildren()
+    selectedPlayer = nil
+
+    local playerList = Players:GetPlayers()
+    countLabel.Text = "Players: " .. tostring(#playerList)
+
+    for _, plr in ipairs(playerList) do
+        if plr ~= LocalPlayer then
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1, 0, 0, 40)
+            btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            btn.Font = Enum.Font.SourceSans
+            btn.TextSize = 14
+            btn.TextXAlignment = Enum.TextXAlignment.Left
+            btn.Text = plr.DisplayName .. "  [@" .. plr.Name .. "]"
+            btn.Parent = scroll
+
+            btn.MouseButton1Click:Connect(function()
+                for _, other in ipairs(scroll:GetChildren()) do
+                    if other:IsA("TextButton") then
+                        other.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+                    end
+                end
+                btn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+                selectedPlayer = plr
+            end)
+        end
+    end
+
+    updateCanvas()
+end
+
 teleport.MouseButton1Click:Connect(function()
-	if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-		local targetHRP = selectedPlayer.Character.HumanoidRootPart
-		local myChar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-		local myHRP = myChar:WaitForChild("HumanoidRootPart")
-		myHRP.CFrame = targetHRP.CFrame + Vector3.new(3, 0, 0) -- offset
-	end
+    if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = selectedPlayer.Character.HumanoidRootPart
+        local myChar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local myHRP = myChar:WaitForChild("HumanoidRootPart")
+        myHRP.CFrame = hrp.CFrame + Vector3.new(3, 0, 0)
+    end
 end)
 
--- Connect updates
+-- Connect events
 Players.PlayerAdded:Connect(updatePlayers)
 Players.PlayerRemoving:Connect(updatePlayers)
 updatePlayers()
