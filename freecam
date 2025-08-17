@@ -1,166 +1,99 @@
 local Players = game:GetService("Players")
+local PlayersService = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local UIS = game:GetService("UserInputService")
 
--- Remove existing GUI if any
-if LocalPlayer.PlayerGui:FindFirstChild("TeleportGUI") then
-    LocalPlayer.PlayerGui.TeleportGUI:Destroy()
+-- Remove old GUI if exists
+if LocalPlayer.PlayerGui:FindFirstChild("UserInfoGUI") then
+    LocalPlayer.PlayerGui.UserInfoGUI:Destroy()
 end
 
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "TeleportGUI"
+screenGui.Name = "UserInfoGUI"
 screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
+-- Main frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 400)
-frame.Position = UDim2.new(0.5, -150, 0.5, -200)
-frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+frame.Size = UDim2.new(0, 300, 0, 250)
+frame.Position = UDim2.new(0.5, -150, 0.5, -125)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Parent = screenGui
 
--- Draggable frame
-local dragging, dragInput, dragStart, startPos
-frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = frame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
+-- Input box
+local inputBox = Instance.new("TextBox")
+inputBox.PlaceholderText = "Type username and press Enter"
+inputBox.Size = UDim2.new(1, -20, 0, 40)
+inputBox.Position = UDim2.new(0, 10, 0, 20)
+inputBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+inputBox.TextColor3 = Color3.new(1,1,1)
+inputBox.ClearTextOnFocus = false
+inputBox.Text = ""
+inputBox.Font = Enum.Font.SourceSans
+inputBox.TextSize = 20
+inputBox.Parent = frame
+
+-- Avatar Image
+local avatarImage = Instance.new("ImageLabel")
+avatarImage.Size = UDim2.new(0, 100, 0, 100)
+avatarImage.Position = UDim2.new(0.5, -50, 0, 70)
+avatarImage.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+avatarImage.BorderSizePixel = 0
+avatarImage.Parent = frame
+
+-- Display name label
+local displayNameLabel = Instance.new("TextLabel")
+displayNameLabel.Size = UDim2.new(1, -20, 0, 25)
+displayNameLabel.Position = UDim2.new(0, 10, 0, 180)
+displayNameLabel.BackgroundTransparency = 1
+displayNameLabel.TextColor3 = Color3.new(1, 1, 1)
+displayNameLabel.Font = Enum.Font.SourceSansBold
+displayNameLabel.TextSize = 18
+displayNameLabel.TextXAlignment = Enum.TextXAlignment.Center
+displayNameLabel.Text = ""
+displayNameLabel.Parent = frame
+
+-- Username label
+local usernameLabel = Instance.new("TextLabel")
+usernameLabel.Size = UDim2.new(1, -20, 0, 20)
+usernameLabel.Position = UDim2.new(0, 10, 0, 210)
+usernameLabel.BackgroundTransparency = 1
+usernameLabel.TextColor3 = Color3.new(0.7, 0.7, 0.7)
+usernameLabel.Font = Enum.Font.SourceSans
+usernameLabel.TextSize = 16
+usernameLabel.TextXAlignment = Enum.TextXAlignment.Center
+usernameLabel.Text = ""
+usernameLabel.Parent = frame
+
+-- Function to update the GUI with player info by username
+local function updatePlayerInfo(username)
+    -- Try find player locally first
+    local target = Players:FindFirstChild(username)
+
+    -- If player not found locally, try Roblox API for userId & avatar (optional)
+    if not target then
+        -- We can’t get nickname directly if player offline
+        -- Just show username and placeholder avatar in this case
+        avatarImage.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+        displayNameLabel.Text = "Player not found"
+        usernameLabel.Text = username
+        return
     end
-end)
-frame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
-    end
-end)
-UIS.InputChanged:Connect(function(input)
-    if dragging and input == dragInput then
-        local delta = input.Position - dragStart
-        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
-                                  startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
 
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 35)
-title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-title.Text = "Teleport Menu"
-title.TextColor3 = Color3.new(1, 1, 1)
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 20
-title.Parent = frame
+    -- Update display name and username
+    displayNameLabel.Text = target.DisplayName
+    usernameLabel.Text = "@" .. target.Name
 
-local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0, 35, 0, 35)
-closeBtn.Position = UDim2.new(1, -35, 0, 0)
-closeBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
-closeBtn.Text = "X"
-closeBtn.TextColor3 = Color3.new(1, 1, 1)
-closeBtn.Font = Enum.Font.SourceSansBold
-closeBtn.TextSize = 24
-closeBtn.Parent = frame
-closeBtn.MouseButton1Click:Connect(function()
-    screenGui:Destroy()
-end)
-
-local countLabel = Instance.new("TextLabel")
-countLabel.Size = UDim2.new(1, -20, 0, 25)
-countLabel.Position = UDim2.new(0, 10, 0, 40)
-countLabel.BackgroundTransparency = 1
-countLabel.TextColor3 = Color3.new(1, 1, 1)
-countLabel.Font = Enum.Font.SourceSans
-countLabel.TextSize = 16
-countLabel.TextXAlignment = Enum.TextXAlignment.Left
-countLabel.Parent = frame
-
-local scroll = Instance.new("ScrollingFrame")
-scroll.Size = UDim2.new(1, -20, 1, -130)
-scroll.Position = UDim2.new(0, 10, 0, 70)
-scroll.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-scroll.BorderSizePixel = 0
-scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-scroll.ScrollBarThickness = 8
-scroll.Parent = frame
-
-local listLayout = Instance.new("UIListLayout")
-listLayout.Padding = UDim.new(0, 5)
-listLayout.SortOrder = Enum.SortOrder.LayoutOrder
-listLayout.Parent = scroll
-
--- Update CanvasSize when list changes
-listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    scroll.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 10)
-end)
-
-local teleportBtn = Instance.new("TextButton")
-teleportBtn.Size = UDim2.new(1, -20, 0, 40)
-teleportBtn.Position = UDim2.new(0, 10, 1, -50)
-teleportBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0)
-teleportBtn.Text = "Teleport"
-teleportBtn.TextColor3 = Color3.new(1, 1, 1)
-teleportBtn.Font = Enum.Font.SourceSansBold
-teleportBtn.TextSize = 18
-teleportBtn.Parent = frame
-
-local selectedPlayer = nil
-
-local function refreshPlayers()
-    -- Clear previous buttons (except UIListLayout)
-    for _, child in ipairs(scroll:GetChildren()) do
-        if child:IsA("TextButton") then
-            child:Destroy()
-        end
-    end
-    selectedPlayer = nil
-
-    local players = Players:GetPlayers()
-    countLabel.Text = "Players in server: " .. tostring(#players)
-
-    for _, plr in ipairs(players) do
-        if plr ~= LocalPlayer then
-            local btn = Instance.new("TextButton")
-            btn.Size = UDim2.new(1, 0, 0, 35)
-            btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-            btn.TextColor3 = Color3.new(1, 1, 1)
-            btn.Font = Enum.Font.SourceSans
-            btn.TextSize = 16
-            btn.Text = plr.DisplayName .. " [@" .. plr.Name .. "]"
-            btn.Parent = scroll
-
-            btn.MouseButton1Click:Connect(function()
-                -- Deselect all buttons
-                for _, otherBtn in ipairs(scroll:GetChildren()) do
-                    if otherBtn:IsA("TextButton") then
-                        otherBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-                    end
-                end
-                btn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-                selectedPlayer = plr
-            end)
-        end
-    end
+    -- Set avatar image using Roblox thumbnail API
+    local userId = target.UserId
+    local thumbUrl = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+    avatarImage.Image = thumbUrl
 end
 
-teleportBtn.MouseButton1Click:Connect(function()
-    if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        local hrp = selectedPlayer.Character.HumanoidRootPart
-        local myChar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local myHRP = myChar:FindFirstChild("HumanoidRootPart")
-        if myHRP then
-            myHRP.CFrame = hrp.CFrame + Vector3.new(3, 0, 0)
-        else
-            warn("Your character's HumanoidRootPart not found.")
+inputBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local text = inputBox.Text:match("^%s*(.-)%s*$") -- trim spaces
+        if text ~= "" then
+            updatePlayerInfo(text)
         end
-    else
-        warn("Selected player not available or their character not loaded.")
     end
 end)
-
-Players.PlayerAdded:Connect(refreshPlayers)
-Players.PlayerRemoving:Connect(refreshPlayers)
-
-refreshPlayers()
