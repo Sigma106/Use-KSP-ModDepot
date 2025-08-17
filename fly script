@@ -12,7 +12,7 @@ frame.Parent = gui
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 30)
 title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-title.Text = "Fly Menu"
+title.Text = "😎 Fly Menu"
 title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.SourceSansBold
 title.TextSize = 20
@@ -64,7 +64,7 @@ plusBtn.Parent = frame
 local flyBtn = Instance.new("TextButton")
 flyBtn.Size = UDim2.new(0, 80, 0, 30)
 flyBtn.Position = UDim2.new(0, 10, 0, 80)
-flyBtn.Text = "Fly"
+flyBtn.Text = "Fly 😎"
 flyBtn.Font = Enum.Font.SourceSans
 flyBtn.TextSize = 18
 flyBtn.Parent = frame
@@ -73,7 +73,7 @@ flyBtn.Parent = frame
 local stopBtn = Instance.new("TextButton")
 stopBtn.Size = UDim2.new(0, 80, 0, 30)
 stopBtn.Position = UDim2.new(0, 100, 0, 80)
-stopBtn.Text = "Stop"
+stopBtn.Text = "Stop 🛑"
 stopBtn.Font = Enum.Font.SourceSans
 stopBtn.TextSize = 18
 stopBtn.Parent = frame
@@ -116,7 +116,7 @@ local hum = char:WaitForChild("Humanoid")
 local cam = workspace.CurrentCamera
 local flyConn
 
--- Оновити швидкість при вводі вручну
+-- Оновити швидкість при ручному вводі
 speedBox.FocusLost:Connect(function()
 	local num = tonumber(speedBox.Text)
 	if num then
@@ -136,7 +136,7 @@ plusBtn.MouseButton1Click:Connect(function()
 	speedBox.Text = tostring(speed)
 end)
 
--- Почати політ (миттєвий рух)
+-- Почати політ (миттєвий рух з hover)
 flyBtn.MouseButton1Click:Connect(function()
 	if flying then return end
 	flying = true
@@ -144,16 +144,20 @@ flyBtn.MouseButton1Click:Connect(function()
 
 	flyConn = game:GetService("RunService").RenderStepped:Connect(function(dt)
 		local move = Vector3.new()
-		if UIS:IsKeyDown(Enum.KeyCode.W) then move = move + cam.CFrame.LookVector end
-		if UIS:IsKeyDown(Enum.KeyCode.S) then move = move - cam.CFrame.LookVector end
-		if UIS:IsKeyDown(Enum.KeyCode.A) then move = move - cam.CFrame.RightVector end
-		if UIS:IsKeyDown(Enum.KeyCode.D) then move = move + cam.CFrame.RightVector end
-		if UIS:IsKeyDown(Enum.KeyCode.E) then move = move + Vector3.new(0, 1, 0) end
-		if UIS:IsKeyDown(Enum.KeyCode.R) then move = move - Vector3.new(0, 1, 0) end
 
-		if move.Magnitude > 0 then
-			hrp.CFrame = hrp.CFrame + (move.Unit * speed * dt)
+		if UIS:IsKeyDown(Enum.KeyCode.W) then move += cam.CFrame.LookVector end
+		if UIS:IsKeyDown(Enum.KeyCode.S) then move -= cam.CFrame.LookVector end
+		if UIS:IsKeyDown(Enum.KeyCode.A) then move -= cam.CFrame.RightVector end
+		if UIS:IsKeyDown(Enum.KeyCode.D) then move += cam.CFrame.RightVector end
+		if UIS:IsKeyDown(Enum.KeyCode.E) then move += Vector3.new(0, 1, 0) end
+		if UIS:IsKeyDown(Enum.KeyCode.R) then move -= Vector3.new(0, 1, 0) end
+
+		-- Prevent falling: hover slightly when idle
+		if move.Magnitude == 0 then
+			move = Vector3.new(0, 0.25, 0)
 		end
+
+		hrp.CFrame = hrp.CFrame + (move.Unit * speed * dt)
 	end)
 end)
 
