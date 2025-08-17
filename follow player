@@ -1,24 +1,65 @@
+-- Roblox Lua full script for player follow GUI with <, > buttons, draggable, close, and username/nickname display
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
-local gui = script.Parent
-local playerInfoLabel = gui:WaitForChild("PlayerInfo")
-local prevBtn = gui:WaitForChild("PrevBtn")
-local nextBtn = gui:WaitForChild("NextBtn")
-local closeBtn = gui:WaitForChild("CloseBtn")
-local frame = gui
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "FollowPlayerGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
--- Make the frame draggable
-frame.Active = true
+-- Create main frame (draggable container)
+local frame = Instance.new("Frame")
+frame.Name = "FollowFrame"
+frame.Size = UDim2.new(0, 300, 0, 120)
+frame.Position = UDim2.new(0.5, -150, 0.8, 0)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Active = true -- Required for dragging
 frame.Draggable = true
+frame.Parent = screenGui
 
+-- Player info label
+local playerInfo = Instance.new("TextLabel")
+playerInfo.Name = "PlayerInfo"
+playerInfo.Size = UDim2.new(1, -20, 0, 40)
+playerInfo.Position = UDim2.new(0, 10, 0, 10)
+playerInfo.BackgroundTransparency = 1
+playerInfo.TextColor3 = Color3.new(1, 1, 1)
+playerInfo.Font = Enum.Font.SourceSansBold
+playerInfo.TextSize = 20
+playerInfo.Text = "Loading players..."
+playerInfo.TextWrapped = true
+playerInfo.Parent = frame
+
+-- Button creation function
+local function createButton(name, text, posX)
+    local btn = Instance.new("TextButton")
+    btn.Name = name
+    btn.Size = UDim2.new(0, 50, 0, 40)
+    btn.Position = UDim2.new(0, posX, 0, 60)
+    btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.SourceSansBold
+    btn.TextSize = 24
+    btn.Text = text
+    btn.Parent = frame
+    return btn
+end
+
+local prevBtn = createButton("PrevBtn", "<", 10)
+local nextBtn = createButton("NextBtn", ">", 110)
+local closeBtn = createButton("CloseBtn", "Close", 210)
+
+-- Variables to track player list and index
 local playerList = {}
 local currentIndex = 1
 local followConnection = nil
 
--- Function to update player list except local player
+-- Update player list excluding local player
 local function updatePlayerList()
     playerList = {}
     for _, player in ipairs(Players:GetPlayers()) do
@@ -26,7 +67,6 @@ local function updatePlayerList()
             table.insert(playerList, player)
         end
     end
-    -- Reset currentIndex if out of bounds
     if #playerList == 0 then
         currentIndex = 0
     elseif currentIndex > #playerList then
@@ -34,25 +74,31 @@ local function updatePlayerList()
     end
 end
 
--- Function to update GUI label
+-- Update label with followed player's info
 local function updateLabel()
     if currentIndex == 0 or #playerList == 0 then
-        playerInfoLabel.Text = "No other players"
+        playerInfo.Text = "No other players to follow."
         return
     end
     local targetPlayer = playerList[currentIndex]
-    local displayName = targetPlayer.DisplayName or targetPlayer.Name
-    playerInfoLabel.Text = string.format("Following: %s (%s)", targetPlayer.Name, displayName)
+    playerInfo.Text = string.format("Following: %s (%s)", targetPlayer.Name, targetPlayer.DisplayName)
 end
 
--- Function to follow player camera
-local function followPlayer(player)
-    if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
-        return
-    end
-
+-- Stop camera follow and reset camera
+local function stopFollow()
     if followConnection then
         followConnection:Disconnect()
+        followConnection = nil
+    end
+    Camera.CameraType = Enum.CameraType.Custom
+end
+
+-- Follow player camera with offset behind and above
+local function followPlayer(player)
+    stopFollow()
+    if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
+        playerInfo.Text = "Target player not loaded."
+        return
     end
 
     followConnection = RunService.RenderStepped:Connect(function()
@@ -61,16 +107,13 @@ local function followPlayer(player)
             Camera.CameraType = Enum.CameraType.Scriptable
             Camera.CFrame = hrp.CFrame * CFrame.new(0, 5, 10) * CFrame.Angles(math.rad(-20), math.rad(180), 0)
         else
-            -- Stop follow if player disappears
-            followConnection:Disconnect()
-            followConnection = nil
-            Camera.CameraType = Enum.CameraType.Custom
-            playerInfoLabel.Text = "Lost target player."
+            stopFollow()
+            playerInfo.Text = "Lost target player."
         end
     end)
 end
 
--- Cycle player
+-- Cycle through players with direction (+1 or -1)
 local function cyclePlayer(direction)
     if #playerList == 0 then return end
     currentIndex = currentIndex + direction
@@ -83,25 +126,19 @@ local function cyclePlayer(direction)
     followPlayer(playerList[currentIndex])
 end
 
--- Close GUI and stop follow
+-- Close button handler
 local function closeGui()
-    if followConnection then
-        followConnection:Disconnect()
-        followConnection = nil
-    end
-    Camera.CameraType = Enum.CameraType.Custom
-    gui.Enabled = false
+    stopFollow()
+    screenGui.Enabled = false
 end
 
--- Initialize
+-- Initialize player list and start following first player
 updatePlayerList()
-
--- If no players to follow, disable buttons
-if #playerList == 0 then
-    playerInfoLabel.Text = "No other players to follow."
-else
+if #playerList > 0 then
     updateLabel()
     followPlayer(playerList[currentIndex])
+else
+    playerInfo.Text = "No other players to follow."
 end
 
 -- Connect buttons
@@ -115,21 +152,16 @@ end)
 
 closeBtn.MouseButton1Click:Connect(closeGui)
 
--- Update player list on player added/removed
+-- Update player list on players added/removed
 Players.PlayerAdded:Connect(function()
     updatePlayerList()
-    if currentIndex == 0 and #playerList > 0 then
-        currentIndex = 1
-        updateLabel()
-        followPlayer(playerList[currentIndex])
-    end
 end)
 
 Players.PlayerRemoving:Connect(function()
     updatePlayerList()
     if #playerList == 0 then
         currentIndex = 0
-        playerInfoLabel.Text = "No other players to follow."
+        playerInfo.Text = "No other players to follow."
         closeGui()
     elseif currentIndex > #playerList then
         currentIndex = 1
