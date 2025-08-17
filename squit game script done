@@ -32,6 +32,13 @@ local hide_and_seek_game = Window:CreateTab("hide and seek game") -- Title, Imag
 
 local jump_rope_game = Window:CreateTab("jump rope game") -- Title, Image
 
+local Buttonteleport = PlayerTab:CreateButton({
+    Name = "teleport to player gui", -- Button label
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))()
+    end,
+})
+
 local Button0 = PlayerTab:CreateButton({
     Name = "tp tool", -- Button label
     Callback = function()
@@ -83,11 +90,11 @@ local Button01 = hide_and_seek_game:CreateButton({
 })
 
 local Button6 = hide_and_seek_game:CreateButton({
-    Name = "Safe Zone IF BLUE!", -- Button label
+    Name = "Safe Zone IF BLUE! And if you red you can kill revives ;)", -- Button label
     Callback = function()
         local player = game.Players.LocalPlayer -- Get the local player
         if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            player.Character.HumanoidRootPart.CFrame = CFrame.new(64, 43, 514)
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(1,12,1)
         end
     end,
 })
@@ -102,13 +109,5 @@ local Button1 = hide_and_seek_game:CreateButton({
     end,
 })
 
-local Button19 = hide_and_seek_game:CreateButton({
-    Name = "Teleport to beds room", -- Button label
-    Callback = function()
-        local player = game.Players.LocalPlayer -- Get the local player
-        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            player.Character.HumanoidRootPart.CFrame = CFrame.new(1,12,1)
-        end
-    end,
-})
+
 
