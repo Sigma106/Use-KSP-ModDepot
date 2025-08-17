@@ -16,13 +16,13 @@ screenGui.ResetOnSpawn = false
 
 -- Create main frame (window)
 local frame = Instance.new("Frame", screenGui)
-frame.Size = UDim2.new(0, 340, 0, 150)
-frame.Position = UDim2.new(0.5, -170, 0.8, 0)
+frame.Size = UDim2.new(0, 280, 0, 150)
+frame.Position = UDim2.new(0.5, -140, 0.8, 0)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Name = "MainFrame"
 
--- Make the frame draggable manually
+-- Make the frame manually draggable
 local dragging = false
 local dragStart, startPos
 
@@ -83,12 +83,10 @@ end
 local toggleBtn = newButton("OFF", 10, 90, 60, 40)
 local prevBtn = newButton("<", 80, 90, 50, 40)
 local nextBtn = newButton(">", 140, 90, 50, 40)
-local modeBtn = newButton("1st Person", 200, 90, 120, 40)
-local closeBtn = newButton("X", 300, 5, 30, 20)
+local closeBtn = newButton("X", 230, 5, 30, 20)
 
 -- Variables
 local spectateOn = false
-local spectateMode = "ThirdPerson"
 local playerList = {}
 local index = 1
 local conn = nil
@@ -110,7 +108,7 @@ local function stop()
     Camera.CameraType = Enum.CameraType.Custom
 end
 
--- Start spectating
+-- Start spectating in Third Person
 local function follow(target)
     stop()
     if not target.Character then return end
@@ -121,15 +119,7 @@ local function follow(target)
         if not root then return end
 
         Camera.CameraType = Enum.CameraType.Scriptable
-
-        if spectateMode == "FirstPerson" then
-            local head = target.Character:FindFirstChild("Head")
-            if head then
-                Camera.CFrame = head.CFrame
-            end
-        else
-            Camera.CFrame = root.CFrame * CFrame.new(0, 5, 10) * CFrame.Angles(math.rad(-20), math.rad(180), 0)
-        end
+        Camera.CFrame = root.CFrame * CFrame.new(0, 5, 10) * CFrame.Angles(math.rad(-20), math.rad(180), 0)
     end)
 end
 
@@ -139,7 +129,7 @@ local function updateUI()
         info.Text = "No players."
     else
         local p = playerList[index]
-        info.Text = "Following: " .. p.Name .. " (" .. p.DisplayName .. ") [" .. spectateMode .. "]"
+        info.Text = "Following: " .. p.Name .. " (" .. p.DisplayName .. ")"
     end
 end
 
@@ -168,14 +158,6 @@ prevBtn.MouseButton1Click:Connect(function()
     if #playerList == 0 then return end
     index = index - 1
     if index < 1 then index = #playerList end
-    updateUI()
-    if spectateOn then follow(playerList[index]) end
-end)
-
--- Change camera mode
-modeBtn.MouseButton1Click:Connect(function()
-    spectateMode = (spectateMode == "FirstPerson") and "ThirdPerson" or "FirstPerson"
-    modeBtn.Text = (spectateMode == "FirstPerson") and "3rd Person" or "1st Person"
     updateUI()
     if spectateOn then follow(playerList[index]) end
 end)
