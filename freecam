@@ -21,7 +21,7 @@ frame.BorderSizePixel = 0
 frame.Parent = screenGui
 
 -- Manual dragging
-local dragging, dragInput, dragStart, startPos
+local dragging, dragStart, startPos
 frame.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		dragging = true
@@ -79,8 +79,13 @@ scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 scroll.ScrollBarThickness = 6
 scroll.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 scroll.BorderSizePixel = 0
+scroll.ClipsDescendants = true
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
-local listLayout = Instance.new("UIListLayout", scroll)
+-- Add layout
+local listLayout = Instance.new("UIListLayout")
+listLayout.Parent = scroll
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 listLayout.Padding = UDim.new(0, 5)
 
 -- Teleport button
@@ -103,35 +108,31 @@ local function updatePlayers()
 	local playerList = Players:GetPlayers()
 	countLabel.Text = "Players: " .. tostring(#playerList)
 
-	for _, plr in pairs(playerList) do
+	for _, plr in ipairs(playerList) do
 		if plr ~= LocalPlayer then
-			local function createButtonForPlayer(player)
-				local btn = Instance.new("TextButton")
-				btn.Size = UDim2.new(1, 0, 0, 40)
-				btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-				btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-				btn.Font = Enum.Font.SourceSans
-				btn.TextSize = 14
-				btn.TextXAlignment = Enum.TextXAlignment.Left
-				btn.Text = player.DisplayName .. "  [@" .. player.Name .. "]"
-				btn.Parent = scroll
+			local playerButton = Instance.new("TextButton")
+			playerButton.Size = UDim2.new(1, 0, 0, 40)
+			playerButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+			playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+			playerButton.Font = Enum.Font.SourceSans
+			playerButton.TextSize = 14
+			playerButton.TextXAlignment = Enum.TextXAlignment.Left
+			playerButton.Text = plr.DisplayName .. "  [@" .. plr.Name .. "]"
+			playerButton.Parent = scroll
 
-				btn.MouseButton1Click:Connect(function()
-					for _, other in ipairs(scroll:GetChildren()) do
-						if other:IsA("TextButton") then
-							other.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-						end
+			playerButton.MouseButton1Click:Connect(function()
+				for _, other in ipairs(scroll:GetChildren()) do
+					if other:IsA("TextButton") then
+						other.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 					end
-					btn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-					selectedPlayer = player
-				end)
-			end
-
-			createButtonForPlayer(plr)
+				end
+				playerButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+				selectedPlayer = plr
+			end)
 		end
 	end
 
-	task.wait()
+	task.wait() -- Yield to let UI layout update
 	scroll.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
 end
 
@@ -145,7 +146,7 @@ teleport.MouseButton1Click:Connect(function()
 	end
 end)
 
--- Auto update
+-- Connect updates
 Players.PlayerAdded:Connect(updatePlayers)
 Players.PlayerRemoving:Connect(updatePlayers)
 updatePlayers()
