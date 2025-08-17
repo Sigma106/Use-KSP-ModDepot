@@ -143,59 +143,6 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
 Duration = 5;
 
--- Remove Frame.Draggable and Frame.Active to use custom drag instead
--- Frame.Active = true
--- Frame.Draggable = true
-
--- Custom draggable implementation:
-local dragging = false
-local dragInput, dragStart, startPos
-
-local function update(input)
-	local delta = input.Position - dragStart
-	Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
-							  startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-
-Frame.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		-- Start drag only if input is NOT on any button inside the Frame
-		local guiObjects = game:GetService("UserInputService"):GetGuiObjectsAtPosition(input.Position.X, input.Position.Y)
-		local isOnButton = false
-		for _, guiObj in ipairs(guiObjects) do
-			if guiObj:IsA("TextButton") then
-				isOnButton = true
-				break
-			end
-		end
-
-		if not isOnButton then
-			dragging = true
-			dragStart = input.Position
-			startPos = Frame.Position
-
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
-					dragging = false
-				end
-			end)
-		end
-	end
-end)
-
-Frame.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement then
-		dragInput = input
-	end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-	if input == dragInput and dragging then
-		update(input)
-	end
-end)
-
-
 onof.MouseButton1Down:connect(function()
 
 	if nowe == true then
@@ -312,5 +259,42 @@ mine.MouseButton1Down:Connect(function()
 	if speeds > 1 then
 		speeds = speeds - 1
 		speed.Text = speeds
+	end
+end)
+
+-- =============== DRAGGABLE WINDOW (ADDED) ===============
+
+local dragging = false
+local dragInput, dragStart, startPos
+
+local function update(input)
+	local delta = input.Position - dragStart
+	Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+							  startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+Frame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = Frame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+Frame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		update(input)
 	end
 end)
