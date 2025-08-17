@@ -81,7 +81,7 @@ end)
 
 -- Username input box
 local inputBox = Instance.new("TextBox")
-inputBox.PlaceholderText = "Enter player username and press Enter"
+inputBox.PlaceholderText = "Enter player username"
 inputBox.Size = UDim2.new(0, 230, 0, 40)
 inputBox.Position = UDim2.new(0, 10, 0, 60)
 inputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
