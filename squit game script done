@@ -8,8 +8,8 @@ Duration = 5;
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "squit game script ez win",
-    LoadingTitle = "loading",
+    Name = "🦑Squid Game 3 [Final Games] script",
+    LoadingTitle = "loading 🦑Squid Game 3 [Final Games] script",
     LoadingSubtitle = "by green_co0kid",
     ConfigurationSaving = {
        Enabled = true,
