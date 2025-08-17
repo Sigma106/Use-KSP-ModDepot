@@ -95,6 +95,7 @@ teleport.Font = Enum.Font.SourceSansBold
 
 -- Handle selection and teleport
 local selectedPlayer = nil
+
 local function updatePlayers()
 	scroll:ClearAllChildren()
 	selectedPlayer = nil
@@ -104,24 +105,29 @@ local function updatePlayers()
 
 	for _, plr in pairs(playerList) do
 		if plr ~= LocalPlayer then
-			local btn = Instance.new("TextButton")
-			btn.Size = UDim2.new(1, 0, 0, 30)
-			btn.Text = plr.Name
-			btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-			btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-			btn.Font = Enum.Font.SourceSans
-			btn.TextSize = 14
-			btn.Parent = scroll
+			local function createButtonForPlayer(player)
+				local btn = Instance.new("TextButton")
+				btn.Size = UDim2.new(1, 0, 0, 40)
+				btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+				btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+				btn.Font = Enum.Font.SourceSans
+				btn.TextSize = 14
+				btn.TextXAlignment = Enum.TextXAlignment.Left
+				btn.Text = player.DisplayName .. "  [@" .. player.Name .. "]"
+				btn.Parent = scroll
 
-			btn.MouseButton1Click:Connect(function()
-				for _, other in ipairs(scroll:GetChildren()) do
-					if other:IsA("TextButton") then
-						other.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+				btn.MouseButton1Click:Connect(function()
+					for _, other in ipairs(scroll:GetChildren()) do
+						if other:IsA("TextButton") then
+							other.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+						end
 					end
-				end
-				btn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-				selectedPlayer = plr
-			end)
+					btn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+					selectedPlayer = player
+				end)
+			end
+
+			createButtonForPlayer(plr)
 		end
 	end
 
@@ -129,12 +135,13 @@ local function updatePlayers()
 	scroll.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
 end
 
+-- Teleport function
 teleport.MouseButton1Click:Connect(function()
 	if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
 		local targetHRP = selectedPlayer.Character.HumanoidRootPart
 		local myChar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 		local myHRP = myChar:WaitForChild("HumanoidRootPart")
-		myHRP.CFrame = targetHRP.CFrame + Vector3.new(3, 0, 0) -- slight offset
+		myHRP.CFrame = targetHRP.CFrame + Vector3.new(3, 0, 0) -- offset
 	end
 end)
 
