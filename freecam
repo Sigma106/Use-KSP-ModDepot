@@ -1,86 +1,77 @@
--- 1. Load Rayfield
+-- Load Rayfield
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- 2. Create the main window
+-- Create Window
 local Window = Rayfield:CreateWindow({
-    Name = "Teleport GUI",
-    LoadingTitle = "Teleport Interface",
-    LoadingSubtitle = "Select & Teleport",
-    ConfigurationSaving = {
-        Enabled = false
-    },
-    Discord = { Enabled = false },
-    KeySystem = false
+  Name = "Teleport GUI",
+  LoadingTitle = "Teleport Interface",
+  LoadingSubtitle = "Select & Teleport",
+  ConfigurationSaving = { Enabled = false },
+  Discord = { Enabled = false },
+  KeySystem = false
 })
 
--- 3. Create Teleport tab and section
-local TeleportTab = Window:CreateTab("Teleport", 4483362458)
-local TeleportSection = TeleportTab:CreateSection("Player Teleport")
+-- Create Tab and Section
+local TeleportTab = Window:CreateTab("Teleport")
+local TPSection = TeleportTab:CreateSection("Player Teleport")
 
--- Helper to get all other player names
-local function GetPlayerNames()
-    local names = {}
-    for _, plr in ipairs(game.Players:GetPlayers()) do
-        if plr ~= game.Players.LocalPlayer then
-            table.insert(names, plr.DisplayName .. " [@" .. plr.Name .. "]")
-        end
+-- Helper to get player list strings
+local function getPlayerStrings()
+  local list = {}
+  for _, plr in ipairs(game.Players:GetPlayers()) do
+    if plr ~= game.Players.LocalPlayer then
+      table.insert(list, plr.DisplayName .. " [@" .. plr.Name .. "]")
     end
-    return names
+  end
+  return list
 end
 
--- 4. Create dropdown for player selection
-local PlayerDropdown = TeleportSection:CreateDropdown({
-    Name = "Select Player",
-    Options = GetPlayerNames(),
-    CurrentOption = nil,
-    Flag = "PlayerDropdown",
-    Callback = function(selected)
-        -- Nothing needed here unless desired
-    end
+-- Create Dropdown
+local PlayerDropdown = TPSection:CreateDropdown({
+  Name = "Select Player",
+  Options = getPlayerStrings(),
+  CurrentOption = {},  -- start with none selected
+  MultipleOptions = false,
+  Flag = "PlayerDropdown",
+  Callback = function(option)
+    -- Option is a table, e.g. {"Nick [@username]"}
+    print("Selected:", option[1])
+  end
 })
 
--- 5. Create Teleport button
-TeleportSection:CreateButton({
-    Name = "Teleport",
-    Callback = function()
-        local sel = PlayerDropdown:Get() -- returns string like "Nick [@username]"
-        if not sel then
-            Rayfield:Notify({
-                Title = "Error",
-                Content = "Please select a player first",
-                Duration = 2
-            })
-            return
-        end
-
-        -- Extract username from the selected string
-        local username = sel:match("%[@(.-)%]")
-        local target = game.Players:FindFirstChild(username)
-        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-            local hrp = target.Character.HumanoidRootPart
-            local localHRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-            if localHRP then
-                localHRP.CFrame = hrp.CFrame + Vector3.new(2, 0, 0)
-                Rayfield:Notify({
-                    Title = "Teleported",
-                    Content = "To " .. sel,
-                    Duration = 2
-                })
-            end
-        else
-            Rayfield:Notify({
-                Title = "Teleport Failed",
-                Content = "Player not found or character not loaded",
-                Duration = 2
-            })
-        end
+-- Teleport Button
+TPSection:CreateButton({
+  Name = "Teleport",
+  Callback = function()
+    local selected = PlayerDropdown.CurrentOption[1]
+    if not selected then
+      Rayfield:Notify({Title = "Error", Content = "No player selected", Duration = 2})
+      return
     end
+
+    local username = selected:match("%[@(.-)%]")
+    local target = game.Players:FindFirstChild(username)
+    if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+      local myHRP = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+      if myHRP then
+        myHRP.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(2,0,0)
+        Rayfield:Notify({Title = "Teleported", Content = "To " .. selected, Duration = 2})
+      end
+    else
+      Rayfield:Notify({Title = "Failed", Content = "Player not found or not loaded", Duration = 2})
+    end
+  end
 })
 
--- 6. Update dropdown when players join or leave
+-- Update dropdown on player join/leave
 game.Players.PlayerAdded:Connect(function()
-    PlayerDropdown:SetOptions(GetPlayerNames())
+  PlayerDropdown:Set({})
+  PlayerDropdown:Set(getPlayerStrings())
+  PlayerDropdown:Refresh(getPlayerStrings())
 end)
+
 game.Players.PlayerRemoving:Connect(function()
-    PlayerDropdown:SetOptions(GetPlayerNames())
+  PlayerDropdown:Set({})
+  PlayerDropdown:Set(getPlayerStrings())
+  PlayerDropdown:Refresh(getPlayerStrings())
 end)
