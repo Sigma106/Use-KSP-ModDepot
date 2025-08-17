@@ -1,182 +1,316 @@
-local player = game.Players.LocalPlayer
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+local UserInputService = game:GetService("UserInputService")
 
--- Головна панель
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 260, 0, 180)
-frame.Position = UDim2.new(0.3, 0, 0.3, 0)
-frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-frame.Parent = gui
+local main = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local up = Instance.new("TextButton")
+local down = Instance.new("TextButton")
+local onof = Instance.new("TextButton")
+local TextLabel = Instance.new("TextLabel")
+local plus = Instance.new("TextButton")
+local speed = Instance.new("TextLabel")
+local mine = Instance.new("TextButton")
+local closebutton = Instance.new("TextButton")
+local mini = Instance.new("TextButton")
+local mini2 = Instance.new("TextButton")
 
--- Заголовок
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 30)
-title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-title.Text = "Fly Menu"
-title.TextColor3 = Color3.new(1,1,1)
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 20
-title.Parent = frame
+main.Name = "main"
+main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+main.ResetOnSpawn = false
 
--- Кнопка закриття
-local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0, 30, 0, 30)
-closeBtn.Position = UDim2.new(1, -30, 0, 0)
-closeBtn.Text = "X"
-closeBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
-closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.Parent = frame
+Frame.Parent = main
+Frame.BackgroundColor3 = Color3.fromRGB(163, 255, 137)
+Frame.BorderColor3 = Color3.fromRGB(103, 221, 213)
+Frame.Position = UDim2.new(0.100320168, 0, 0.379746825, 0)
+Frame.Size = UDim2.new(0, 190, 0, 57)
 
--- Поле для швидкості
-local speedBox = Instance.new("TextBox")
-speedBox.Size = UDim2.new(0, 80, 0, 30)
-speedBox.Position = UDim2.new(0, 10, 0, 40)
-speedBox.PlaceholderText = "Speed"
-speedBox.Text = "50"
-speedBox.Font = Enum.Font.SourceSans
-speedBox.TextSize = 18
-speedBox.ClearTextOnFocus = false
-speedBox.Parent = frame
+up.Name = "up"
+up.Parent = Frame
+up.BackgroundColor3 = Color3.fromRGB(79, 255, 152)
+up.Size = UDim2.new(0, 44, 0, 28)
+up.Font = Enum.Font.SourceSans
+up.Text = "UP"
+up.TextColor3 = Color3.fromRGB(0, 0, 0)
+up.TextSize = 14.000
 
--- Кнопка Зменшити швидкість (-)
-local minusBtn = Instance.new("TextButton")
-minusBtn.Size = UDim2.new(0, 30, 0, 30)
-minusBtn.Position = UDim2.new(0, 100, 0, 40)
-minusBtn.Text = "-"
-minusBtn.Font = Enum.Font.SourceSansBold
-minusBtn.TextSize = 22
-minusBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-minusBtn.TextColor3 = Color3.new(1,1,1)
-minusBtn.Parent = frame
+down.Name = "down"
+down.Parent = Frame
+down.BackgroundColor3 = Color3.fromRGB(215, 255, 121)
+down.Position = UDim2.new(0, 0, 0.491228074, 0)
+down.Size = UDim2.new(0, 44, 0, 28)
+down.Font = Enum.Font.SourceSans
+down.Text = "DOWN"
+down.TextColor3 = Color3.fromRGB(0, 0, 0)
+down.TextSize = 14.000
 
--- Кнопка Збільшити швидкість (+)
-local plusBtn = Instance.new("TextButton")
-plusBtn.Size = UDim2.new(0, 30, 0, 30)
-plusBtn.Position = UDim2.new(0, 140, 0, 40)
-plusBtn.Text = "+"
-plusBtn.Font = Enum.Font.SourceSansBold
-plusBtn.TextSize = 22
-plusBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-plusBtn.TextColor3 = Color3.new(1,1,1)
-plusBtn.Parent = frame
+onof.Name = "onof"
+onof.Parent = Frame
+onof.BackgroundColor3 = Color3.fromRGB(255, 249, 74)
+onof.Position = UDim2.new(0.702823281, 0, 0.491228074, 0)
+onof.Size = UDim2.new(0, 56, 0, 28)
+onof.Font = Enum.Font.SourceSans
+onof.Text = "fly"
+onof.TextColor3 = Color3.fromRGB(0, 0, 0)
+onof.TextSize = 14.000
 
--- Кнопка Fly
-local flyBtn = Instance.new("TextButton")
-flyBtn.Size = UDim2.new(0, 80, 0, 30)
-flyBtn.Position = UDim2.new(0, 10, 0, 80)
-flyBtn.Text = "Fly"
-flyBtn.Font = Enum.Font.SourceSans
-flyBtn.TextSize = 18
-flyBtn.Parent = frame
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.fromRGB(242, 60, 255)
+TextLabel.Position = UDim2.new(0.469327301, 0, 0, 0)
+TextLabel.Size = UDim2.new(0, 100, 0, 28)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "FLY GUI V3"
+TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextWrapped = true
 
--- Кнопка Stop Fly
-local stopBtn = Instance.new("TextButton")
-stopBtn.Size = UDim2.new(0, 80, 0, 30)
-stopBtn.Position = UDim2.new(0, 100, 0, 80)
-stopBtn.Text = "Stop"
-stopBtn.Font = Enum.Font.SourceSans
-stopBtn.TextSize = 18
-stopBtn.Parent = frame
+plus.Name = "plus"
+plus.Parent = Frame
+plus.BackgroundColor3 = Color3.fromRGB(133, 145, 255)
+plus.Position = UDim2.new(0.231578946, 0, 0, 0)
+plus.Size = UDim2.new(0, 45, 0, 28)
+plus.Font = Enum.Font.SourceSans
+plus.Text = "+"
+plus.TextColor3 = Color3.fromRGB(0, 0, 0)
+plus.TextScaled = true
+plus.TextSize = 14.000
+plus.TextWrapped = true
 
--- Drag функціонал
-local UIS = game:GetService("UserInputService")
-local dragging, dragStart, startPos
+speed.Name = "speed"
+speed.Parent = Frame
+speed.BackgroundColor3 = Color3.fromRGB(255, 85, 0)
+speed.Position = UDim2.new(0.468421042, 0, 0.491228074, 0)
+speed.Size = UDim2.new(0, 44, 0, 28)
+speed.Font = Enum.Font.SourceSans
+speed.Text = "1"
+speed.TextColor3 = Color3.fromRGB(0, 0, 0)
+speed.TextScaled = true
+speed.TextSize = 14.000
+speed.TextWrapped = true
 
-title.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = frame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
+mine.Name = "mine"
+mine.Parent = Frame
+mine.BackgroundColor3 = Color3.fromRGB(123, 255, 247)
+mine.Position = UDim2.new(0.231578946, 0, 0.491228074, 0)
+mine.Size = UDim2.new(0, 45, 0, 29)
+mine.Font = Enum.Font.SourceSans
+mine.Text = "-"
+mine.TextColor3 = Color3.fromRGB(0, 0, 0)
+mine.TextScaled = true
+mine.TextSize = 14.000
+mine.TextWrapped = true
 
-UIS.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local delta = input.Position - dragStart
-        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
+closebutton.Name = "Close"
+closebutton.Parent = Frame
+closebutton.BackgroundColor3 = Color3.fromRGB(225, 25, 0)
+closebutton.Font = Enum.Font.SourceSans
+closebutton.Size = UDim2.new(0, 45, 0, 28)
+closebutton.Text = "X"
+closebutton.TextSize = 30
+closebutton.Position =  UDim2.new(0, 0, -1, 27)
 
--- Закриття меню
-closeBtn.MouseButton1Click:Connect(function()
-    gui:Destroy()
-end)
+mini.Name = "minimize"
+mini.Parent = Frame
+mini.BackgroundColor3 = Color3.fromRGB(192, 150, 230)
+mini.Font = Enum.Font.SourceSans
+mini.Size = UDim2.new(0, 45, 0, 28)
+mini.Text = "-"
+mini.TextSize = 40
+mini.Position = UDim2.new(0, 44, -1, 27)
 
--- Fly функціонал
-local flying = false
-local speed = tonumber(speedBox.Text) or 50
-local char = player.Character or player.CharacterAdded:Wait()
-local hrp = char:WaitForChild("HumanoidRootPart")
-local hum = char:WaitForChild("Humanoid")
-local cam = workspace.CurrentCamera
-local flyConn
+mini2.Name = "minimize2"
+mini2.Parent = Frame
+mini2.BackgroundColor3 = Color3.fromRGB(192, 150, 230)
+mini2.Font = Enum.Font.SourceSans
+mini2.Size = UDim2.new(0, 45, 0, 28)
+mini2.Text = "+"
+mini2.TextSize = 40
+mini2.Position = UDim2.new(0, 44, -1, 57)
+mini2.Visible = false
 
--- Оновлення швидкості при ручному вводі
-speedBox.FocusLost:Connect(function()
-	local num = tonumber(speedBox.Text)
-	if num then
-		speed = num
-	end
-end)
+speeds = 1
 
--- Зменшити швидкість
-minusBtn.MouseButton1Click:Connect(function()
-	speed = math.max(0, speed - 10)
-	speedBox.Text = tostring(speed)
-end)
+local speaker = game:GetService("Players").LocalPlayer
 
--- Збільшити швидкість
-plusBtn.MouseButton1Click:Connect(function()
-	speed = speed + 10
-	speedBox.Text = tostring(speed)
-end)
+local chr = game.Players.LocalPlayer.Character
+local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
 
--- Почати політ
-flyBtn.MouseButton1Click:Connect(function()
-	if flying then return end
-	flying = true
+nowe = false
 
-	hum.PlatformStand = true -- Flat pose (no physics sway)
+game:GetService("StarterGui"):SetCore("SendNotification", { 
+	Title = "FLY GUI V3";
+	Text = "BY XNEO";
+	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
+Duration = 5;
 
-	local bodyVel = Instance.new("BodyVelocity")
-	bodyVel.MaxForce = Vector3.new(4000, 4000, 4000)
-	bodyVel.Velocity = Vector3.new(0, 0, 0)
-	bodyVel.Parent = hrp
+-- Remove Frame.Draggable and Frame.Active to use custom drag instead
+-- Frame.Active = true
+-- Frame.Draggable = true
 
-	flyConn = game:GetService("RunService").RenderStepped:Connect(function()
-		local move = Vector3.new()
-		if UIS:IsKeyDown(Enum.KeyCode.W) then move = move + cam.CFrame.LookVector end
-		if UIS:IsKeyDown(Enum.KeyCode.S) then move = move - cam.CFrame.LookVector end
-		if UIS:IsKeyDown(Enum.KeyCode.A) then move = move - cam.CFrame.RightVector end
-		if UIS:IsKeyDown(Enum.KeyCode.D) then move = move + cam.CFrame.RightVector end
+-- Custom draggable implementation:
+local dragging = false
+local dragInput, dragStart, startPos
 
-		if UIS:IsKeyDown(Enum.KeyCode.E) then move = move + Vector3.new(0, 1, 0) end
-		if UIS:IsKeyDown(Enum.KeyCode.R) then move = move - Vector3.new(0, 1, 0) end
+local function update(input)
+	local delta = input.Position - dragStart
+	Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+							  startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
 
-		if move.Magnitude > 0 then
-			bodyVel.Velocity = move.Unit * speed
-
-			-- Rotate player to look where the camera is facing
-			local lookDir = cam.CFrame.LookVector
-			local yawCFrame = CFrame.new(hrp.Position, hrp.Position + Vector3.new(lookDir.X, 0, lookDir.Z))
-			hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(0, yawCFrame.Rotation:ToEulerAnglesYXZ())
-		else
-			bodyVel.Velocity = Vector3.zero
+Frame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		-- Start drag only if input is NOT on any button inside the Frame
+		local guiObjects = game:GetService("UserInputService"):GetGuiObjectsAtPosition(input.Position.X, input.Position.Y)
+		local isOnButton = false
+		for _, guiObj in ipairs(guiObjects) do
+			if guiObj:IsA("TextButton") then
+				isOnButton = true
+				break
+			end
 		end
-	end)
+
+		if not isOnButton then
+			dragging = true
+			dragStart = input.Position
+			startPos = Frame.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end
 end)
 
--- Зупинити політ
-stopBtn.MouseButton1Click:Connect(function()
-	flying = false
-	if flyConn then flyConn:Disconnect() end
-	if hrp:FindFirstChild("BodyVelocity") then
-		hrp.BodyVelocity:Destroy()
+Frame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
 	end
-	hum.PlatformStand = false
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		update(input)
+	end
+end)
+
+
+onof.MouseButton1Down:connect(function()
+
+	if nowe == true then
+		nowe = false
+
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,true)
+		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateTypeSwimming,true)
+		speaker.Character.Humanoid.PlatformStand = false
+
+		onof.Text = "fly"
+
+		hum.PlatformStand = false
+		hum:ChangeState(Enum.HumanoidStateType.Landed)
+	elseif nowe == false then
+		nowe = true
+		onof.Text = "nofly"
+		local plr = game.Players.LocalPlayer
+		local chr = plr.Character
+
+		local hg = Instance.new("BodyGyro", chr.HumanoidRootPart)
+		hg.P = 9e4
+		hg.maxTorque = Vector3.new(9e4, 9e4, 9e4)
+		hg.cframe = chr.HumanoidRootPart.CFrame
+
+		local bv = Instance.new("BodyVelocity", chr.HumanoidRootPart)
+		bv.velocity = Vector3.new(0,0,0)
+		bv.maxForce = Vector3.new(9e4, 9e4, 9e4)
+
+		spawn(function()
+			repeat wait()
+				plr.Character.Humanoid.PlatformStand = true
+				local pos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+				local camCF = workspace.CurrentCamera.CFrame
+				local moveVector = Vector3.new()
+				if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+					moveVector = moveVector + camCF.LookVector
+				end
+				if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+					moveVector = moveVector - camCF.LookVector
+				end
+				if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+					moveVector = moveVector - camCF.RightVector
+				end
+				if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+					moveVector = moveVector + camCF.RightVector
+				end
+				moveVector = moveVector.Unit
+				if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+					pos = pos + Vector3.new(0, 1, 0)
+				end
+				if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
+					pos = pos - Vector3.new(0, 1, 0)
+				end
+				bv.velocity = moveVector * speeds + Vector3.new(0, 0, 0)
+				hg.cframe = workspace.CurrentCamera.CFrame
+				bv.Parent = plr.Character.HumanoidRootPart
+				hg.Parent = plr.Character.HumanoidRootPart
+			until nowe == false
+			bv:Destroy()
+			hg:Destroy()
+		end)
+	end
+end)
+
+closebutton.MouseButton1Click:Connect(function()
+	main:Destroy()
+end)
+
+mini.MouseButton1Click:Connect(function()
+	Frame.Size = UDim2.new(0, 44, 0, 28)
+	mini.Visible = false
+	mini2.Visible = true
+	up.Visible = false
+	down.Visible = false
+	onof.Visible = false
+	speed.Visible = false
+	mine.Visible = false
+	TextLabel.Visible = false
+	closebutton.Visible = false
+end)
+
+mini2.MouseButton1Click:Connect(function()
+	Frame.Size = UDim2.new(0, 190, 0, 57)
+	mini.Visible = true
+	mini2.Visible = false
+	up.Visible = true
+	down.Visible = true
+	onof.Visible = true
+	speed.Visible = true
+	mine.Visible = true
+	TextLabel.Visible = true
+	closebutton.Visible = true
+end)
+
+up.MouseButton1Down:Connect(function()
+	speeds = speeds + 1
+	speed.Text = speeds
+end)
+
+mine.MouseButton1Down:Connect(function()
+	if speeds > 1 then
+		speeds = speeds - 1
+		speed.Text = speeds
+	end
 end)
