@@ -28,11 +28,11 @@ local Window = Rayfield:CreateWindow({
  
 local PlayerTab = Window:CreateTab("Player", 7992557358) -- Title, Image
 
-local hide_and_seek_game = Window:CreateTab("hide and seek game") -- Title, Image
+local hide_and_seek_game = Window:CreateTab("hide and seek game", 85803605028190) -- Title, Image
 
-local jump_rope_game = Window:CreateTab("jump rope game") -- Title, Image
+local jump_rope_game = Window:CreateTab("jump rope game", 83957935100320) -- Title, Image
 
-local teleportsTab = Window:CreateTab("teleports")
+local teleportsTab = Window:CreateTab("teleports", 12941020168)
 
 local Buttonteleport = PlayerTab:CreateButton({
     Name = "teleport to player gui", -- Button label
