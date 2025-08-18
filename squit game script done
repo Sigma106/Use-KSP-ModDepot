@@ -42,7 +42,7 @@ local Window = Rayfield:CreateWindow({
     }
  })
  
-local PlayerTab = Window:CreateTab("Player", 7992557358) -- Title, Image
+local PlayerTab = Window:CreateTab("Local Player", 7992557358) -- Title, Image
 
 local hide_and_seek_game = Window:CreateTab("hide and seek game", 85803605028190) -- Title, Image
 
