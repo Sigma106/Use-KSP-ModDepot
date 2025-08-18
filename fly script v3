@@ -16,18 +16,7 @@ main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 main.ResetOnSpawn = false
 
-TextLabel.Parent = main
-TextLabel.BackgroundColor3 = Color3.fromRGB(242, 60, 255)
-TextLabel.Position = UDim2.new(0.469327301, 0, -0.511, 0)
-TextLabel.Size = UDim2.new(0, 100, 0, 28)
-TextLabel.Font = Enum.Font.SourceSans
-TextLabel.Text = "Fly gui"
-TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
-TextLabel.TextScaled = true
-TextLabel.TextSize = 14.000
-TextLabel.TextWrapped = true
-
-Frame.Parent = TextLabel
+Frame.Parent = main
 Frame.BackgroundColor3 = Color3.fromRGB(163, 255, 137)
 Frame.BorderColor3 = Color3.fromRGB(103, 221, 213)
 Frame.Position = UDim2.new(0.100320168, 0, 0.379746825, 0)
@@ -44,6 +33,16 @@ onof.Text = "fly"
 onof.TextColor3 = Color3.fromRGB(0, 0, 0)
 onof.TextSize = 14.000
 
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.fromRGB(242, 60, 255)
+TextLabel.Position = UDim2.new(0.469327301, 0, -0.511, 0)
+TextLabel.Size = UDim2.new(0, 100, 0, 28)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "Fly gui"
+TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextWrapped = true
 
 
 
@@ -93,11 +92,11 @@ local dragInput
 local dragStart
 local startPos
 
-TextLabel.InputBegan:Connect(function(input)
+Frame.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		dragging = true
 		dragStart = input.Position
-		startPos = TextLabel.Position
+		startPos = Frame.Position
 
 		input.Changed:Connect(function()
 			if input.UserInputState == Enum.UserInputState.End then
@@ -107,7 +106,7 @@ TextLabel.InputBegan:Connect(function(input)
 	end
 end)
 
-TextLabel.InputChanged:Connect(function(input)
+Frame.InputChanged:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseMovement then
 		dragInput = input
 	end
@@ -116,7 +115,7 @@ end)
 UserInputService.InputChanged:Connect(function(input)
 	if input == dragInput and dragging then
 		local delta = input.Position - dragStart
-		TextLabel.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+		Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
 			startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 	end
 end)
