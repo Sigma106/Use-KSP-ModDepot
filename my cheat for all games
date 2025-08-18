@@ -33,7 +33,7 @@ local othersscripton = Window:CreateTab("others scripts", 9405930424) -- Title, 
 local visuals = Window:CreateTab("visual", 6523858394) -- Title, Image
 
 
-local settings = Window:CreateTab("settings", 4738901432) -- Title, Image
+local settings = Window:CreateTab("settings", 4492476121) -- Title, Image
 
 -- WalkSpeed Slider
 local Slider = PlayerTab:CreateSlider({
@@ -158,14 +158,14 @@ local Buttonunctest = visuals:CreateButton({
 })
 
 
-local Buttonunctest = visuals:CreateButton({
+local Buttonunctest = settings:CreateButton({
     Name = "unc test", -- Button label
     Callback = function()
        loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/unc%20test"))()
     end
 })
 
-local Buttonurejoin = visuals:CreateButton({
+local Buttonurejoin = settings:CreateButton({
     Name = "rejoin", -- Button label
     Callback = function()
        -- Simple rejoin script for exploit execution
