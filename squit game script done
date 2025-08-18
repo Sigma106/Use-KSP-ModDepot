@@ -96,34 +96,6 @@ local Button = PlayerTab:CreateButton({
     end,
 })
 
-local Toggleinfinityjump = PlayerTab:CreateToggle({
-    Name = "Infinite Jump",
-    CurrentValue = false,
-    Flag = "Toggle1",
-    Callback = function(state)
-        InfiniteJumpEnabled = state
-
-        -- Disconnect previous connection if it exists
-        if InfiniteJumpConnection then
-            InfiniteJumpConnection:Disconnect()
-            InfiniteJumpConnection = nil
-        end
-
-        -- If toggle is turned on, set up the connection
-        if InfiniteJumpEnabled then
-            InfiniteJumpConnection = UserInputService.JumpRequest:Connect(function()
-                local character = LocalPlayer.Character
-                if character then
-                    local humanoid = character:FindFirstChildOfClass("Humanoid")
-                    if humanoid then
-                        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                    end
-                end
-            end)
-        end
-    end,
-})
-
 local Button = jump_rope_game:CreateButton({
     Name = "Teleport to the Finish", -- Button label
     Callback = function()
