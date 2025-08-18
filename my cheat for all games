@@ -32,6 +32,9 @@ local othersscripton = Window:CreateTab("others scripts", 9405930424) -- Title, 
 
 local visuals = Window:CreateTab("visual", 6523858394) -- Title, Image
 
+
+local settings = Window:CreateTab("settings", 4738901432) -- Title, Image
+
 -- WalkSpeed Slider
 local Slider = PlayerTab:CreateSlider({
     Name = "WalkSpeed",
@@ -146,5 +149,45 @@ local Button01 = visuals:CreateButton({
     Name = "esp", -- Button label
     Callback = function()
        loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/esp%20gui%20on%20off'))()
+    end
+})
+
+local Buttonunctest = visuals:CreateButton({
+    Name = "unc test", -- Button label
+    Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/unc%20test"))()
+    end
+})
+
+
+local Buttonunctest = visuals:CreateButton({
+    Name = "unc test", -- Button label
+    Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/unc%20test"))()
+    end
+})
+
+local Buttonurejoin = visuals:CreateButton({
+    Name = "rejoin", -- Button label
+    Callback = function()
+       -- Simple rejoin script for exploit execution
+
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+local player = Players.LocalPlayer
+
+-- Function to rejoin the game
+function rejoinGame()
+    if player then
+        -- Teleport the player back to the game by using the PlaceId
+        TeleportService:Teleport(game.PlaceId, player)
+    else
+        print("Player not found!")
+    end
+end
+
+-- Call the function to rejoin
+rejoinGame()
+
     end
 })
