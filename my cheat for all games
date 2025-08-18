@@ -26,7 +26,7 @@ local Window = Rayfield:CreateWindow({
     }
  })
 
- local PlayerTab = Window:CreateTab("Player", 7992557358) -- Title, Image
+ local PlayerTab = Window:CreateTab("Local Player", 7992557358) -- Title, Image
 
 local othersscripton = Window:CreateTab("others scripts", 9405930424) -- Title, Image
 
@@ -149,14 +149,6 @@ local Button01 = visuals:CreateButton({
        loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/esp%20gui%20on%20off'))()
     end
 })
-
-local Buttonunctest = visuals:CreateButton({
-    Name = "unc test", -- Button label
-    Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/unc%20test"))()
-    end
-})
-
 
 local Buttonunctest = settings:CreateButton({
     Name = "unc test", -- Button label
