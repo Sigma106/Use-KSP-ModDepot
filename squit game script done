@@ -90,7 +90,7 @@ local Buttonnoclip = PlayerTab:CreateButton({
 })
 
 local Button = PlayerTab:CreateButton({
-    Name = "fly FlyGuiV3", -- Button label
+    Name = "fly gui", -- Button label
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fly%20script%20v3"))()
     end,
