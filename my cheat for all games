@@ -106,7 +106,12 @@ end)
     end,
 })
 
-
+local ButtonBtools = PlayerTab:CreateButton({
+    Name = "Btools", -- Button label
+    Callback = function()
+        loadstring(game:HttpGet("https://cdn.wearedevs.net/scripts/BTools.txt"))()
+    end,
+})
 
 local Button = PlayerTab:CreateButton({
     Name = "Fly gui", -- Button label
