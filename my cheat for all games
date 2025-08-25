@@ -127,12 +127,12 @@ local Butdawdwwwton = PlayerTab:CreateButton({
     end,
 })
 
-local Butdawton = PlayerTab:CreateButton({
-    Name = "Fling player", -- Button label
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-FREAKY-FLING/main/kawaii_freaky_fling.lua"))()
-    end,
-})
+--local Butdawton = PlayerTab:CreateButton({
+--    Name = "Fling player", -- Button label
+--    Callback = function()
+--        loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-FREAKY-FLING/main/kawaii_freaky_fling.lua"))()
+--    end,
+--})
 
 local Button1 = othersscripton:CreateButton({
     Name = "Infinite Yield", -- Button label
