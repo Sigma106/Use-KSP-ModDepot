@@ -1,0 +1,137 @@
+-- Place this script inside a **LocalScript** under **StarterPlayer -> StarterCharacterScripts** or **StarterGui**
+
+-- Create the GUI container (panel)
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player.PlayerGui
+
+local panel = Instance.new("Frame")
+panel.Size = UDim2.new(0, 300, 0, 250)
+panel.Position = UDim2.new(0.5, -150, 0.5, -125)
+panel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+panel.BorderSizePixel = 0
+panel.Parent = screenGui
+
+-- Panel drag functionality
+local dragging = false
+local dragStartPos = nil
+local offset = nil
+
+panel.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStartPos = input.Position
+        offset = panel.Position - UDim2.new(0, dragStartPos.X, 0, dragStartPos.Y)
+    end
+end)
+
+panel.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStartPos
+        panel.Position = offset + UDim2.new(0, delta.X, 0, delta.Y)
+    end
+end)
+
+panel.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+-- Close button for the panel
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -35, 0, 5)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+closeButton.Parent = panel
+
+closeButton.MouseButton1Click:Connect(function()
+    panel.Visible = false
+end)
+
+-- Title label for the panel
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(0, 300, 0, 40)
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
+titleLabel.Text = "Teleport Panel"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 20
+titleLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+titleLabel.TextAlign = Enum.TextAlign.Center
+titleLabel.Parent = panel
+
+-- Create TextBox for X coordinate input
+local xInput = Instance.new("TextBox")
+xInput.Size = UDim2.new(0, 200, 0, 30)
+xInput.Position = UDim2.new(0.5, -100, 0, 50)
+xInput.PlaceholderText = "Enter X coordinate"
+xInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+xInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+xInput.Parent = panel
+
+-- Create TextBox for Y coordinate input
+local yInput = Instance.new("TextBox")
+yInput.Size = UDim2.new(0, 200, 0, 30)
+yInput.Position = UDim2.new(0.5, -100, 0, 90)
+yInput.PlaceholderText = "Enter Y coordinate"
+yInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+yInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+yInput.Parent = panel
+
+-- Create TextBox for Z coordinate input
+local zInput = Instance.new("TextBox")
+zInput.Size = UDim2.new(0, 200, 0, 30)
+zInput.Position = UDim2.new(0.5, -100, 0, 130)
+zInput.PlaceholderText = "Enter Z coordinate"
+zInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+zInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+zInput.Parent = panel
+
+-- Create Button for Teleport
+local teleportButton = Instance.new("TextButton")
+teleportButton.Size = UDim2.new(0, 200, 0, 40)
+teleportButton.Position = UDim2.new(0.5, -100, 0, 170)
+teleportButton.Text = "Teleport"
+teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+teleportButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+teleportButton.Parent = panel
+
+-- Create Button for Copying Coordinates
+local copyButton = Instance.new("TextButton")
+copyButton.Size = UDim2.new(0, 200, 0, 40)
+copyButton.Position = UDim2.new(0.5, -100, 0, 210)
+copyButton.Text = "Copy Coordinates"
+copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+copyButton.Parent = panel
+
+-- Function to teleport to entered coordinates
+teleportButton.MouseButton1Click:Connect(function()
+    local x = tonumber(xInput.Text)
+    local y = tonumber(yInput.Text)
+    local z = tonumber(zInput.Text)
+    
+    if x and y and z then
+        -- Set the player's position to the new coordinates
+        player.Character:SetPrimaryPartCFrame(CFrame.new(x, y, z))
+    else
+        print("Invalid coordinates")
+    end
+end)
+
+-- Function to copy current coordinates to the input fields
+copyButton.MouseButton1Click:Connect(function()
+    local character = player.Character
+    if character and character.PrimaryPart then
+        local position = character.PrimaryPart.Position
+        xInput.Text = tostring(position.X)
+        yInput.Text = tostring(position.Y)
+        zInput.Text = tostring(position.Z)
+    else
+        print("Player's character not found!")
+    end
+end)
+
