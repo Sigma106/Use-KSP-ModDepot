@@ -1,0 +1,86 @@
+-- Place this script inside a **LocalScript** under **StarterPlayer -> StarterCharacterScripts** or **StarterGui**
+
+-- Create the GUI elements
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player.PlayerGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 200)
+frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BackgroundTransparency = 0.5
+frame.Parent = screenGui
+
+-- Create TextBox for X coordinate input
+local xInput = Instance.new("TextBox")
+xInput.Size = UDim2.new(0, 200, 0, 30)
+xInput.Position = UDim2.new(0.5, -100, 0, 20)
+xInput.PlaceholderText = "Enter X coordinate"
+xInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+xInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+xInput.Parent = frame
+
+-- Create TextBox for Y coordinate input
+local yInput = Instance.new("TextBox")
+yInput.Size = UDim2.new(0, 200, 0, 30)
+yInput.Position = UDim2.new(0.5, -100, 0, 60)
+yInput.PlaceholderText = "Enter Y coordinate"
+yInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+yInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+yInput.Parent = frame
+
+-- Create TextBox for Z coordinate input
+local zInput = Instance.new("TextBox")
+zInput.Size = UDim2.new(0, 200, 0, 30)
+zInput.Position = UDim2.new(0.5, -100, 0, 100)
+zInput.PlaceholderText = "Enter Z coordinate"
+zInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+zInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+zInput.Parent = frame
+
+-- Create Button for Teleport
+local teleportButton = Instance.new("TextButton")
+teleportButton.Size = UDim2.new(0, 200, 0, 40)
+teleportButton.Position = UDim2.new(0.5, -100, 0, 140)
+teleportButton.Text = "Teleport"
+teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+teleportButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+teleportButton.Parent = frame
+
+-- Create Button for Copying Coordinates
+local copyButton = Instance.new("TextButton")
+copyButton.Size = UDim2.new(0, 200, 0, 40)
+copyButton.Position = UDim2.new(0.5, -100, 0, 180)
+copyButton.Text = "Copy Coordinates"
+copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+copyButton.Parent = frame
+
+-- Function to teleport to entered coordinates
+teleportButton.MouseButton1Click:Connect(function()
+    local x = tonumber(xInput.Text)
+    local y = tonumber(yInput.Text)
+    local z = tonumber(zInput.Text)
+    
+    if x and y and z then
+        -- Set the player's position to the new coordinates
+        player.Character:SetPrimaryPartCFrame(CFrame.new(x, y, z))
+    else
+        print("Invalid coordinates")
+    end
+end)
+
+-- Function to copy current coordinates to the input fields
+copyButton.MouseButton1Click:Connect(function()
+    local character = player.Character
+    if character and character.PrimaryPart then
+        local position = character.PrimaryPart.Position
+        xInput.Text = tostring(position.X)
+        yInput.Text = tostring(position.Y)
+        zInput.Text = tostring(position.Z)
+    else
+        print("Player's character not found!")
+    end
+end)
+
