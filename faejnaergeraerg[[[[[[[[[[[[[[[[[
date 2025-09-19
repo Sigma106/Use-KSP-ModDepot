@@ -1,0 +1,138 @@
+local player = game.Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Main draggable panel
+local panel = Instance.new("Frame")
+panel.Size = UDim2.new(0, 320, 0, 200)
+panel.Position = UDim2.new(0.5, -160, 0.5, -100)
+panel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+panel.BorderSizePixel = 0
+panel.Parent = screenGui
+
+-- Header (for dragging)
+local header = Instance.new("Frame")
+header.Size = UDim2.new(1, 0, 0, 30)
+header.Position = UDim2.new(0, 0, 0, 0)
+header.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+header.BorderSizePixel = 0
+header.Parent = panel
+
+-- Title text
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -30, 1, 0)
+title.Position = UDim2.new(0, 5, 0, 0)
+title.Text = "Teleport GUI"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 18
+title.Parent = header
+
+-- Close button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 25, 0, 25)
+closeBtn.Position = UDim2.new(1, -30, 0, 2)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.TextSize = 16
+closeBtn.Parent = header
+
+closeBtn.MouseButton1Click:Connect(function()
+	panel.Visible = false
+end)
+
+-- TextBox for coordinates
+local coordBox = Instance.new("TextBox")
+coordBox.Size = UDim2.new(0, 280, 0, 35)
+coordBox.Position = UDim2.new(0.5, -140, 0, 50)
+coordBox.PlaceholderText = "Enter coordinates: x, y, z"
+coordBox.Text = ""
+coordBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+coordBox.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+coordBox.ClearTextOnFocus = false
+coordBox.Font = Enum.Font.SourceSans
+coordBox.TextSize = 16
+coordBox.Parent = panel
+
+-- Teleport Button
+local teleportBtn = Instance.new("TextButton")
+teleportBtn.Size = UDim2.new(0, 130, 0, 35)
+teleportBtn.Position = UDim2.new(0.5, -140, 0, 100)
+teleportBtn.Text = "Teleport"
+teleportBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+teleportBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+teleportBtn.Font = Enum.Font.SourceSansBold
+teleportBtn.TextSize = 16
+teleportBtn.Parent = panel
+
+-- Copy Coordinates Button
+local copyBtn = Instance.new("TextButton")
+copyBtn.Size = UDim2.new(0, 130, 0, 35)
+copyBtn.Position = UDim2.new(0.5, 10, 0, 100)
+copyBtn.Text = "Copy Position"
+copyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyBtn.BackgroundColor3 = Color3.fromRGB(150, 50, 50)
+copyBtn.Font = Enum.Font.SourceSansBold
+copyBtn.TextSize = 16
+copyBtn.Parent = panel
+
+-- Teleport logic
+teleportBtn.MouseButton1Click:Connect(function()
+	local text = coordBox.Text
+	local x, y, z = text:match("(-?%d+%.?%d*)%s*,%s*(-?%d+%.?%d*)%s*,%s*(-?%d+%.?%d*)")
+	
+	if x and y and z then
+		local pos = Vector3.new(tonumber(x), tonumber(y), tonumber(z))
+		local char = player.Character
+		if char and char:FindFirstChild("HumanoidRootPart") then
+			char:SetPrimaryPartCFrame(CFrame.new(pos))
+		end
+	else
+		coordBox.Text = "Invalid format. Use: x, y, z"
+	end
+end)
+
+-- Copy current position logic
+copyBtn.MouseButton1Click:Connect(function()
+	local char = player.Character
+	if char and char:FindFirstChild("HumanoidRootPart") then
+		local pos = char.HumanoidRootPart.Position
+		coordBox.Text = string.format("%.2f, %.2f, %.2f", pos.X, pos.Y, pos.Z)
+	end
+end)
+
+-- REAL DRAGGING FIX (uses UserInputService)
+local dragging = false
+local dragStart
+local startPos
+
+header.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = panel.Position
+	end
+end)
+
+header.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		panel.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+			startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
