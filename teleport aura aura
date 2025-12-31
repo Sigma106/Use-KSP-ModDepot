@@ -1,0 +1,141 @@
+-- Services
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "TeleportGui"
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 240, 0, 140)
+frame.Position = UDim2.new(0.4, 0, 0.4, 0)
+frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = frame
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -40, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 5)
+title.BackgroundTransparency = 1
+title.Text = "Teleporting Prank"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextSize = 18
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = frame
+
+-- Close Button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 25, 0, 25)
+closeButton.Position = UDim2.new(1, -30, 0, 5)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.new(1, 1, 1)
+closeButton.BackgroundColor3 = Color3.fromRGB(170, 60, 60)
+closeButton.Parent = frame
+
+-- Start / Stop Button
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 200, 0, 45)
+toggleButton.Position = UDim2.new(0, 20, 0, 70)
+toggleButton.Text = "Start"
+toggleButton.TextColor3 = Color3.new(1, 1, 1)
+toggleButton.TextSize = 18
+toggleButton.BackgroundColor3 = Color3.fromRGB(60, 170, 60)
+toggleButton.Parent = frame
+
+-- Dragging
+local dragging = false
+local dragStart, startPos
+
+frame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+-- Teleport points
+local teleportPoints = {
+	CFrame.new(26.48, 55.71, -31.86),
+	CFrame.new(39.43, 55.78, -31.04),
+	CFrame.new(51.82, 55.65, -30.30)
+}
+
+local stopLocation = CFrame.new(-14.61, 57.89, -28.88)
+
+local running = false
+local index = 1
+local connection
+
+-- Stop function (used by Stop button AND Close button)
+local function stopTeleport()
+	running = false
+	toggleButton.Text = "Start"
+	toggleButton.BackgroundColor3 = Color3.fromRGB(60, 170, 60)
+
+	if connection then
+		connection:Disconnect()
+		connection = nil
+	end
+
+	hrp.CFrame = stopLocation
+end
+
+-- Toggle Button
+toggleButton.MouseButton1Click:Connect(function()
+	running = not running
+
+	if running then
+		toggleButton.Text = "Stop"
+		toggleButton.BackgroundColor3 = Color3.fromRGB(170, 60, 60)
+
+		connection = RunService.Heartbeat:Connect(function()
+			if not hrp or not hrp.Parent then return end
+
+			hrp.CFrame = teleportPoints[index]
+			index += 1
+			if index > #teleportPoints then
+				index = 1
+			end
+		end)
+	else
+		stopTeleport()
+	end
+end)
+
+-- Close Button (acts like Stop)
+closeButton.MouseButton1Click:Connect(function()
+	if running then
+		stopTeleport()
+	end
+	gui:Destroy()
+end)
