@@ -1,0 +1,113 @@
+-- SERVICES
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+
+-- GUI
+local gui = Instance.new("ScreenGui", player.PlayerGui)
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.fromScale(0.25, 0.35)
+frame.Position = UDim2.fromScale(0.35, 0.3)
+frame.BackgroundColor3 = Color3.fromRGB(35,35,35)
+frame.Active = true
+frame.Draggable = true
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.fromScale(1, 0.2)
+title.Text = "Fly Player"
+title.TextScaled = true
+title.TextColor3 = Color3.new(1,1,1)
+title.BackgroundTransparency = 1
+
+local close = Instance.new("TextButton", frame)
+close.Text = "X"
+close.Size = UDim2.fromScale(0.15,0.2)
+close.Position = UDim2.fromScale(0.85,0)
+close.BackgroundColor3 = Color3.fromRGB(200,50,50)
+
+local nameBox = Instance.new("TextBox", frame)
+nameBox.PlaceholderText = "Username"
+nameBox.Size = UDim2.fromScale(0.9,0.15)
+nameBox.Position = UDim2.fromScale(0.05,0.25)
+
+local startBtn = Instance.new("TextButton", frame)
+startBtn.Text = "Start"
+startBtn.Size = UDim2.fromScale(0.4,0.15)
+startBtn.Position = UDim2.fromScale(0.05,0.45)
+
+local upBtn = Instance.new("TextButton", frame)
+upBtn.Text = "S (Up)"
+upBtn.Size = UDim2.fromScale(0.4,0.15)
+upBtn.Position = UDim2.fromScale(0.55,0.45)
+
+local stopBtn = Instance.new("TextButton", frame)
+stopBtn.Text = "Stop"
+stopBtn.Size = UDim2.fromScale(0.9,0.15)
+stopBtn.Position = UDim2.fromScale(0.05,0.65)
+
+-- FLY
+local bodyVel = Instance.new("BodyVelocity")
+bodyVel.MaxForce = Vector3.new(1e5,1e5,1e5)
+
+local bodyGyro = Instance.new("BodyGyro")
+bodyGyro.MaxTorque = Vector3.new(1e5,1e5,1e5)
+
+local following = false
+local targetHRP
+
+-- START FOLLOW
+local function startFollow(name)
+	local target = Players:FindFirstChild(name)
+	if not target or not target.Character then return end
+
+	targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
+	if not targetHRP then return end
+
+	bodyVel.Parent = hrp
+	bodyGyro.Parent = hrp
+	following = true
+end
+
+-- STOP
+local function stopAll()
+	following = false
+	bodyVel.Parent = nil
+	bodyGyro.Parent = nil
+	targetHRP = nil
+end
+
+-- BUTTONS
+startBtn.MouseButton1Click:Connect(function()
+	startFollow(nameBox.Text)
+end)
+
+upBtn.MouseButton1Down:Connect(function()
+	bodyVel.Velocity = Vector3.new(0, 50, 0)
+end)
+
+upBtn.MouseButton1Up:Connect(function()
+	bodyVel.Velocity = Vector3.zero
+end)
+
+stopBtn.MouseButton1Click:Connect(stopAll)
+
+close.MouseButton1Click:Connect(function()
+	stopAll()
+	gui:Destroy()
+end)
+
+-- LOCK TO TARGET BACK
+RunService.RenderStepped:Connect(function()
+	if following and targetHRP then
+		-- Match rotation
+		bodyGyro.CFrame = targetHRP.CFrame
+
+		-- Stay on their back
+		local offset = CFrame.new(0, 2, -2)
+		hrp.CFrame = targetHRP.CFrame * offset
+	end
+end)
