@@ -94,6 +94,21 @@ flyBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 flyBtn.TextColor3 = Color3.new(1, 1, 1)
 flyBtn.Parent = mainTab
 
+-- Fly Button (Main Tab)
+local noclipBtn = Instance.new("TextButton")
+noclipBtn.Size = UDim2.new(0, 200, 0, 40)
+noclipBtn.Position = UDim2.new(0.5, -100, 0, 50)
+noclipBtn.Text = "noclip"
+noclipBtn.Font = Enum.Font.SourceSansBold
+noclipBtn.TextSize = 18
+noclipBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+noclipBtn.TextColor3 = Color3.new(1, 1, 1)
+noclipBtn.Parent = mainTab
+
+noclipBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/efeefefewewfewfefffffffffffffffffff'))()
+end)
+
 flyBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fly%20script%20v3"))()
 end)
