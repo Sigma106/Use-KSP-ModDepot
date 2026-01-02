@@ -137,7 +137,7 @@ troll_playersBtn.TextColor3 = Color3.new(1, 1, 1)
 troll_playersBtn.Parent = mainTab
 
 troll_playersBtn.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/teleport%20aura%20aura"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/9876"))()
 end)
 
 ready_inventoryBtn.MouseButton1Click:Connect(function()
@@ -235,6 +235,7 @@ createTPButton("Spawn", 10, Vector3.new(26.88, 4.00, 95.81))
 createTPButton("Baseplate", 60, Vector3.new(1236.88, -26.43, 87.10))
 createTPButton("Battle", 110, Vector3.new(-26560.35, 20.42, 103.17))
 createTPButton("Win", 160, Vector3.new(35.03, 497.00, 134.45))
+createTPButton("troll brigde", 210, Vector3.new(-14.61, 57.89, -28.88))
 
 -- Tab Switching
 mainTabBtn.MouseButton1Click:Connect(function()
