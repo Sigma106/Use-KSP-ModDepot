@@ -86,7 +86,7 @@ tpTab.Visible = false
 -- Fly Button (Main Tab)
 local flyBtn = Instance.new("TextButton")
 flyBtn.Size = UDim2.new(0, 200, 0, 40)
-flyBtn.Position = UDim2.new(0.5, -50, 0, 70)
+flyBtn.Position = UDim2.new(0.5, -100, 0, 10)
 flyBtn.Text = "Fly"
 flyBtn.Font = Enum.Font.SourceSansBold
 flyBtn.TextSize = 18
