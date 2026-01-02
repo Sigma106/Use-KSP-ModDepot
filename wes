@@ -108,7 +108,7 @@ noclipBtn.Parent = mainTab
 -- Fly Button (Main Tab)
 local tptoolBtn = Instance.new("TextButton")
 tptoolBtn.Size = UDim2.new(0, 200, 0, 40)
-tptoolBtn.Position = UDim2.new(0.5, -100, 0, 120)
+tptoolBtn.Position = UDim2.new(0.5, -100, 0, 110)
 tptoolBtn.Text = "tptool"
 tptoolBtn.Font = Enum.Font.SourceSansBold
 tptoolBtn.TextSize = 18
