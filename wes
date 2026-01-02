@@ -83,16 +83,21 @@ local tpTab = mainTab:Clone()
 tpTab.Parent = frame
 tpTab.Visible = false
 
--- Main Tab Button (Hi - does nothing)
-local hiBtn = Instance.new("TextButton")
-hiBtn.Size = UDim2.new(0, 200, 0, 40)
-hiBtn.Position = UDim2.new(0.5, -100, 0, 20)
-hiBtn.Text = "Hi"
-hiBtn.Font = Enum.Font.SourceSansBold
-hiBtn.TextSize = 18
-hiBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-hiBtn.TextColor3 = Color3.new(1, 1, 1)
-hiBtn.Parent = mainTab
+-- Fly Button (Main Tab)
+local flyBtn = Instance.new("TextButton")
+flyBtn.Size = UDim2.new(0, 200, 0, 40)
+flyBtn.Position = UDim2.new(0.5, -100, 0, 70)
+flyBtn.Text = "Fly"
+flyBtn.Font = Enum.Font.SourceSansBold
+flyBtn.TextSize = 18
+flyBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+flyBtn.TextColor3 = Color3.new(1, 1, 1)
+flyBtn.Parent = mainTab
+
+flyBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+end)
+
 
 -- Teleport helper
 local function teleportTo(x, y, z)
