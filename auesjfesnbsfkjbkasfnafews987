@@ -1,0 +1,100 @@
+-- SERVICES
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+
+-- GUI
+local gui = Instance.new("ScreenGui", player.PlayerGui)
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.fromScale(0.25, 0.35)
+frame.Position = UDim2.fromScale(0.35, 0.3)
+frame.BackgroundColor3 = Color3.fromRGB(35,35,35)
+frame.Active = true
+frame.Draggable = true
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.fromScale(1, 0.2)
+title.Text = "Fly Player"
+title.TextScaled = true
+title.TextColor3 = Color3.new(1,1,1)
+title.BackgroundTransparency = 1
+
+local close = Instance.new("TextButton", frame)
+close.Text = "X"
+close.Size = UDim2.fromScale(0.15,0.2)
+close.Position = UDim2.fromScale(0.85,0)
+close.BackgroundColor3 = Color3.fromRGB(200,50,50)
+
+local nameBox = Instance.new("TextBox", frame)
+nameBox.PlaceholderText = "Username"
+nameBox.Size = UDim2.fromScale(0.9,0.15)
+nameBox.Position = UDim2.fromScale(0.05,0.25)
+
+local startBtn = Instance.new("TextButton", frame)
+startBtn.Text = "Start"
+startBtn.Size = UDim2.fromScale(0.4,0.15)
+startBtn.Position = UDim2.fromScale(0.05,0.45)
+
+local stopBtn = Instance.new("TextButton", frame)
+stopBtn.Text = "Stop"
+stopBtn.Size = UDim2.fromScale(0.9,0.15)
+stopBtn.Position = UDim2.fromScale(0.05,0.65)
+
+-- BODY CONTROLLERS
+local gyro = Instance.new("BodyGyro")
+gyro.MaxTorque = Vector3.new(1e6,1e6,1e6)
+gyro.P = 1e5
+
+local carrying = false
+local targetHRP
+
+-- START
+local function startCarry(name)
+	local target = Players:FindFirstChild(name)
+	if not target or not target.Character then return end
+
+	targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
+	if not targetHRP then return end
+
+	-- teleport YOU to target
+	hrp.CFrame = targetHRP.CFrame * CFrame.new(0, -2, 0)
+
+	gyro.Parent = hrp
+	carrying = true
+end
+
+-- STOP
+local function stopAll()
+	carrying = false
+	gyro.Parent = nil
+	targetHRP = nil
+end
+
+-- BUTTONS
+startBtn.MouseButton1Click:Connect(function()
+	startCarry(nameBox.Text)
+end)
+
+stopBtn.MouseButton1Click:Connect(stopAll)
+
+close.MouseButton1Click:Connect(function()
+	stopAll()
+	gui:Destroy()
+end)
+
+-- LOCK LOGIC
+RunService.RenderStepped:Connect(function()
+	if carrying and targetHRP then
+		-- YOU look at floor (downward)
+		local lookDown = hrp.Position + Vector3.new(0, -10, 0)
+		gyro.CFrame = CFrame.new(hrp.Position, lookDown)
+
+		-- TARGET stands on YOUR back
+		local offset = CFrame.new(0, 3, -1.5)
+		targetHRP.CFrame = hrp.CFrame * offset
+	end
+end)
