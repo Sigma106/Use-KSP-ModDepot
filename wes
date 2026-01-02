@@ -136,7 +136,7 @@ troll_playersBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 troll_playersBtn.TextColor3 = Color3.new(1, 1, 1)
 troll_playersBtn.Parent = mainTab
 
-flyBtn.MouseButton1Click:Connect(function()
+local troll_playersBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/teleport%20aura%20aura"))()
 end)
 
