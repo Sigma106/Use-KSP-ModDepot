@@ -126,6 +126,20 @@ ready_inventoryBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 ready_inventoryBtn.TextColor3 = Color3.new(1, 1, 1)
 ready_inventoryBtn.Parent = mainTab
 
+local troll_playersBtn = Instance.new("TextButton")
+troll_playersBtn.Size = UDim2.new(0, 200, 0, 40)
+troll_playersBtn.Position = UDim2.new(0.5, -100, 0, 210)
+troll_playersBtn.Text = "troll players brigde"
+troll_playersBtn.Font = Enum.Font.SourceSansBold
+troll_playersBtn.TextSize = 18
+troll_playersBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+troll_playersBtn.TextColor3 = Color3.new(1, 1, 1)
+troll_playersBtn.Parent = mainTab
+
+flyBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/teleport%20aura%20aura"))()
+end)
+
 ready_inventoryBtn.MouseButton1Click:Connect(function()
 	-- LocalScript
 
