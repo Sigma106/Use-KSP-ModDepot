@@ -1,0 +1,139 @@
+-- Aura Tower GUI (LocalScript)
+
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "AuraTowerGui"
+gui.ResetOnSpawn = false
+gui.Parent = playerGui
+
+-- Main Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 420, 0, 300)
+frame.Position = UDim2.new(0.5, -210, 0.5, -150)
+frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.Parent = gui
+
+-- Title Label
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -50, 0, 40)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "Aura Tower"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextSize = 22
+title.Font = Enum.Font.SourceSansBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = frame
+
+-- Close Button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 40, 0, 30)
+closeBtn.Position = UDim2.new(1, -45, 0, 5)
+closeBtn.Text = "X"
+closeBtn.TextSize = 18
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.BackgroundColor3 = Color3.fromRGB(170, 50, 50)
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.Parent = frame
+
+closeBtn.MouseButton1Click:Connect(function()
+	gui:Destroy()
+end)
+
+-- Tab Buttons
+local tabBar = Instance.new("Frame")
+tabBar.Size = UDim2.new(1, 0, 0, 40)
+tabBar.Position = UDim2.new(0, 0, 0, 40)
+tabBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+tabBar.Parent = frame
+
+local mainTabBtn = Instance.new("TextButton")
+mainTabBtn.Size = UDim2.new(0.5, 0, 1, 0)
+mainTabBtn.Text = "Main"
+mainTabBtn.Font = Enum.Font.SourceSansBold
+mainTabBtn.TextSize = 18
+mainTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+mainTabBtn.TextColor3 = Color3.new(1, 1, 1)
+mainTabBtn.Parent = tabBar
+
+local tpTabBtn = Instance.new("TextButton")
+tpTabBtn.Size = UDim2.new(0.5, 0, 1, 0)
+tpTabBtn.Position = UDim2.new(0.5, 0, 0, 0)
+tpTabBtn.Text = "Teleports"
+tpTabBtn.Font = Enum.Font.SourceSansBold
+tpTabBtn.TextSize = 18
+tpTabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+tpTabBtn.TextColor3 = Color3.new(1, 1, 1)
+tpTabBtn.Parent = tabBar
+
+-- Content Frames
+local mainTab = Instance.new("Frame")
+mainTab.Size = UDim2.new(1, 0, 1, -80)
+mainTab.Position = UDim2.new(0, 0, 0, 80)
+mainTab.BackgroundTransparency = 1
+mainTab.Parent = frame
+
+local tpTab = mainTab:Clone()
+tpTab.Parent = frame
+tpTab.Visible = false
+
+-- Main Tab Button (Hi - does nothing)
+local hiBtn = Instance.new("TextButton")
+hiBtn.Size = UDim2.new(0, 200, 0, 40)
+hiBtn.Position = UDim2.new(0.5, -100, 0, 20)
+hiBtn.Text = "Hi"
+hiBtn.Font = Enum.Font.SourceSansBold
+hiBtn.TextSize = 18
+hiBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+hiBtn.TextColor3 = Color3.new(1, 1, 1)
+hiBtn.Parent = mainTab
+
+-- Teleport helper
+local function teleportTo(x, y, z)
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hrp = char:WaitForChild("HumanoidRootPart")
+	hrp.CFrame = CFrame.new(x, y, z)
+end
+
+-- Teleport Buttons
+local function createTPButton(text, yPos, coords)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 250, 0, 40)
+	btn.Position = UDim2.new(0.5, -125, 0, yPos)
+	btn.Text = text
+	btn.Font = Enum.Font.SourceSansBold
+	btn.TextSize = 18
+	btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Parent = tpTab
+
+	btn.MouseButton1Click:Connect(function()
+		teleportTo(coords.X, coords.Y, coords.Z)
+	end)
+end
+
+createTPButton("Spawn", 10, Vector3.new(26.88, 4.00, 95.81))
+createTPButton("Baseplate", 60, Vector3.new(1236.88, -26.43, 87.10))
+createTPButton("Battle", 110, Vector3.new(-26560.35, 20.42, 103.17))
+createTPButton("Win", 160, Vector3.new(35.03, 497.00, 134.45))
+
+-- Tab Switching
+mainTabBtn.MouseButton1Click:Connect(function()
+	mainTab.Visible = true
+	tpTab.Visible = false
+	mainTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+	tpTabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+end)
+
+tpTabBtn.MouseButton1Click:Connect(function()
+	mainTab.Visible = false
+	tpTab.Visible = true
+	mainTabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	tpTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+end)
