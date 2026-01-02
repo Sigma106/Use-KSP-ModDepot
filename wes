@@ -116,6 +116,59 @@ tptoolBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 tptoolBtn.TextColor3 = Color3.new(1, 1, 1)
 tptoolBtn.Parent = mainTab
 
+local ready_inventoryBtn = Instance.new("TextButton")
+ready_inventoryBtn.Size = UDim2.new(0, 200, 0, 40)
+ready_inventoryBtn.Position = UDim2.new(0.5, -100, 0, 160)
+ready_inventoryBtn.Text = "ready inventory"
+ready_inventoryBtn.Font = Enum.Font.SourceSansBold
+ready_inventoryBtn.TextSize = 18
+ready_inventoryBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+ready_inventoryBtn.TextColor3 = Color3.new(1, 1, 1)
+ready_inventoryBtn.Parent = mainTab
+
+ready_inventoryBtn.MouseButton1Click:Connect(function()
+	-- LocalScript
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- Save original position
+local originalCFrame = hrp.CFrame
+
+-- Create teleport tool
+local Tele = Instance.new("Tool")
+Tele.Name = "TPTool"
+Tele.ToolTip = "Teleport Tool"
+Tele.RequiresHandle = false
+Tele.RobloxLocked = true
+Tele.Parent = player.Backpack
+
+-- Tool click teleport behavior
+Tele.Equipped:Connect(function(mouse)
+	mouse.Button1Down:Connect(function()
+		if mouse.Target then
+			hrp.CFrame = CFrame.new(
+				mouse.Hit.X,
+				mouse.Hit.Y + 5,
+				mouse.Hit.Z
+			)
+		end
+	end)
+end)
+
+-- Teleport sequence
+task.wait(0.1)
+hrp.CFrame = CFrame.new(-94.28, 58.57, 304.06)
+
+task.wait(0.1)
+hrp.CFrame = CFrame.new(65.02, 61.34, -40.66)
+
+task.wait(0.1)
+hrp.CFrame = originalCFrame
+
+end)
+
 tptoolBtn.MouseButton1Click:Connect(function()
 	local Tele = Instance.new("Tool", game.Players.LocalPlayer.Backpack)
 Tele.RequiresHandle = false
