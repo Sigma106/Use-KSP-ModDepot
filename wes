@@ -97,13 +97,39 @@ flyBtn.Parent = mainTab
 -- Fly Button (Main Tab)
 local noclipBtn = Instance.new("TextButton")
 noclipBtn.Size = UDim2.new(0, 200, 0, 40)
-noclipBtn.Position = UDim2.new(0.5, -100, 0, 50)
+noclipBtn.Position = UDim2.new(0.5, -100, 0, 60)
 noclipBtn.Text = "noclip"
 noclipBtn.Font = Enum.Font.SourceSansBold
 noclipBtn.TextSize = 18
 noclipBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 noclipBtn.TextColor3 = Color3.new(1, 1, 1)
 noclipBtn.Parent = mainTab
+
+-- Fly Button (Main Tab)
+local tptoolBtn = Instance.new("TextButton")
+tptoolBtn.Size = UDim2.new(0, 200, 0, 40)
+tptoolBtn.Position = UDim2.new(0.5, -100, 0, 120)
+tptoolBtn.Text = "tptool"
+tptoolBtn.Font = Enum.Font.SourceSansBold
+tptoolBtn.TextSize = 18
+tptoolBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+tptoolBtn.TextColor3 = Color3.new(1, 1, 1)
+tptoolBtn.Parent = mainTab
+
+tptoolBtn.MouseButton1Click:Connect(function()
+	local Tele = Instance.new("Tool", game.Players.LocalPlayer.Backpack)
+Tele.RequiresHandle = false
+Tele.RobloxLocked = true
+Tele.Name = "TPTool"
+Tele.ToolTip = "Teleport Tool"
+Tele.Equipped:connect(function(Mouse)
+	Mouse.Button1Down:connect(function()
+		if Mouse.Target then
+			game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name).HumanoidRootPart.CFrame = (CFrame.new(Mouse.Hit.x, Mouse.Hit.y + 5, Mouse.Hit.z))
+		end
+	end)
+end)
+end)
 
 noclipBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/efeefefewewfewfefffffffffffffffffff'))()
