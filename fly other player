@@ -1,0 +1,125 @@
+-- SERVICES
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- GUI
+local gui = Instance.new("ScreenGui", player.PlayerGui)
+gui.Name = "FlyPlayerGui"
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.fromScale(0.25, 0.35)
+frame.Position = UDim2.fromScale(0.35, 0.3)
+frame.BackgroundColor3 = Color3.fromRGB(35,35,35)
+frame.Active = true
+frame.Draggable = true
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.fromScale(1, 0.2)
+title.Text = "Fly Player"
+title.TextColor3 = Color3.new(1,1,1)
+title.BackgroundTransparency = 1
+title.TextScaled = true
+
+local close = Instance.new("TextButton", frame)
+close.Text = "X"
+close.Size = UDim2.fromScale(0.15,0.2)
+close.Position = UDim2.fromScale(0.85,0)
+close.BackgroundColor3 = Color3.fromRGB(200,50,50)
+
+local nameBox = Instance.new("TextBox", frame)
+nameBox.PlaceholderText = "Username"
+nameBox.Size = UDim2.fromScale(0.9,0.15)
+nameBox.Position = UDim2.fromScale(0.05,0.25)
+nameBox.Text = ""
+
+local startBtn = Instance.new("TextButton", frame)
+startBtn.Text = "Start"
+startBtn.Size = UDim2.fromScale(0.4,0.15)
+startBtn.Position = UDim2.fromScale(0.05,0.45)
+
+local upBtn = Instance.new("TextButton", frame)
+upBtn.Text = "S (Up)"
+upBtn.Size = UDim2.fromScale(0.4,0.15)
+upBtn.Position = UDim2.fromScale(0.55,0.45)
+
+local stopBtn = Instance.new("TextButton", frame)
+stopBtn.Text = "Stop"
+stopBtn.Size = UDim2.fromScale(0.9,0.15)
+stopBtn.Position = UDim2.fromScale(0.05,0.65)
+
+-- FLY SETUP
+local bodyVel, bodyGyro
+local flying = false
+local weld
+
+local function startFly()
+	if flying then return end
+	flying = true
+
+	bodyVel = Instance.new("BodyVelocity", hrp)
+	bodyVel.MaxForce = Vector3.new(1e5,1e5,1e5)
+	bodyVel.Velocity = Vector3.zero
+
+	bodyGyro = Instance.new("BodyGyro", hrp)
+	bodyGyro.MaxTorque = Vector3.new(1e5,1e5,1e5)
+	bodyGyro.CFrame = hrp.CFrame
+end
+
+local function stopFly()
+	flying = false
+	if bodyVel then bodyVel:Destroy() end
+	if bodyGyro then bodyGyro:Destroy() end
+	if weld then weld:Destroy() end
+end
+
+-- TELEPORT & WELD PLAYER
+local function attachPlayer(targetName)
+	local target = Players:FindFirstChild(targetName)
+	if not target or not target.Character then return end
+
+	local targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
+	if not targetHRP then return end
+
+	targetHRP.CFrame = hrp.CFrame * CFrame.new(0, 2, -1)
+
+	weld = Instance.new("WeldConstraint")
+	weld.Part0 = hrp
+	weld.Part1 = targetHRP
+	weld.Parent = hrp
+end
+
+-- BUTTONS
+startBtn.MouseButton1Click:Connect(function()
+	startFly()
+	attachPlayer(nameBox.Text)
+end)
+
+upBtn.MouseButton1Down:Connect(function()
+	if bodyVel then
+		bodyVel.Velocity = Vector3.new(0, 50, 0)
+	end
+end)
+
+upBtn.MouseButton1Up:Connect(function()
+	if bodyVel then
+		bodyVel.Velocity = Vector3.zero
+	end
+end)
+
+stopBtn.MouseButton1Click:Connect(stopFly)
+close.MouseButton1Click:Connect(function()
+	gui:Destroy()
+	stopFly()
+end)
+
+-- KEEP FLY STABLE
+RunService.RenderStepped:Connect(function()
+	if flying and bodyGyro then
+		bodyGyro.CFrame = workspace.CurrentCamera.CFrame
+	end
+end)
