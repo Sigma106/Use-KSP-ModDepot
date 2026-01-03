@@ -1,0 +1,162 @@
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local selectedPart
+
+-- Tool
+local Tool = Instance.new("Tool")
+Tool.Name = "PartEditor"
+Tool.RequiresHandle = false
+Tool.Parent = player.Backpack
+
+-- GUI
+local gui = Instance.new("ScreenGui", player.PlayerGui)
+gui.Enabled = false
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.fromScale(0.35, 0.55)
+frame.Position = UDim2.fromScale(0.02, 0.22)
+frame.BackgroundColor3 = Color3.fromRGB(35,35,35)
+
+-- UI helpers
+local function label(text, y)
+	local l = Instance.new("TextLabel", frame)
+	l.Text = text
+	l.Size = UDim2.fromScale(0.9, 0.05)
+	l.Position = UDim2.fromScale(0.05, y)
+	l.BackgroundTransparency = 1
+	l.TextColor3 = Color3.new(1,1,1)
+	l.TextXAlignment = Left
+	return l
+end
+
+local function box(placeholder, x, y)
+	local b = Instance.new("TextBox", frame)
+	b.PlaceholderText = placeholder
+	b.Size = UDim2.fromScale(0.25, 0.07)
+	b.Position = UDim2.fromScale(x, y)
+	b.BackgroundColor3 = Color3.fromRGB(60,60,60)
+	b.TextColor3 = Color3.new(1,1,1)
+	return b
+end
+
+local function button(text, x, y)
+	local b = Instance.new("TextButton", frame)
+	b.Text = text
+	b.Size = UDim2.fromScale(0.25, 0.08)
+	b.Position = UDim2.fromScale(x, y)
+	b.BackgroundColor3 = Color3.fromRGB(80,80,80)
+	b.TextColor3 = Color3.new(1,1,1)
+	return b
+end
+
+-- Spawn
+local spawnBtn = button("Spawn Part", 0.05, 0.05)
+
+-- Move arrows
+label("Move", 0.16)
+local up = button("⬆", 0.37, 0.2)
+local down = button("⬇", 0.37, 0.36)
+local left = button("⬅", 0.05, 0.36)
+local right = button("➡", 0.69, 0.36)
+local upY = button("🔼", 0.05, 0.28)
+local downY = button("🔽", 0.69, 0.28)
+
+-- Size
+label("Size (X Y Z)", 0.48)
+local sx = box("X", 0.05, 0.53)
+local sy = box("Y", 0.37, 0.53)
+local sz = box("Z", 0.69, 0.53)
+local applySize = button("Apply Size", 0.37, 0.61)
+
+-- Position
+label("Position (X Y Z)", 0.71)
+local px = box("X", 0.05, 0.76)
+local py = box("Y", 0.37, 0.76)
+local pz = box("Z", 0.69, 0.76)
+local applyPos = button("Apply Pos", 0.37, 0.84)
+
+-- Color
+label("Color (R G B)", 0.94)
+local cr = box("R", 0.05, 0.99)
+local cg = box("G", 0.37, 0.99)
+local cb = box("B", 0.69, 0.99)
+
+-- Actions
+local seatBtn = button("Toggle Seat", 0.05, 1.08)
+local delBtn = button("Delete", 0.69, 1.08)
+
+-- Logic
+spawnBtn.MouseButton1Click:Connect(function()
+	local part = Instance.new("Part")
+	part.Size = Vector3.new(10,1,10)
+	part.Anchored = true
+	part.Position = player.Character.HumanoidRootPart.Position - Vector3.new(0,3,0)
+	part.Parent = workspace
+	selectedPart = part
+end)
+
+-- Select by clicking
+mouse.Button1Down:Connect(function()
+	if mouse.Target and mouse.Target:IsA("BasePart") then
+		selectedPart = mouse.Target
+	end
+end)
+
+local function move(v)
+	if selectedPart then
+		selectedPart.Position += v
+	end
+end
+
+up.MouseButton1Click:Connect(function() move(Vector3.new(0,0,-2)) end)
+down.MouseButton1Click:Connect(function() move(Vector3.new(0,0,2)) end)
+left.MouseButton1Click:Connect(function() move(Vector3.new(-2,0,0)) end)
+right.MouseButton1Click:Connect(function() move(Vector3.new(2,0,0)) end)
+upY.MouseButton1Click:Connect(function() move(Vector3.new(0,2,0)) end)
+downY.MouseButton1Click:Connect(function() move(Vector3.new(0,-2,0)) end)
+
+applySize.MouseButton1Click:Connect(function()
+	if selectedPart then
+		selectedPart.Size = Vector3.new(
+			tonumber(sx.Text) or selectedPart.Size.X,
+			tonumber(sy.Text) or selectedPart.Size.Y,
+			tonumber(sz.Text) or selectedPart.Size.Z
+		)
+	end
+end)
+
+applyPos.MouseButton1Click:Connect(function()
+	if selectedPart then
+		selectedPart.Position = Vector3.new(
+			tonumber(px.Text) or selectedPart.Position.X,
+			tonumber(py.Text) or selectedPart.Position.Y,
+			tonumber(pz.Text) or selectedPart.Position.Z
+		)
+	end
+end)
+
+seatBtn.MouseButton1Click:Connect(function()
+	if not selectedPart then return end
+	local new = selectedPart:IsA("Seat") and Instance.new("Part") or Instance.new("Seat")
+	new.Size = selectedPart.Size
+	new.CFrame = selectedPart.CFrame
+	new.Anchored = true
+	new.Parent = workspace
+	selectedPart:Destroy()
+	selectedPart = new
+end)
+
+delBtn.MouseButton1Click:Connect(function()
+	if selectedPart then
+		selectedPart:Destroy()
+		selectedPart = nil
+	end
+end)
+
+Tool.Equipped:Connect(function()
+	gui.Enabled = true
+end)
+
+Tool.Unequipped:Connect(function()
+	gui.Enabled = false
+end)
