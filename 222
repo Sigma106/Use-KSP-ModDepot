@@ -1,0 +1,140 @@
+local ScreenGui = Instance.new("ScreenGui")
+local exploit = Instance.new("Frame")
+local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+local window = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local UIAspectRatioConstraint_2 = Instance.new("UIAspectRatioConstraint")
+local close = Instance.new("TextButton")
+local UIAspectRatioConstraint_3 = Instance.new("UIAspectRatioConstraint")
+local UITextSizeConstraint = Instance.new("UITextSizeConstraint")
+local undo = Instance.new("TextButton")
+local UIAspectRatioConstraint_4 = Instance.new("UIAspectRatioConstraint")
+local UITextSizeConstraint_2 = Instance.new("UITextSizeConstraint")
+local namewindow = Instance.new("TextLabel")
+local UITextSizeConstraint_3 = Instance.new("UITextSizeConstraint")
+local UIAspectRatioConstraint_5 = Instance.new("UIAspectRatioConstraint")
+local uidrag = Instance.new("UIDragDetector")
+
+--Properties:
+
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+exploit.Name = "exploit"
+exploit.Parent = ScreenGui
+exploit.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
+exploit.BorderColor3 = Color3.fromRGB(27, 42, 53)
+exploit.Position = UDim2.new(0.239950657, 0, 0.147046551, 0)
+exploit.Size = UDim2.new(0.610236228, 0, 0.0465019569, 0)
+
+uidrag.Parent = exploit
+
+
+UIAspectRatioConstraint.Parent = exploit
+UIAspectRatioConstraint.AspectRatio = 18.000
+
+window.Name = "window"
+window.Parent = exploit
+window.BackgroundColor3 = Color3.fromRGB(120, 120, 120)
+window.BorderColor3 = Color3.fromRGB(27, 42, 53)
+window.Position = UDim2.new(0, 0, 0.991172075, 0)
+window.Size = UDim2.new(1, 0, 13.4516125, 0)
+
+TextLabel.Parent = window
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.BorderColor3 = Color3.fromRGB(27, 42, 53)
+TextLabel.BorderSizePixel = 0
+TextLabel.Position = UDim2.new(0.151006714, 0, 0.097560972, 0)
+TextLabel.Size = UDim2.new(0, 200, 0, 50)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "Vous ne pouvez pas charger ce cadre."
+TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.TextSize = 14.000
+TextLabel.TextTransparency = 1.000
+
+UIAspectRatioConstraint_2.Parent = window
+UIAspectRatioConstraint_2.AspectRatio = 1.338
+
+close.Name = "close"
+close.Parent = exploit
+close.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+close.BackgroundTransparency = 1.000
+close.BorderColor3 = Color3.fromRGB(27, 42, 53)
+close.Position = UDim2.new(0.939820766, 0, 0, 0)
+close.Size = UDim2.new(0.0591397844, 0, 0.99999994, 0)
+close.Font = Enum.Font.SourceSansLight
+close.Text = "X"
+close.TextColor3 = Color3.fromRGB(255, 255, 255)
+close.TextScaled = true
+close.TextSize = 14.000
+close.TextWrapped = true
+
+UIAspectRatioConstraint_3.Parent = close
+UIAspectRatioConstraint_3.AspectRatio = 1.065
+
+UITextSizeConstraint.Parent = close
+UITextSizeConstraint.MaxTextSize = 30
+
+undo.Name = "undo"
+undo.Parent = exploit
+undo.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+undo.BackgroundTransparency = 1.000
+undo.BorderColor3 = Color3.fromRGB(27, 42, 53)
+undo.Position = UDim2.new(0.882974803, 0, 0, 0)
+undo.Size = UDim2.new(0.055555556, 0, 1, 0)
+undo.Font = Enum.Font.SourceSansLight
+undo.Text = "-"
+undo.TextColor3 = Color3.fromRGB(255, 255, 255)
+undo.TextScaled = true
+undo.TextSize = 14.000
+undo.TextWrapped = true
+
+UIAspectRatioConstraint_4.Parent = undo
+
+UITextSizeConstraint_2.Parent = undo
+UITextSizeConstraint_2.MaxTextSize = 30
+
+namewindow.Name = "name window"
+namewindow.Parent = exploit
+namewindow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+namewindow.BackgroundTransparency = 1.000
+namewindow.BorderColor3 = Color3.fromRGB(27, 42, 53)
+namewindow.Position = UDim2.new(0.452241629, 0, -4.92218987e-07, 0)
+namewindow.Size = UDim2.new(0.127240136, 0, 0.870967686, 0)
+namewindow.Font = Enum.Font.SourceSans
+namewindow.Text = "menu hide"
+namewindow.TextColor3 = Color3.fromRGB(255, 255, 255)
+namewindow.TextScaled = true
+namewindow.TextSize = 33.000
+namewindow.TextWrapped = true
+
+UITextSizeConstraint_3.Parent = namewindow
+UITextSizeConstraint_3.MaxTextSize = 33
+
+UIAspectRatioConstraint_5.Parent = namewindow
+UIAspectRatioConstraint_5.AspectRatio = 2.630
+
+undo.MouseButton1Click:Connect(function()
+	script.Parent.MouseButton1Click:Connect(function()
+		-- Toggle visibility of the window
+		local window = script.Parent.Parent:FindFirstChild("window")
+		if window then
+			window.Visible = not window.Visible
+		end
+	end)
+end)
+
+close.MouseButton1Click:Connect(function()
+	script.Parent.MouseEnter:Connect(function()
+		script.Parent.BackgroundTransparency = 0
+	end)
+
+	script.Parent.MouseLeave:Connect(function()
+		script.Parent.BackgroundTransparency = 1
+	end)
+
+	script.Parent.MouseButton1Click:Connect(function()
+		script.Parent.Parent.Parent.exploit.Visible = false
+	end)
+end)
