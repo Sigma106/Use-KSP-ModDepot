@@ -15,9 +15,6 @@ local brigdetroll = Instance.new("TextButton")
 local close = Instance.new("TextButton")
 local UIAspectRatioConstraint_2 = Instance.new("UIAspectRatioConstraint")
 local UITextSizeConstraint = Instance.new("UITextSizeConstraint")
-local undo = Instance.new("TextButton")
-local UIAspectRatioConstraint_3 = Instance.new("UIAspectRatioConstraint")
-local UITextSizeConstraint_2 = Instance.new("UITextSizeConstraint")
 local namewindow = Instance.new("TextLabel")
 local UIAspectRatioConstraint_4 = Instance.new("UIAspectRatioConstraint")
 local UITextSizeConstraint_3 = Instance.new("UITextSizeConstraint")
@@ -30,282 +27,103 @@ local UITextSizeConstraint_5 = Instance.new("UITextSizeConstraint")
 local windowteleport = Instance.new("Frame")
 local _1tp = Instance.new("TextButton")
 local _2tp = Instance.new("TextButton")
+local _3tp = Instance.new("TextButton")
 local _4tp = Instance.new("TextButton")
 local _5tp = Instance.new("TextButton")
-local _3tp = Instance.new("TextButton")
-local uidrag = Instance.new("UIDragDetector")
---Properties:
 
+-- ScreenGui
 ScreenGuiss.Name = "ScreenGuiss"
-ScreenGui.Parent = game.CoreGui
+ScreenGuiss.Parent = game.CoreGui
 ScreenGuiss.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-exploit.Name = "exploit"
+-- Main frame
 exploit.Parent = ScreenGuiss
 exploit.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
-exploit.BorderColor3 = Color3.fromRGB(27, 42, 53)
-exploit.Position = UDim2.new(0.239950657, 0, 0.147046551, 0)
-exploit.Size = UDim2.new(0.419064701, 0, 0.0465019569, 0)
+exploit.Position = UDim2.new(0.24, 0, 0.15, 0)
+exploit.Size = UDim2.new(0.42, 0, 0.046, 0)
 
-uidrag.Parent = exploit
+-- Drag (executor safe)
+exploit.Active = true
+exploit.Draggable = true
 
 UIAspectRatioConstraint.Parent = exploit
-UIAspectRatioConstraint.AspectRatio = 18.000
+UIAspectRatioConstraint.AspectRatio = 18
 
-windowmain.Name = "windowmain"
+-- Window main
 windowmain.Parent = exploit
 windowmain.BackgroundColor3 = Color3.fromRGB(120, 120, 120)
-windowmain.BorderColor3 = Color3.fromRGB(27, 42, 53)
-windowmain.Position = UDim2.new(-0.00194956409, 0, 2.25448942, 0)
-windowmain.Size = UDim2.new(1, 0, 13.4516125, 0)
+windowmain.Position = UDim2.new(0, 0, 2.25, 0)
+windowmain.Size = UDim2.new(1, 0, 13.45, 0)
 
-FlyGui.Name = "Fly Gui"
-FlyGui.Parent = windowmain
-FlyGui.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-FlyGui.BorderColor3 = Color3.fromRGB(0, 0, 0)
-FlyGui.Position = UDim2.new(0.253443331, 0, 0.0313052312, 0)
-FlyGui.Size = UDim2.new(0, 251, 0, 50)
-FlyGui.Font = Enum.Font.SourceSans
-FlyGui.Text = "Fly Gui"
-FlyGui.TextColor3 = Color3.fromRGB(255, 255, 255)
-FlyGui.TextScaled = true
-FlyGui.TextSize = 14.000
-FlyGui.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-FlyGui.TextWrapped = true
+-- Buttons
+local function makeBtn(btn, parent, text, posY)
+	btn.Parent = parent
+	btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+	btn.Position = UDim2.new(0.253, 0, posY, 0)
+	btn.Size = UDim2.new(0, 251, 0, 50)
+	btn.Font = Enum.Font.SourceSans
+	btn.Text = text
+	btn.TextColor3 = Color3.fromRGB(255,255,255)
+	btn.TextScaled = true
+end
 
-Readyinventar.Name = "Ready inventar "
-Readyinventar.Parent = windowmain
-Readyinventar.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-Readyinventar.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Readyinventar.Position = UDim2.new(0.253443331, 0, 0.58697319, 0)
-Readyinventar.Size = UDim2.new(0, 251, 0, 50)
-Readyinventar.Font = Enum.Font.SourceSans
-Readyinventar.Text = "Ready inventar"
-Readyinventar.TextColor3 = Color3.fromRGB(255, 255, 255)
-Readyinventar.TextScaled = true
-Readyinventar.TextSize = 14.000
-Readyinventar.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-Readyinventar.TextWrapped = true
+makeBtn(FlyGui, windowmain, "Fly Gui", 0.03)
+makeBtn(NoclipGui, windowmain, "Noclip Gui", 0.21)
+makeBtn(tprool, windowmain, "TP Tool", 0.39)
+makeBtn(Readyinventar, windowmain, "Ready Inventar", 0.58)
+makeBtn(brigdetroll, windowmain, "Bridge Troll", 0.79)
 
-NoclipGui.Name = "Noclip Gui"
-NoclipGui.Parent = windowmain
-NoclipGui.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-NoclipGui.BorderColor3 = Color3.fromRGB(0, 0, 0)
-NoclipGui.Position = UDim2.new(0.253443331, 0, 0.213919088, 0)
-NoclipGui.Size = UDim2.new(0, 251, 0, 50)
-NoclipGui.Font = Enum.Font.SourceSans
-NoclipGui.Text = "Noclip gui"
-NoclipGui.TextColor3 = Color3.fromRGB(255, 255, 255)
-NoclipGui.TextScaled = true
-NoclipGui.TextSize = 14.000
-NoclipGui.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-NoclipGui.TextWrapped = true
-
-tprool.Name = "tprool"
-tprool.Parent = windowmain
-tprool.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-tprool.BorderColor3 = Color3.fromRGB(0, 0, 0)
-tprool.Position = UDim2.new(0.253443331, 0, 0.396532923, 0)
-tprool.Size = UDim2.new(0, 251, 0, 50)
-tprool.Font = Enum.Font.SourceSans
-tprool.Text = "tptool"
-tprool.TextColor3 = Color3.fromRGB(255, 255, 255)
-tprool.TextScaled = true
-tprool.TextSize = 14.000
-tprool.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-tprool.TextWrapped = true
-
-brigdetroll.Name = "brigde troll"
-brigdetroll.Parent = windowmain
-brigdetroll.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-brigdetroll.BorderColor3 = Color3.fromRGB(0, 0, 0)
-brigdetroll.Position = UDim2.new(0.253443331, 0, 0.790457189, 0)
-brigdetroll.Size = UDim2.new(0, 251, 0, 50)
-brigdetroll.Font = Enum.Font.SourceSans
-brigdetroll.Text = "brigde troll"
-brigdetroll.TextColor3 = Color3.fromRGB(255, 255, 255)
-brigdetroll.TextScaled = true
-brigdetroll.TextSize = 14.000
-brigdetroll.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-brigdetroll.TextWrapped = true
-
-close.Name = "close"
+-- Close
 close.Parent = exploit
-close.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-close.BackgroundTransparency = 1.000
-close.BorderColor3 = Color3.fromRGB(27, 42, 53)
-close.Position = UDim2.new(0.939820766, 0, 0, 0)
-close.Size = UDim2.new(0.0591397844, 0, 0.99999994, 0)
-close.Font = Enum.Font.SourceSansLight
+close.BackgroundTransparency = 1
+close.Position = UDim2.new(0.94,0,0,0)
+close.Size = UDim2.new(0.06,0,1,0)
 close.Text = "X"
-close.TextColor3 = Color3.fromRGB(255, 255, 255)
 close.TextScaled = true
-close.TextSize = 14.000
-close.TextWrapped = true
 
 UIAspectRatioConstraint_2.Parent = close
-UIAspectRatioConstraint_2.AspectRatio = 1.065
-
 UITextSizeConstraint.Parent = close
 UITextSizeConstraint.MaxTextSize = 28
 
---undo.Name = "undo"
---undo.Parent = exploit
---undo.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
---undo.BackgroundTransparency = 1.000
---undo.BorderColor3 = Color3.fromRGB(27, 42, 53)
---undo.Position = UDim2.new(0.882974803, 0, 0, 0)
---undo.Size = UDim2.new(0.055555556, 0, 1, 0)
---undo.Font = Enum.Font.SourceSansLight
---undo.Text = "-"
---undo.TextColor3 = Color3.fromRGB(255, 255, 255)
---undo.TextScaled = true
---undo.TextSize = 14.000
---undo.TextWrapped = true
-
-UIAspectRatioConstraint_3.Parent = undo
-
-UITextSizeConstraint_2.Parent = undo
-UITextSizeConstraint_2.MaxTextSize = 28
-
-namewindow.Name = "name window"
+-- Title
 namewindow.Parent = exploit
-namewindow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-namewindow.BackgroundTransparency = 1.000
-namewindow.BorderColor3 = Color3.fromRGB(27, 42, 53)
-namewindow.Position = UDim2.new(0.452241629, 0, -4.92218987e-07, 0)
-namewindow.Size = UDim2.new(0.127240136, 0, 0.870967686, 0)
-namewindow.Font = Enum.Font.SourceSans
+namewindow.BackgroundTransparency = 1
+namewindow.Position = UDim2.new(0.45,0,0,0)
+namewindow.Size = UDim2.new(0.13,0,0.87,0)
 namewindow.Text = "menu hide"
-namewindow.TextColor3 = Color3.fromRGB(255, 255, 255)
 namewindow.TextScaled = true
-namewindow.TextSize = 33.000
-namewindow.TextWrapped = true
+namewindow.TextColor3 = Color3.fromRGB(255,255,255)
 
 UIAspectRatioConstraint_4.Parent = namewindow
-UIAspectRatioConstraint_4.AspectRatio = 2.630
-
 UITextSizeConstraint_3.Parent = namewindow
 UITextSizeConstraint_3.MaxTextSize = 17
 
-Main.Name = "Main"
+-- Tabs
 Main.Parent = exploit
-Main.BackgroundColor3 = Color3.fromRGB(71, 71, 71)
-Main.BorderColor3 = Color3.fromRGB(27, 42, 53)
-Main.Position = UDim2.new(0, 0, 0.999999762, 0)
-Main.Size = UDim2.new(0.579481602, 0, 1.19718719, 0)
-Main.Font = Enum.Font.SourceSans
+Main.Position = UDim2.new(0,0,1,0)
+Main.Size = UDim2.new(0.58,0,1.2,0)
 Main.Text = "Main"
-Main.TextColor3 = Color3.fromRGB(255, 255, 255)
 Main.TextScaled = true
-Main.TextSize = 49.000
-Main.TextWrapped = true
 
-UIAspectRatioConstraint_5.Parent = Main
-UIAspectRatioConstraint_5.AspectRatio = 7.914
-
-UITextSizeConstraint_4.Parent = Main
-UITextSizeConstraint_4.MaxTextSize = 34
-
-Teleport.Name = "Teleport"
 Teleport.Parent = exploit
-Teleport.BackgroundColor3 = Color3.fromRGB(71, 71, 71)
-Teleport.BorderColor3 = Color3.fromRGB(27, 42, 53)
-Teleport.Position = UDim2.new(0.525018275, 0, 0.976001024, 0)
-Teleport.Size = UDim2.new(0.473942339, 0, 1.27599859, 0)
-Teleport.Font = Enum.Font.SourceSans
+Teleport.Position = UDim2.new(0.525,0,0.98,0)
+Teleport.Size = UDim2.new(0.47,0,1.28,0)
 Teleport.Text = "Teleport"
-Teleport.TextColor3 = Color3.fromRGB(255, 255, 255)
 Teleport.TextScaled = true
-Teleport.TextSize = 49.000
-Teleport.TextWrapped = true
 
-UIAspectRatioConstraint_6.Parent = Teleport
-UIAspectRatioConstraint_6.AspectRatio = 6.686
-
-UITextSizeConstraint_5.Parent = Teleport
-UITextSizeConstraint_5.MaxTextSize = 34
-
-windowteleport.Name = "windowteleport"
+-- Teleport window
 windowteleport.Parent = exploit
-windowteleport.BackgroundColor3 = Color3.fromRGB(120, 120, 120)
-windowteleport.BorderColor3 = Color3.fromRGB(27, 42, 53)
-windowteleport.Position = UDim2.new(-0.00194956409, 0, 2.25448942, 0)
-windowteleport.Size = UDim2.new(1, 0, 13.4516125, 0)
+windowteleport.Size = windowmain.Size
+windowteleport.Position = windowmain.Position
 windowteleport.Visible = false
 
-_1tp.Name = "1 tp"
-_1tp.Parent = windowteleport
-_1tp.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-_1tp.BorderColor3 = Color3.fromRGB(0, 0, 0)
-_1tp.Position = UDim2.new(0.253443331, 0, 0.0313052312, 0)
-_1tp.Size = UDim2.new(0, 251, 0, 50)
-_1tp.Font = Enum.Font.SourceSans
-_1tp.Text = "teleport to finish"
-_1tp.TextColor3 = Color3.fromRGB(255, 255, 255)
-_1tp.TextScaled = true
-_1tp.TextSize = 14.000
-_1tp.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-_1tp.TextWrapped = true
+makeBtn(_1tp, windowteleport, "Teleport to finish", 0.03)
+makeBtn(_2tp, windowteleport, "Noclip", 0.21)
+makeBtn(_5tp, windowteleport, "TP Tool", 0.39)
+makeBtn(_3tp, windowteleport, "Ready Inventar", 0.58)
+makeBtn(_4tp, windowteleport, "Bridge Troll", 0.79)
 
-_2tp.Name = "2 tp"
-_2tp.Parent = windowteleport
-_2tp.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-_2tp.BorderColor3 = Color3.fromRGB(0, 0, 0)
-_2tp.Position = UDim2.new(0.253443331, 0, 0.213919088, 0)
-_2tp.Size = UDim2.new(0, 251, 0, 50)
-_2tp.Font = Enum.Font.SourceSans
-_2tp.Text = "Noclip gui"
-_2tp.TextColor3 = Color3.fromRGB(255, 255, 255)
-_2tp.TextScaled = true
-_2tp.TextSize = 14.000
-_2tp.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-_2tp.TextWrapped = true
-
-_4tp.Name = "4 tp"
-_4tp.Parent = windowteleport
-_4tp.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-_4tp.BorderColor3 = Color3.fromRGB(0, 0, 0)
-_4tp.Position = UDim2.new(0.253443331, 0, 0.790457189, 0)
-_4tp.Size = UDim2.new(0, 251, 0, 50)
-_4tp.Font = Enum.Font.SourceSans
-_4tp.Text = "brigde troll"
-_4tp.TextColor3 = Color3.fromRGB(255, 255, 255)
-_4tp.TextScaled = true
-_4tp.TextSize = 14.000
-_4tp.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-_4tp.TextWrapped = true
-
-_5tp.Name = "5 tp"
-_5tp.Parent = windowteleport
-_5tp.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-_5tp.BorderColor3 = Color3.fromRGB(0, 0, 0)
-_5tp.Position = UDim2.new(0.253443331, 0, 0.396532923, 0)
-_5tp.Size = UDim2.new(0, 251, 0, 50)
-_5tp.Font = Enum.Font.SourceSans
-_5tp.Text = "tptool"
-_5tp.TextColor3 = Color3.fromRGB(255, 255, 255)
-_5tp.TextScaled = true
-_5tp.TextSize = 14.000
-_5tp.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-_5tp.TextWrapped = true
-
-_3tp.Name = "3 tp"
-_3tp.Parent = windowteleport
-_3tp.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-_3tp.BorderColor3 = Color3.fromRGB(0, 0, 0)
-_3tp.Position = UDim2.new(0.253443331, 0, 0.58697319, 0)
-_3tp.Size = UDim2.new(0, 251, 0, 50)
-_3tp.Font = Enum.Font.SourceSans
-_3tp.Text = "Ready inventar"
-_3tp.TextColor3 = Color3.fromRGB(255, 255, 255)
-_3tp.TextScaled = true
-_3tp.TextSize = 14.000
-_3tp.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-_3tp.TextWrapped = true
-
--- Scripts:
-
+-- Scripts
 Main.MouseButton1Click:Connect(function()
 	windowmain.Visible = true
 	windowteleport.Visible = false
@@ -316,83 +134,32 @@ Teleport.MouseButton1Click:Connect(function()
 	windowteleport.Visible = true
 end)
 
-Readyinventar.MouseButton1Click:Connect(function()
-	local player = game.Players.LocalPlayer
-	local character = player.Character or player.CharacterAdded:Wait()
-	local hrp = character:WaitForChild("HumanoidRootPart")
-
-	-- Save original position
-	local originalCFrame = hrp.CFrame
-
-	-- Create teleport tool
-	local Tele = Instance.new("Tool")
-	Tele.Name = "TPTool"
-	Tele.ToolTip = "Teleport Tool"
-	Tele.RequiresHandle = false
-	Tele.RobloxLocked = true
-	Tele.Parent = player.Backpack
-
-	-- Tool click teleport behavior
-	Tele.Equipped:Connect(function(mouse)
-		mouse.Button1Down:Connect(function()
-			if mouse.Target then
-				hrp.CFrame = CFrame.new(
-					mouse.Hit.X,
-					mouse.Hit.Y + 5,
-					mouse.Hit.Z
-				)
-			end
-		end)
-	end)
-
-	-- Teleport sequence
-	task.wait(0.1)
-	hrp.CFrame = CFrame.new(-94.28, 58.57, 304.06)
-
-	task.wait(0.1)
-	hrp.CFrame = CFrame.new(65.02, 61.34, -40.66)
-
-	task.wait(0.1)
-	hrp.CFrame = originalCFrame
-
-end)
-
 tprool.MouseButton1Click:Connect(function()
 	local Tele = Instance.new("Tool", game.Players.LocalPlayer.Backpack)
 	Tele.RequiresHandle = false
-	Tele.RobloxLocked = true
 	Tele.Name = "TPTool"
-	Tele.ToolTip = "Teleport Tool"
-	Tele.Equipped:connect(function(Mouse)
-		Mouse.Button1Down:connect(function()
-			if Mouse.Target then
-				game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name).HumanoidRootPart.CFrame = (CFrame.new(Mouse.Hit.x, Mouse.Hit.y + 5, Mouse.Hit.z))
+	Tele.Equipped:Connect(function(mouse)
+		mouse.Button1Down:Connect(function()
+			if mouse.Target then
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+					CFrame.new(mouse.Hit.X, mouse.Hit.Y + 5, mouse.Hit.Z)
 			end
 		end)
 	end)
 end)
 
 NoclipGui.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/efeefefewewfewfefffffffffffffffffff'))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/efeefefewewfewfefffffffffffffffffff"))()
 end)
 
 FlyGui.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fly%20script%20v3"))()
 end)
 
--- Hide / Show window
---undo.MouseButton1Click:Connect(function()
---	windowmain.Visible = not windowmain.Visible
---	windowteleport.Visible = not windowteleport.Visible
---end)
-
--- Close GUI
 close.MouseButton1Click:Connect(function()
 	exploit.Visible = false
 end)
 
-
--- Hover effect for close button
 close.MouseEnter:Connect(function()
 	close.BackgroundTransparency = 0
 end)
@@ -400,4 +167,3 @@ end)
 close.MouseLeave:Connect(function()
 	close.BackgroundTransparency = 1
 end)
-
