@@ -9,11 +9,11 @@
 
 local SpectateGui = Instance.new("ScreenGui")
 local Button = Instance.new("ImageButton")
+local ButtonClose = Instance.new("TextButton")
 local Bar = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
 local Next = Instance.new("TextButton")
 local Previous = Instance.new("TextButton")
-local Close = Instance.new("TextButton")
 local UIGradient = Instance.new("UIGradient")
 local UIGradient_2 = Instance.new("UIGradient")
 local UIGradient_3 = Instance.new("UIGradient")
@@ -32,6 +32,18 @@ Button.Position = UDim2.new(0, 0, 0.5, -25)
 Button.Size = UDim2.new(0, 50, 0, 50)
 Button.Image = "http://www.roblox.com/asset/?id=176106970"
 
+-- Close button on ImageButton
+ButtonClose.Name = "ButtonClose"
+ButtonClose.Parent = Button
+ButtonClose.Size = UDim2.new(0.4, 0, 0.4, 0)
+ButtonClose.Position = UDim2.new(0.6, 0, 0, 0)
+ButtonClose.Text = "X"
+ButtonClose.TextScaled = true
+ButtonClose.Font = Enum.Font.SourceSansBold
+ButtonClose.TextColor3 = Color3.fromRGB(255,255,255)
+ButtonClose.BackgroundColor3 = Color3.fromRGB(170,60,60)
+ButtonClose.BackgroundTransparency = 0.2
+
 Bar.Name = "Bar"
 Bar.Parent = SpectateGui
 Bar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -39,13 +51,12 @@ Bar.BackgroundTransparency = 0.2
 Bar.BorderSizePixel = 5
 Bar.Position = UDim2.new(-1, -100, 0.88, -50)
 Bar.Size = UDim2.new(0, 200, 0, 50)
-Bar.Visible = true
 
 Title.Name = "Title"
 Title.Parent = Bar
 Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0.25, 0, 0, 0)
-Title.Size = UDim2.new(0.3, 0, 1, 0)
+Title.Position = UDim2.new(0.275, 0, 0, 0)
+Title.Size = UDim2.new(0.45, 0, 1, 0)
 Title.Font = Enum.Font.SourceSans
 Title.TextColor3 = Color3.fromRGB(255,255,255)
 Title.TextScaled = true
@@ -60,52 +71,42 @@ Previous.TextColor3 = Color3.fromRGB(255,255,255)
 
 Next.Name = "Next"
 Next.Parent = Bar
-Next.Position = UDim2.new(0.55, 0, 0, 0)
-Next.Size = UDim2.new(0.25, 0, 1, 0)
+Next.Position = UDim2.new(1, 0, 0, 0)
+Next.Size = UDim2.new(-0.25, 0, 1, 0)
 Next.Text = ">"
 Next.TextSize = 48
 Next.Font = Enum.Font.SourceSans
 Next.TextColor3 = Color3.fromRGB(255,255,255)
 
-Close.Name = "Close"
-Close.Parent = Bar
-Close.Position = UDim2.new(0.8, 0, 0, 0)
-Close.Size = UDim2.new(0.2, 0, 1, 0)
-Close.Text = "X"
-Close.TextScaled = true
-Close.Font = Enum.Font.SourceSansBold
-Close.TextColor3 = Color3.fromRGB(255,255,255)
-Close.BackgroundColor3 = Color3.fromRGB(170,60,60)
-
 UIGradient.Parent = Next
 UIGradient_2.Parent = Previous
 UIGradient_3.Parent = Bar
 
--- LocalScript:
+-- ======================
+-- LocalScript Logic
+-- ======================
 
 local cam = workspace.CurrentCamera
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
-local open = false
-
--- DRAGGING
+-- ===== DRAG IMAGEBUTTON =====
 local dragging = false
 local dragStart
 local startPos
 
-Bar.InputBegan:Connect(function(input)
+Button.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		dragging = true
 		dragStart = input.Position
-		startPos = Bar.Position
+		startPos = Button.Position
 	end
 end)
 
 UIS.InputChanged:Connect(function(input)
 	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
 		local delta = input.Position - dragStart
-		Bar.Position = UDim2.new(
+		Button.Position = UDim2.new(
 			startPos.X.Scale,
 			startPos.X.Offset + delta.X,
 			startPos.Y.Scale,
@@ -120,7 +121,19 @@ UIS.InputEnded:Connect(function(input)
 	end
 end)
 
--- PLAYER INDEX
+-- ===== CLOSE IMAGEBUTTON =====
+ButtonClose.MouseButton1Click:Connect(function()
+	Button.Visible = false
+end)
+
+-- ===== REOPEN IMAGEBUTTON (FAILSAFE) =====
+UIS.InputBegan:Connect(function(input, gp)
+	if not gp and input.KeyCode == Enum.KeyCode.RightShift then
+		Button.Visible = true
+	end
+end)
+
+-- ===== PLAYER INDEX =====
 local function getIndex()
 	for i,v in ipairs(game.Players:GetPlayers()) do
 		if v.Name == Title.Text then
@@ -129,7 +142,9 @@ local function getIndex()
 	end
 end
 
--- OPEN / CLOSE
+local open = false
+
+-- ===== TOGGLE SPECTATE BAR =====
 Button.MouseButton1Click:Connect(function()
 	open = not open
 
@@ -139,18 +154,14 @@ Button.MouseButton1Click:Connect(function()
 			Title.Text = game.Players:GetPlayerFromCharacter(cam.CameraSubject.Parent).Name
 		end)
 	else
-		cam.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+		pcall(function()
+			cam.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+		end)
 		Bar:TweenPosition(UDim2.new(-1,-100,0.88,-50),"In","Quad",0.5,true)
 	end
 end)
 
-Close.MouseButton1Click:Connect(function()
-	open = false
-	cam.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
-	Bar:TweenPosition(UDim2.new(-1,-100,0.88,-50),"In","Quad",0.5,true)
-end)
-
--- SPECTATE CONTROLS
+-- ===== SPECTATE CONTROLS =====
 Previous.MouseButton1Click:Connect(function()
 	local players = game.Players:GetPlayers()
 	local i = getIndex() or 1
@@ -159,19 +170,4 @@ Previous.MouseButton1Click:Connect(function()
 	Title.Text = target.Name
 end)
 
-Next.MouseButton1Click:Connect(function()
-	local players = game.Players:GetPlayers()
-	local i = getIndex() or 1
-	local target = players[i+1] or players[1]
-	cam.CameraSubject = target.Character.Humanoid
-	Title.Text = target.Name
-end)
-
--- GRADIENT ANIMATION
-for _,g in ipairs({UIGradient,UIGradient_2,UIGradient_3}) do
-	TweenService:Create(
-		g,
-		TweenInfo.new(5,Enum.EasingStyle.Back,Enum.EasingDirection.InOut,-1,true),
-		{Offset = Vector2.new(10,2)}
-	):Play()
-end
+Next.MouseBut
