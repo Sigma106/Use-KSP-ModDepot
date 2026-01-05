@@ -1,0 +1,304 @@
+--[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+--// Universal Spectate GUI Made by Tyrone_darealest 
+
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local toggleKey = Enum.KeyCode.RightShift
+
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "SpectateUI"
+ScreenGui.Parent = (gethui and gethui()) or game.CoreGui 
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 300, 0, 180)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -90)
+MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+MainFrame.Active = true
+MainFrame.Visible = true
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner", MainFrame)
+UICorner.CornerRadius = UDim.new(0, 12)
+
+
+local TopBar = Instance.new("Frame")
+TopBar.Name = "TopBar"
+TopBar.Size = UDim2.new(1, 0, 0, 30)
+TopBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TopBar.Parent = MainFrame
+local TopBarCorner = Instance.new("UICorner", TopBar)
+TopBarCorner.CornerRadius = UDim.new(0, 12)
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -40, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Text = "Spectate GUI"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 16
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = TopBar
+
+
+local Minimize = Instance.new("TextButton")
+Minimize.Size = UDim2.new(0, 30, 0, 30)
+Minimize.Position = UDim2.new(1, -35, 0, 0)
+Minimize.Text = "-"
+Minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
+Minimize.TextSize = 18
+Minimize.BackgroundTransparency = 1
+Minimize.Parent = TopBar
+
+
+do
+    local dragging, dragStart, startPos
+    TopBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+    TopBar.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            if dragging and dragStart and startPos then
+                local delta = input.Position - dragStart
+                MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            end
+        end
+    end)
+end
+
+
+local PlayerBox = Instance.new("TextBox")
+PlayerBox.Size = UDim2.new(0.9, 0, 0, 30)
+PlayerBox.Position = UDim2.new(0.05, 0, 0, 40)
+PlayerBox.PlaceholderText = "Enter player name (full or partial)"
+PlayerBox.Text = ""
+PlayerBox.TextSize = 14
+PlayerBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlayerBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+PlayerBox.Font = Enum.Font.Gotham
+PlayerBox.ClearTextOnFocus = false
+PlayerBox.Parent = MainFrame
+Instance.new("UICorner", PlayerBox).CornerRadius = UDim.new(0, 8)
+
+local SpectateButton = Instance.new("TextButton")
+SpectateButton.Size = UDim2.new(0.4, 0, 0, 30)
+SpectateButton.Position = UDim2.new(0.05, 0, 0, 80)
+SpectateButton.Text = "Spectate"
+SpectateButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpectateButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+SpectateButton.Font = Enum.Font.Gotham
+SpectateButton.TextSize = 14
+SpectateButton.Parent = MainFrame
+Instance.new("UICorner", SpectateButton).CornerRadius = UDim.new(0, 8)
+
+
+local StopButton = Instance.new("TextButton")
+StopButton.Size = UDim2.new(0.4, 0, 0, 30)
+StopButton.Position = UDim2.new(0.55, 0, 0, 80)
+StopButton.Text = "Stop"
+StopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+StopButton.BackgroundColor3 = Color3.fromRGB(150, 50, 50)
+StopButton.Font = Enum.Font.Gotham
+StopButton.TextSize = 14
+StopButton.Parent = MainFrame
+Instance.new("UICorner", StopButton).CornerRadius = UDim.new(0, 8)
+
+
+local KeybindButton = Instance.new("TextButton")
+KeybindButton.Size = UDim2.new(0.9, 0, 0, 30)
+KeybindButton.Position = UDim2.new(0.05, 0, 0, 120)
+KeybindButton.Text = "Set Toggle Key (Current: RightShift)"
+KeybindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeybindButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+KeybindButton.Font = Enum.Font.Gotham
+KeybindButton.TextSize = 14
+KeybindButton.Parent = MainFrame
+Instance.new("UICorner", KeybindButton).CornerRadius = UDim.new(0, 8)
+
+local Camera = workspace.CurrentCamera
+local spectating = false
+local targetPlayer = nil
+
+local function findPlayer(query)
+    if not query or query == "" then return nil end
+    query = query:lower()
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr.Character then
+            local name = plr.Name:lower()
+            local dname = tostring(plr.DisplayName or ""):lower()
+            if name:find(query, 1, true) or dname:find(query, 1, true) then
+                return plr
+            end
+        end
+    end
+    return nil
+end
+
+SpectateButton.MouseButton1Click:Connect(function()
+    local q = PlayerBox.Text
+    local plr = findPlayer(q)
+    if plr and plr.Character then
+        targetPlayer = plr
+        spectating = true
+        local hum = plr.Character:FindFirstChildWhichIsA("Humanoid")
+        if hum then Camera.CameraSubject = hum end
+    else
+      
+        KeybindButton.Text = "No player found"
+        delay(1.2, function()
+            KeybindButton.Text = ("Bound: %s"):format(toggleKey and toggleKey.Name or "None")
+        end)
+    end
+end)
+
+StopButton.MouseButton1Click:Connect(function()
+    spectating = false
+    targetPlayer = nil
+    local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+    if hum then Camera.CameraSubject = hum end
+end)
+
+
+RunService.RenderStepped:Connect(function()
+    if spectating and targetPlayer and targetPlayer.Character then
+        local hum = targetPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+        if hum then Camera.CameraSubject = hum end
+    end
+end)
+
+
+local children = {PlayerBox, SpectateButton, StopButton, KeybindButton}
+local originalProps = {}
+for _, v in ipairs(children) do
+    originalProps[v] = {
+        Visible = v.Visible,
+        BackgroundTransparency = (v.BackgroundTransparency or 0),
+        TextTransparency = (v.TextTransparency or 0),
+        Position = v.Position,
+        Size = v.Size
+    }
+end
+
+local minimized = false
+local tweenTime = 0.22
+
+local function hideChildren()
+    for _, v in ipairs(children) do
+        if v and v.Parent then
+            v.Active = false
+         
+            local props = {}
+            if v:IsA("TextBox") or v:IsA("TextLabel") or v:IsA("TextButton") then
+                props.TextTransparency = 1
+                props.BackgroundTransparency = 1
+            else
+                props.BackgroundTransparency = 1
+            end
+            TweenService:Create(v, TweenInfo.new(tweenTime, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
+            delay(tweenTime + 0.01, function()
+                if v and v.Parent then v.Visible = false end
+            end)
+        end
+    end
+end
+
+local function showChildren()
+    for _, v in ipairs(children) do
+        if v and v.Parent then
+            v.Visible = true
+            local props = {}
+            props.TextTransparency = originalProps[v].TextTransparency or 0
+            props.BackgroundTransparency = originalProps[v].BackgroundTransparency or 0
+        
+            TweenService:Create(v, TweenInfo.new(tweenTime, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
+            delay(tweenTime + 0.01, function()
+                if v and v.Parent then v.Active = true end
+            end)
+        end
+    end
+end
+
+Minimize.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    Minimize.Text = minimized and "+" or "-"
+    if minimized then
+       
+        TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 300, 0, 30)}):Play()
+        hideChildren()
+    else
+
+        TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 300, 0, 180)}):Play()
+        showChildren()
+    end
+end)
+
+
+local bindingConnection
+local function setKeybindText()
+    local text = toggleKey and toggleKey.Name or "None"
+    KeybindButton.Text = ("Bound: %s"):format(text)
+end
+setKeybindText()
+
+KeybindButton.MouseButton1Click:Connect(function()
+    KeybindButton.Text = "Press a key..."
+    if bindingConnection then bindingConnection:Disconnect() end
+    bindingConnection = UserInputService.InputBegan:Connect(function(input, gpe)
+        if gpe then return end
+        local newKey = nil
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            newKey = input.KeyCode
+        elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+            newKey = Enum.KeyCode.MouseButton1
+        elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
+            newKey = Enum.KeyCode.MouseButton2
+        elseif input.UserInputType == Enum.UserInputType.MouseButton3 then
+            newKey = Enum.KeyCode.MouseButton3
+        elseif input.UserInputType == Enum.UserInputType.Gamepad1 or input.UserInputType.Name:match("Gamepad") then
+          
+            newKey = input.KeyCode ~= Enum.KeyCode.Unknown and input.KeyCode or nil
+        end
+
+        if newKey then
+            toggleKey = newKey
+            setKeybindText()
+        else
+            KeybindButton.Text = "Bound: " .. tostring(toggleKey.Name)
+        end
+
+        if bindingConnection then bindingConnection:Disconnect() bindingConnection = nil end
+    end)
+end)
+
+
+UserInputService.InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+    -- compare by KeyCode; for mouse buttons they will map to MouseButton1/2/3
+    if input.KeyCode == toggleKey or (input.UserInputType == Enum.UserInputType.MouseButton1 and toggleKey == Enum.KeyCode.MouseButton1) or
+       (input.UserInputType == Enum.UserInputType.MouseButton2 and toggleKey == Enum.KeyCode.MouseButton2) or
+       (input.UserInputType == Enum.UserInputType.MouseButton3 and toggleKey == Enum.KeyCode.MouseButton3) then
+        MainFrame.Visible = not MainFrame.Visible
+      
+        if MainFrame.Visible and not minimized then
+            showChildren()
+        end
+    end
+end)
