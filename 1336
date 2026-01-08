@@ -62,12 +62,12 @@ closeButton.MouseButton1Click:Connect(function()
     screenGui:Destroy()
 end)
 
--- TextBox (starts empty)
+-- Speed Input Box (stretches across frame)
 local speedBox = Instance.new("TextBox")
-speedBox.Size = UDim2.new(0, 220, 0, 60)
-speedBox.Position = UDim2.new(0, 10, 0, 60)
+speedBox.Size = UDim2.new(1, -20, 0, 40) -- width = 100% of frame minus 20px for margin
+speedBox.Position = UDim2.new(0, 10, 0, 60) -- 10px left margin
 speedBox.PlaceholderText = "Enter speed"
-speedBox.Text = "" -- empty text at start
+speedBox.Text = ""
 speedBox.ClearTextOnFocus = false
 speedBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 speedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -78,6 +78,7 @@ speedBox.Parent = mainFrame
 local inputCorner = Instance.new("UICorner")
 inputCorner.CornerRadius = UDim.new(0, 6)
 inputCorner.Parent = speedBox
+
 
 -- Set Speed Button
 local setSpeedButton = Instance.new("TextButton")
