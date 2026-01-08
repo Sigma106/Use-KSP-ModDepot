@@ -12,7 +12,7 @@ local uis = UserInputService
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "CoolGUI"
 ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
 
 --// Main Frame
 local MainFrame = Instance.new("Frame")
@@ -22,9 +22,8 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 MainFrame.BorderSizePixel = 0
 MainFrame.Parent = ScreenGui
 MainFrame.Active = true
-MainFrame.Draggable = true -- built-in drag
+MainFrame.Draggable = true -- Built-in drag
 
---// UI Corner for rounded edges
 local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(0, 10)
 UICorner.Parent = MainFrame
@@ -102,6 +101,33 @@ local noclipActive = false
 local flySpeed = 50
 local bodyVelocity
 
+-- TextBox for Fly speed
+local flySpeedBox = Instance.new("TextBox")
+flySpeedBox.Size = UDim2.new(1, 0, 0, 50)
+flySpeedBox.Position = UDim2.new(0, 0, 0, 260)
+flySpeedBox.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+flySpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+flySpeedBox.Font = Enum.Font.GothamBold
+flySpeedBox.PlaceholderText = "Enter Fly Speed (Default 50)"
+flySpeedBox.TextSize = 16
+flySpeedBox.Parent = ButtonsFrame
+
+local flyCorner = Instance.new("UICorner")
+flyCorner.CornerRadius = UDim.new(0, 8)
+flyCorner.Parent = flySpeedBox
+
+flySpeedBox.FocusLost:Connect(function(enterPressed)
+    local value = tonumber(flySpeedBox.Text)
+    if value and value > 0 then
+        flySpeed = value
+        flySpeedBox.Text = ""
+        flySpeedBox.PlaceholderText = "Fly Speed: "..flySpeed
+    else
+        flySpeedBox.Text = ""
+        flySpeedBox.PlaceholderText = "Invalid value!"
+    end
+end)
+
 local function toggleFly()
     flyActive = not flyActive
     if flyActive then
@@ -126,9 +152,9 @@ end
 --// Buttons
 createButton("Fly", toggleFly)
 createButton("NoClip", toggleNoclip)
-createButton("Print Hello", function() print("Hello!") end) -- example extra button
+createButton("Print Hello", function() print("Hello!") end)
 
---// Noclip Implementation
+--// Noclip and Fly Implementation
 RunService.Stepped:Connect(function()
     if noclipActive then
         for _, part in pairs(character:GetDescendants()) do
@@ -137,6 +163,7 @@ RunService.Stepped:Connect(function()
             end
         end
     end
+
     if flyActive and bodyVelocity then
         local direction = Vector3.new(0,0,0)
         if uis:IsKeyDown(Enum.KeyCode.W) then
@@ -157,6 +184,23 @@ RunService.Stepped:Connect(function()
         if uis:IsKeyDown(Enum.KeyCode.LeftShift) then
             direction = direction - Vector3.new(0,1,0)
         end
-        bodyVelocity.Velocity = direction.Unit * flySpeed
+        if direction.Magnitude > 0 then
+            bodyVelocity.Velocity = direction.Unit * flySpeed
+        else
+            bodyVelocity.Velocity = Vector3.new(0,0,0)
+        end
     end
 end)
+
+--// Resize Feature
+local function makeResizable(frame)
+    local resizeCorner = Instance.new("Frame")
+    resizeCorner.Size = UDim2.new(0, 20, 0, 20)
+    resizeCorner.Position = UDim2.new(1, -20, 1, -20)
+    resizeCorner.BackgroundColor3 = Color3.fromRGB(80, 80, 100)
+    resizeCorner.BorderSizePixel = 0
+    resizeCorner.Parent = frame
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 4)
+    corner.
