@@ -31,7 +31,7 @@ title.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 16
-title.Text = "🔍 ESP Menu"
+title.Text = "  ESP Menu"
 title.TextStrokeTransparency = 0.8
 
 -- ESP Toggle Button
@@ -64,19 +64,33 @@ local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 5)
 closeCorner.Parent = closeButton
 
--- Close GUI function (auto-disable ESP)
+-- Close GUI function
 closeButton.MouseButton1Click:Connect(function()
     if espEnabled then
-        espEnabled = false
-        for _, data in pairs(espObjects) do
-            for _, obj in pairs(data) do
-                obj:Destroy()
-            end
-        end
-        espObjects = {}
-        espButton.Text = "Enable ESP"
+        toggleESP() -- disables ESP if enabled
     end
-    screenGui:Destroy()
+    screenGui:Destroy() -- removes the GUI
+end)
+
+-- Rainbow effect colors (can be removed if not needed)
+local colors = {
+    Color3.fromRGB(255, 0, 0),   -- Red
+    Color3.fromRGB(255, 127, 0), -- Orange
+    Color3.fromRGB(255, 255, 0), -- Yellow
+    Color3.fromRGB(0, 255, 0),   -- Green
+    Color3.fromRGB(0, 0, 255),   -- Blue
+    Color3.fromRGB(75, 0, 130),  -- Indigo
+    Color3.fromRGB(238, 130, 238) -- Violet
+}
+
+local currentIndex = 1
+runService.RenderStepped:Connect(function()
+    -- Optional: frame color change instead of footer
+    -- frame.BackgroundColor3 = colors[currentIndex]
+    currentIndex = currentIndex + 1
+    if currentIndex > #colors then
+        currentIndex = 1
+    end
 end)
 
 -- ESP Logic
