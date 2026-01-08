@@ -58,7 +58,6 @@ closeCorner.CornerRadius = UDim.new(0, 6)
 closeCorner.Parent = closeButton
 
 closeButton.MouseButton1Click:Connect(function()
-    humanoid.JumpHeight = originalJump
     screenGui:Destroy()
 end)
 
