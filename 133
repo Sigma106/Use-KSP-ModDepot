@@ -46,7 +46,7 @@ titleLabel.Parent = titleBar
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 40, 0, 40)
 closeButton.Position = UDim2.new(1, -40, 0, 0)
-closeButton.Text = "✕"
+closeButton.Text = "X"
 closeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.Font = Enum.Font.GothamBold
@@ -64,7 +64,7 @@ end)
 
 -- TextBox (starts empty)
 local speedBox = Instance.new("TextBox")
-speedBox.Size = UDim2.new(0, 200, 0, 40)
+speedBox.Size = UDim2.new(0, 200, 0, 60)
 speedBox.Position = UDim2.new(0, 10, 0, 60)
 speedBox.PlaceholderText = "Enter speed"
 speedBox.Text = "" -- empty text at start
