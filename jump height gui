@@ -3,20 +3,19 @@ local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 
--- Store original values
-local originalSpeed = humanoid.WalkSpeed
+-- Store original jump height
 local originalJump = humanoid.JumpHeight
 
 -- GUI Setup
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "SpeedJumpGui"
+screenGui.Name = "JumpHeightGui"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
 -- Main Frame
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 300, 0, 260) -- increased height for jump section
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -130)
+mainFrame.Size = UDim2.new(0, 300, 0, 180)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -90)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
@@ -36,7 +35,7 @@ local titleLabel = Instance.new("TextLabel")
 titleLabel.Size = UDim2.new(1, -50, 1, 0)
 titleLabel.Position = UDim2.new(0, 10, 0, 0)
 titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "      Speed & Jump Controller"
+titleLabel.Text = "         Jump Height GUI"
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextSize = 20
@@ -59,32 +58,14 @@ closeCorner.CornerRadius = UDim.new(0, 6)
 closeCorner.Parent = closeButton
 
 closeButton.MouseButton1Click:Connect(function()
-    humanoid.WalkSpeed = originalSpeed
     humanoid.JumpHeight = originalJump
     screenGui:Destroy()
 end)
 
--- Speed Input
-local speedBox = Instance.new("TextBox")
-speedBox.Size = UDim2.new(1, -20, 0, 40)
-speedBox.Position = UDim2.new(0, 10, 0, 60)
-speedBox.PlaceholderText = "Enter walk speed"
-speedBox.Text = ""
-speedBox.ClearTextOnFocus = false
-speedBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-speedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-speedBox.Font = Enum.Font.Gotham
-speedBox.TextSize = 18
-speedBox.Parent = mainFrame
-
-local inputCorner = Instance.new("UICorner")
-inputCorner.CornerRadius = UDim.new(0, 6)
-inputCorner.Parent = speedBox
-
--- Jump Input
+-- Jump Height Input Box
 local jumpBox = Instance.new("TextBox")
 jumpBox.Size = UDim2.new(1, -20, 0, 40)
-jumpBox.Position = UDim2.new(0, 10, 0, 120) -- below speed box
+jumpBox.Position = UDim2.new(0, 10, 0, 60)
 jumpBox.PlaceholderText = "Enter jump height"
 jumpBox.Text = ""
 jumpBox.ClearTextOnFocus = false
@@ -98,25 +79,10 @@ local jumpCorner = Instance.new("UICorner")
 jumpCorner.CornerRadius = UDim.new(0, 6)
 jumpCorner.Parent = jumpBox
 
--- Set Speed Button
-local setSpeedButton = Instance.new("TextButton")
-setSpeedButton.Size = UDim2.new(0, 120, 0, 40)
-setSpeedButton.Position = UDim2.new(0, 10, 0, 180)
-setSpeedButton.Text = "Set Speed"
-setSpeedButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
-setSpeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-setSpeedButton.Font = Enum.Font.GothamBold
-setSpeedButton.TextSize = 18
-setSpeedButton.Parent = mainFrame
-
-local setCorner = Instance.new("UICorner")
-setCorner.CornerRadius = UDim.new(0, 6)
-setCorner.Parent = setSpeedButton
-
 -- Set Jump Button
 local setJumpButton = Instance.new("TextButton")
 setJumpButton.Size = UDim2.new(0, 120, 0, 40)
-setJumpButton.Position = UDim2.new(0, 160, 0, 180)
+setJumpButton.Position = UDim2.new(0, 10, 0, 110)
 setJumpButton.Text = "Set Jump"
 setJumpButton.BackgroundColor3 = Color3.fromRGB(180, 180, 0)
 setJumpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -129,28 +95,21 @@ jumpBtnCorner.CornerRadius = UDim.new(0, 6)
 jumpBtnCorner.Parent = setJumpButton
 
 -- Reset Button
-local normalButton = Instance.new("TextButton")
-normalButton.Size = UDim2.new(0, 120, 0, 40)
-normalButton.Position = UDim2.new(0, 10, 0, 230)
-normalButton.Text = "Reset"
-normalButton.BackgroundColor3 = Color3.fromRGB(70, 70, 200)
-normalButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-normalButton.Font = Enum.Font.GothamBold
-normalButton.TextSize = 18
-normalButton.Parent = mainFrame
+local resetButton = Instance.new("TextButton")
+resetButton.Size = UDim2.new(0, 120, 0, 40)
+resetButton.Position = UDim2.new(0, 160, 0, 110)
+resetButton.Text = "Reset"
+resetButton.BackgroundColor3 = Color3.fromRGB(70, 70, 200)
+resetButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+resetButton.Font = Enum.Font.GothamBold
+resetButton.TextSize = 18
+resetButton.Parent = mainFrame
 
-local normalCorner = Instance.new("UICorner")
-normalCorner.CornerRadius = UDim.new(0, 6)
-normalCorner.Parent = normalButton
+local resetCorner = Instance.new("UICorner")
+resetCorner.CornerRadius = UDim.new(0, 6)
+resetCorner.Parent = resetButton
 
 -- Button Functions
-setSpeedButton.MouseButton1Click:Connect(function()
-    local speed = tonumber(speedBox.Text)
-    if speed then
-        humanoid.WalkSpeed = speed
-    end
-end)
-
 setJumpButton.MouseButton1Click:Connect(function()
     local jump = tonumber(jumpBox.Text)
     if jump then
@@ -158,12 +117,11 @@ setJumpButton.MouseButton1Click:Connect(function()
     end
 end)
 
-normalButton.MouseButton1Click:Connect(function()
-    humanoid.WalkSpeed = originalSpeed
+resetButton.MouseButton1Click:Connect(function()
     humanoid.JumpHeight = originalJump
 end)
 
--- Dragging System (unchanged)
+-- Dragging System
 local dragging = false
 local dragInput, dragStart, startPos
 
