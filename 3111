@@ -49,18 +49,30 @@ local buttonCorner = Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 6)
 buttonCorner.Parent = espButton
 
--- Footer Label (Rainbow Text)
-local footerLabel = Instance.new("TextLabel")
-footerLabel.Parent = frame
-footerLabel.Size = UDim2.new(1, 0, 0, 20)
-footerLabel.Position = UDim2.new(0, 0, 0.9, 0)
-footerLabel.BackgroundTransparency = 1
-footerLabel.Font = Enum.Font.GothamBold
-footerLabel.TextSize = 14
-footerLabel.TextStrokeTransparency = 0.5
-footerLabel.Text = "Made by GPTexploits"
-footerLabel.TextXAlignment = Enum.TextXAlignment.Center
+-- Close Button (X)
+local closeButton = Instance.new("TextButton")
+closeButton.Parent = frame
+closeButton.Size = UDim2.new(0, 25, 0, 25)
+closeButton.Position = UDim2.new(1, -30, 0, 5) -- top-right corner
+closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 18
+closeButton.Text = "X"
 
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 5)
+closeCorner.Parent = closeButton
+
+-- Close GUI function
+closeButton.MouseButton1Click:Connect(function()
+    if espEnabled then
+        toggleESP() -- disables ESP if enabled
+    end
+    screenGui:Destroy() -- removes the GUI
+end)
+
+-- Rainbow effect colors (can be removed if not needed)
 local colors = {
     Color3.fromRGB(255, 0, 0),   -- Red
     Color3.fromRGB(255, 127, 0), -- Orange
@@ -73,7 +85,8 @@ local colors = {
 
 local currentIndex = 1
 runService.RenderStepped:Connect(function()
-    footerLabel.TextColor3 = colors[currentIndex]
+    -- Optional: frame color change instead of footer
+    -- frame.BackgroundColor3 = colors[currentIndex]
     currentIndex = currentIndex + 1
     if currentIndex > #colors then
         currentIndex = 1
@@ -147,7 +160,7 @@ local function refreshESP()
     end
 end
 
-local function toggleESP()
+function toggleESP()
     espEnabled = not espEnabled
     espButton.Text = espEnabled and "Disable ESP" or "Enable ESP"
 
