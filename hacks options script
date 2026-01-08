@@ -392,15 +392,15 @@ TextButton.MouseLeave:Connect(function()
 	TextButton.BackgroundTransparency = 1
 end)
 
-fly.MouseEnter:Connect(function()
+fly.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fly%20script%20v3"))()
 end)
 
-Noclip.MouseEnter:Connect(function()
+Noclip.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/efeefefewewfewfefffffffffffffffffff'))()
 end)
 
-Tptool.MouseEnter:Connect(function()
+Tptool.MouseButton1Click:Connect(function()
 		local Tele = Instance.new("Tool", game.Players.LocalPlayer.Backpack)
 		Tele.RequiresHandle = false
 		Tele.RobloxLocked = true
@@ -415,35 +415,35 @@ Tptool.MouseEnter:Connect(function()
 	end)
 end)
 
-Spectateplayer.MouseEnter:Connect(function()
+Spectateplayer.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/follow%20player'))() 
 end)
 
-teleporttoplayer.MouseEnter:Connect(function()
+teleporttoplayer.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))()
 end)
 
-speedgui.MouseEnter:Connect(function()
+speedgui.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/speed%20gui%20script"))()
 end)
 
-dexgui.MouseEnter:Connect(function()
+dexgui.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/memeenjoyer43/darkdex/refs/heads/main/script"))()
 end)
 
-Maintabbutton.MouseEnter:Connect(function()
+Maintabbutton.MouseButton1Click:Connect(function()
 	esptab.Visible = false
 	Trolltab.Visible = false
 	maintab.Visible = true
 end)
 
-Esptabbutton.MouseEnter:Connect(function()
+Esptabbutton.MouseButton1Click:Connect(function()
 	esptab.Visible = true
 	Trolltab.Visible = false
 	maintab.Visible = false
 end)
 
-Trolltabbutton.MouseEnter:Connect(function()
+Trolltabbutton.MouseButton1Click:Connect(function()
 	esptab.Visible = false
 	Trolltab.Visible = true
 	maintab.Visible = false
