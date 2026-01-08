@@ -50,7 +50,7 @@ maintab.BackgroundColor3 = Color3.fromRGB(57, 57, 57)
 maintab.BorderColor3 = Color3.fromRGB(0, 0, 0)
 maintab.Position = UDim2.new(0.0890151486, 0, 0.991724789, 0)
 maintab.Size = UDim2.new(0, 481, 0, 327)
-maintab.ZIndex = 20
+
 
 fly.Name = "fly"
 fly.Parent = maintab
@@ -184,6 +184,7 @@ ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 ImageLabel.Position = UDim2.new(0, 0, 0.991724789, 0)
 ImageLabel.Size = UDim2.new(0, 58, 0, 327)
 ImageLabel.ImageColor3 = Color3.fromRGB(18, 18, 18)
+ImageLabel.ZIndex = 20
 
 TextButton.Parent = Frame
 TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -300,7 +301,7 @@ esptab.BorderColor3 = Color3.fromRGB(0, 0, 0)
 esptab.Position = UDim2.new(0.0890151486, 0, 0.991724789, 0)
 esptab.Size = UDim2.new(0, 481, 0, 327)
 esptab.Visible = false
-esptab.ZIndex = 20
+
 
 Espgui.Name = "Esp gui"
 Espgui.Parent = esptab
@@ -337,7 +338,6 @@ Trolltab.BorderColor3 = Color3.fromRGB(0, 0, 0)
 Trolltab.Position = UDim2.new(0.0890151486, 0, 0.991724789, 0)
 Trolltab.Size = UDim2.new(0, 481, 0, 327)
 Trolltab.Visible = false
-Trolltab.ZIndex = 20
 
 flingall.Name = "fling all"
 flingall.Parent = Trolltab
