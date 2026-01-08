@@ -240,7 +240,7 @@ TextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 TextLabel_2.BorderSizePixel = 0
 TextLabel_2.Position = UDim2.new(0, 0, 2.70967746, 0)
 TextLabel_2.Size = UDim2.new(0, 58, 0, 30)
-TextLabel_2.ZIndex = 2
+TextLabel_2.ZIndex = 21
 TextLabel_2.Font = Enum.Font.SourceSans
 TextLabel_2.Text = "Main"
 TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -255,7 +255,7 @@ TextLabel_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
 TextLabel_3.BorderSizePixel = 0
 TextLabel_3.Position = UDim2.new(0, 0, 5.58064508, 0)
 TextLabel_3.Size = UDim2.new(0, 58, 0, 30)
-TextLabel_3.ZIndex = 2
+TextLabel_3.ZIndex = 21
 TextLabel_3.Font = Enum.Font.SourceSans
 TextLabel_3.Text = "esp"
 TextLabel_3.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -270,7 +270,7 @@ TextLabel_4.BorderColor3 = Color3.fromRGB(0, 0, 0)
 TextLabel_4.BorderSizePixel = 0
 TextLabel_4.Position = UDim2.new(0, 0, 8.87096786, 0)
 TextLabel_4.Size = UDim2.new(0, 58, 0, 30)
-TextLabel_4.ZIndex = 2
+TextLabel_4.ZIndex = 21
 TextLabel_4.Font = Enum.Font.SourceSans
 TextLabel_4.Text = "Troll"
 TextLabel_4.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -404,17 +404,17 @@ Noclip.MouseButton1Click:Connect(function()
 end)
 
 Tptool.MouseButton1Click:Connect(function()
-		local Tele = Instance.new("Tool", game.Players.LocalPlayer.Backpack)
-		Tele.RequiresHandle = false
-		Tele.RobloxLocked = true
-		Tele.Name = "TPTool"
-		Tele.ToolTip = "Teleport Tool"
-		Tele.Equipped:connect(function(Mouse)
-			Mouse.Button1Down:connect(function()
-				if Mouse.Target then
-					game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name).HumanoidRootPart.CFrame = (CFrame.new(Mouse.Hit.x, Mouse.Hit.y + 5, Mouse.Hit.z))
-				end
-			end)
+	local Tele = Instance.new("Tool", game.Players.LocalPlayer.Backpack)
+	Tele.RequiresHandle = false
+	Tele.RobloxLocked = true
+	Tele.Name = "TPTool"
+	Tele.ToolTip = "Teleport Tool"
+	Tele.Equipped:connect(function(Mouse)
+		Mouse.Button1Down:connect(function()
+			if Mouse.Target then
+				game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name).HumanoidRootPart.CFrame = (CFrame.new(Mouse.Hit.x, Mouse.Hit.y + 5, Mouse.Hit.z))
+			end
+		end)
 	end)
 end)
 
