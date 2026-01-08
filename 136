@@ -1,9 +1,3 @@
---[[ 
-  Utility GUI (Local)
-  Fly / Noclip / Speed / Jump
-  Draggable + Resizable
-]]
-
 -- SERVICES
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
@@ -16,17 +10,18 @@ local root = char:WaitForChild("HumanoidRootPart")
 local cam = workspace.CurrentCamera
 
 -- GUI
-local gui = Instance.new("ScreenGui", plr.PlayerGui)
+local gui = Instance.new("ScreenGui")
 gui.Name = "UtilityGUI"
+gui.Parent = plr:WaitForChild("PlayerGui")
 gui.ResetOnSpawn = false
 
-local main = Instance.new("Frame", gui)
-main.Size = UDim2.fromOffset(320, 420)
-main.Position = UDim2.fromScale(0.5, 0.5) - UDim2.fromOffset(160, 210)
+local main = Instance.new("Frame")
+main.Size = UDim2.fromOffset(350, 450)
+main.Position = UDim2.fromScale(0.5, 0.5) - UDim2.fromOffset(175, 225)
 main.BackgroundColor3 = Color3.fromRGB(25,25,35)
 main.BorderSizePixel = 0
-
-Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
+main.Parent = gui
+Instance.new("UICorner", main).CornerRadius = UDim.new(0,12)
 
 -- TITLE BAR
 local title = Instance.new("Frame", main)
@@ -42,7 +37,7 @@ label.TextColor3 = Color3.new(1,1,1)
 label.Font = Enum.Font.GothamBold
 label.TextSize = 18
 label.BackgroundTransparency = 1
-label.TextXAlignment = Left
+label.TextXAlignment = Enum.TextXAlignment.Left
 
 local close = Instance.new("TextButton", title)
 close.Size = UDim2.fromOffset(30,30)
@@ -53,12 +48,11 @@ close.TextSize = 16
 close.BackgroundColor3 = Color3.fromRGB(180,50,50)
 close.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", close)
-
 close.MouseButton1Click:Connect(function()
 	gui:Destroy()
 end)
 
--- DRAG
+-- DRAGGING
 do
 	local dragging, offset
 	title.InputBegan:Connect(function(i)
@@ -73,22 +67,48 @@ do
 		end
 	end)
 	UIS.InputChanged:Connect(function(i)
-		if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then
-			main.Position = UDim2.fromOffset(i.Position.X-offset.X, i.Position.Y-offset.Y)
+		if i.UserInputType == Enum.UserInputType.MouseMovement and dragging then
+			main.Position = UDim2.fromOffset(i.Position.X - offset.X, i.Position.Y - offset.Y)
 		end
 	end)
 end
 
--- CONTENT
+-- RESIZE CORNER
+local resize = Instance.new("Frame", main)
+resize.Size = UDim2.fromOffset(20,20)
+resize.Position = UDim2.new(1,-20,1,-20)
+resize.BackgroundColor3 = Color3.fromRGB(70,70,90)
+Instance.new("UICorner", resize).CornerRadius = UDim.new(0,4)
+
+local resizing = false
+local startSize, startPos
+resize.InputBegan:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		resizing = true
+		startSize = Vector2.new(main.AbsoluteSize.X, main.AbsoluteSize.Y)
+		startPos = i.Position
+		i.Changed:Connect(function()
+			if i.UserInputState == Enum.UserInputState.End then resizing = false end
+		end)
+	end
+end)
+RunService.RenderStepped:Connect(function()
+	if resizing then
+		local delta = UIS:GetMouseLocation() - startPos
+		main.Size = UDim2.fromOffset(math.clamp(startSize.X+delta.X,150,800), math.clamp(startSize.Y+delta.Y,200,600))
+	end
+end)
+
+-- CONTENT FRAME
 local content = Instance.new("Frame", main)
 content.Position = UDim2.fromOffset(10,50)
 content.Size = UDim2.new(1,-20,1,-60)
 content.BackgroundTransparency = 1
-
 local layout = Instance.new("UIListLayout", content)
 layout.Padding = UDim.new(0,10)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
 
--- BUTTON CREATOR
+-- UTILITY FUNCTIONS
 local function button(text, callback)
 	local b = Instance.new("TextButton")
 	b.Size = UDim2.new(1,0,0,45)
@@ -114,22 +134,22 @@ local function inputBox(placeholder, callback)
 	t.BackgroundColor3 = Color3.fromRGB(50,50,80)
 	Instance.new("UICorner", t)
 	t.FocusLost:Connect(function()
-		local v = tonumber(t.Text)
-		if v then callback(v) end
+		local val = tonumber(t.Text)
+		if val then callback(val) end
 		t.Text = ""
 	end)
 	t.Parent = content
 end
 
 -- FEATURES
-local fly = false
-local noclip = false
+local flyActive = false
+local noclipActive = false
 local flySpeed = 60
 local bv
 
 button("Toggle Fly", function()
-	fly = not fly
-	if fly then
+	flyActive = not flyActive
+	if flyActive then
 		bv = Instance.new("BodyVelocity", root)
 		bv.MaxForce = Vector3.new(1e5,1e5,1e5)
 	else
@@ -137,25 +157,14 @@ button("Toggle Fly", function()
 	end
 end)
 
-inputBox("Fly Speed", function(v)
-	flySpeed = math.clamp(v,10,300)
-end)
-
-button("Toggle Noclip", function()
-	noclip = not noclip
-end)
-
-inputBox("WalkSpeed", function(v)
-	hum.WalkSpeed = math.clamp(v,5,300)
-end)
-
-inputBox("JumpPower", function(v)
-	hum.JumpPower = math.clamp(v,10,300)
-end)
+inputBox("Fly Speed", function(v) flySpeed = math.clamp(v,10,300) end)
+button("Toggle Noclip", function() noclipActive = not noclipActive end)
+inputBox("WalkSpeed", function(v) hum.WalkSpeed = math.clamp(v,5,300) end)
+inputBox("JumpPower", function(v) hum.JumpPower = math.clamp(v,10,300) end)
 
 -- LOOPS
 RunService.Stepped:Connect(function()
-	if noclip then
+	if noclipActive then
 		for _,p in ipairs(char:GetDescendants()) do
 			if p:IsA("BasePart") then p.CanCollide = false end
 		end
@@ -163,7 +172,7 @@ RunService.Stepped:Connect(function()
 end)
 
 RunService.RenderStepped:Connect(function()
-	if fly and bv then
+	if flyActive and bv then
 		local dir = Vector3.zero
 		if UIS:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
 		if UIS:IsKeyDown(Enum.KeyCode.S) then dir -= cam.CFrame.LookVector end
@@ -171,6 +180,6 @@ RunService.RenderStepped:Connect(function()
 		if UIS:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
 		if UIS:IsKeyDown(Enum.KeyCode.Space) then dir += Vector3.yAxis end
 		if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then dir -= Vector3.yAxis end
-		bv.Velocity = dir.Magnitude > 0 and dir.Unit * flySpeed or Vector3.zero
+		bv.Velocity = (dir.Magnitude > 0) and dir.Unit*flySpeed or Vector3.zero
 	end
 end)
