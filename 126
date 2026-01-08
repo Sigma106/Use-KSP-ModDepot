@@ -1,0 +1,176 @@
+--[[ 
+  Utility GUI (Local)
+  Fly / Noclip / Speed / Jump
+  Draggable + Resizable
+]]
+
+-- SERVICES
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local plr = Players.LocalPlayer
+local char = plr.Character or plr.CharacterAdded:Wait()
+local hum = char:WaitForChild("Humanoid")
+local root = char:WaitForChild("HumanoidRootPart")
+local cam = workspace.CurrentCamera
+
+-- GUI
+local gui = Instance.new("ScreenGui", plr.PlayerGui)
+gui.Name = "UtilityGUI"
+gui.ResetOnSpawn = false
+
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.fromOffset(320, 420)
+main.Position = UDim2.fromScale(0.5, 0.5) - UDim2.fromOffset(160, 210)
+main.BackgroundColor3 = Color3.fromRGB(25,25,35)
+main.BorderSizePixel = 0
+
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
+
+-- TITLE BAR
+local title = Instance.new("Frame", main)
+title.Size = UDim2.new(1,0,0,40)
+title.BackgroundColor3 = Color3.fromRGB(40,40,60)
+Instance.new("UICorner", title).CornerRadius = UDim.new(0,12)
+
+local label = Instance.new("TextLabel", title)
+label.Size = UDim2.new(1,-40,1,0)
+label.Position = UDim2.fromOffset(10,0)
+label.Text = "Utility Panel"
+label.TextColor3 = Color3.new(1,1,1)
+label.Font = Enum.Font.GothamBold
+label.TextSize = 18
+label.BackgroundTransparency = 1
+label.TextXAlignment = Left
+
+local close = Instance.new("TextButton", title)
+close.Size = UDim2.fromOffset(30,30)
+close.Position = UDim2.new(1,-35,0,5)
+close.Text = "X"
+close.Font = Enum.Font.GothamBold
+close.TextSize = 16
+close.BackgroundColor3 = Color3.fromRGB(180,50,50)
+close.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", close)
+
+close.MouseButton1Click:Connect(function()
+	gui:Destroy()
+end)
+
+-- DRAG
+do
+	local dragging, offset
+	title.InputBegan:Connect(function(i)
+		if i.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			offset = i.Position - main.AbsolutePosition
+		end
+	end)
+	title.InputEnded:Connect(function(i)
+		if i.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+	UIS.InputChanged:Connect(function(i)
+		if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then
+			main.Position = UDim2.fromOffset(i.Position.X-offset.X, i.Position.Y-offset.Y)
+		end
+	end)
+end
+
+-- CONTENT
+local content = Instance.new("Frame", main)
+content.Position = UDim2.fromOffset(10,50)
+content.Size = UDim2.new(1,-20,1,-60)
+content.BackgroundTransparency = 1
+
+local layout = Instance.new("UIListLayout", content)
+layout.Padding = UDim.new(0,10)
+
+-- BUTTON CREATOR
+local function button(text, callback)
+	local b = Instance.new("TextButton")
+	b.Size = UDim2.new(1,0,0,45)
+	b.Text = text
+	b.Font = Enum.Font.GothamBold
+	b.TextSize = 16
+	b.TextColor3 = Color3.new(1,1,1)
+	b.BackgroundColor3 = Color3.fromRGB(60,60,90)
+	Instance.new("UICorner", b)
+	b.MouseButton1Click:Connect(callback)
+	b.Parent = content
+	return b
+end
+
+local function inputBox(placeholder, callback)
+	local t = Instance.new("TextBox")
+	t.Size = UDim2.new(1,0,0,45)
+	t.PlaceholderText = placeholder
+	t.Text = ""
+	t.Font = Enum.Font.GothamBold
+	t.TextSize = 16
+	t.TextColor3 = Color3.new(1,1,1)
+	t.BackgroundColor3 = Color3.fromRGB(50,50,80)
+	Instance.new("UICorner", t)
+	t.FocusLost:Connect(function()
+		local v = tonumber(t.Text)
+		if v then callback(v) end
+		t.Text = ""
+	end)
+	t.Parent = content
+end
+
+-- FEATURES
+local fly = false
+local noclip = false
+local flySpeed = 60
+local bv
+
+button("Toggle Fly", function()
+	fly = not fly
+	if fly then
+		bv = Instance.new("BodyVelocity", root)
+		bv.MaxForce = Vector3.new(1e5,1e5,1e5)
+	else
+		if bv then bv:Destroy() end
+	end
+end)
+
+inputBox("Fly Speed", function(v)
+	flySpeed = math.clamp(v,10,300)
+end)
+
+button("Toggle Noclip", function()
+	noclip = not noclip
+end)
+
+inputBox("WalkSpeed", function(v)
+	hum.WalkSpeed = math.clamp(v,5,300)
+end)
+
+inputBox("JumpPower", function(v)
+	hum.JumpPower = math.clamp(v,10,300)
+end)
+
+-- LOOPS
+RunService.Stepped:Connect(function()
+	if noclip then
+		for _,p in ipairs(char:GetDescendants()) do
+			if p:IsA("BasePart") then p.CanCollide = false end
+		end
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if fly and bv then
+		local dir = Vector3.zero
+		if UIS:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
+		if UIS:IsKeyDown(Enum.KeyCode.S) then dir -= cam.CFrame.LookVector end
+		if UIS:IsKeyDown(Enum.KeyCode.A) then dir -= cam.CFrame.RightVector end
+		if UIS:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
+		if UIS:IsKeyDown(Enum.KeyCode.Space) then dir += Vector3.yAxis end
+		if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then dir -= Vector3.yAxis end
+		bv.Velocity = dir.Magnitude > 0 and dir.Unit * flySpeed or Vector3.zero
+	end
+end)
