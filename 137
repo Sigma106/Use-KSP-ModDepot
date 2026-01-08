@@ -11,13 +11,14 @@ local cam = workspace.CurrentCamera
 
 -- GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "UtilityGUI"
+gui.Name = "TabUtilityGUI"
 gui.Parent = plr:WaitForChild("PlayerGui")
 gui.ResetOnSpawn = false
 
+-- MAIN FRAME
 local main = Instance.new("Frame")
-main.Size = UDim2.fromOffset(350, 450)
-main.Position = UDim2.fromScale(0.5, 0.5) - UDim2.fromOffset(175, 225)
+main.Size = UDim2.fromOffset(400, 500)
+main.Position = UDim2.fromScale(0.5,0.5) - UDim2.fromOffset(200,250)
 main.BackgroundColor3 = Color3.fromRGB(25,25,35)
 main.BorderSizePixel = 0
 main.Parent = gui
@@ -32,7 +33,7 @@ Instance.new("UICorner", title).CornerRadius = UDim.new(0,12)
 local label = Instance.new("TextLabel", title)
 label.Size = UDim2.new(1,-40,1,0)
 label.Position = UDim2.fromOffset(10,0)
-label.Text = "Utility Panel"
+label.Text = "Super Utility GUI"
 label.TextColor3 = Color3.new(1,1,1)
 label.Font = Enum.Font.GothamBold
 label.TextSize = 18
@@ -73,43 +74,50 @@ do
 	end)
 end
 
--- RESIZE CORNER
-local resize = Instance.new("Frame", main)
-resize.Size = UDim2.fromOffset(20,20)
-resize.Position = UDim2.new(1,-20,1,-20)
-resize.BackgroundColor3 = Color3.fromRGB(70,70,90)
-Instance.new("UICorner", resize).CornerRadius = UDim.new(0,4)
+-- TAB BUTTONS
+local tabFrame = Instance.new("Frame", main)
+tabFrame.Size = UDim2.new(1,0,0,40)
+tabFrame.Position = UDim2.fromOffset(0,40)
+tabFrame.BackgroundTransparency = 1
 
-local resizing = false
-local startSize, startPos
-resize.InputBegan:Connect(function(i)
-	if i.UserInputType == Enum.UserInputType.MouseButton1 then
-		resizing = true
-		startSize = Vector2.new(main.AbsoluteSize.X, main.AbsoluteSize.Y)
-		startPos = i.Position
-		i.Changed:Connect(function()
-			if i.UserInputState == Enum.UserInputState.End then resizing = false end
-		end)
-	end
-end)
-RunService.RenderStepped:Connect(function()
-	if resizing then
-		local delta = UIS:GetMouseLocation() - startPos
-		main.Size = UDim2.fromOffset(math.clamp(startSize.X+delta.X,150,800), math.clamp(startSize.Y+delta.Y,200,600))
-	end
-end)
+local contentFrame = Instance.new("Frame", main)
+contentFrame.Size = UDim2.new(1,-20,1,-100)
+contentFrame.Position = UDim2.fromOffset(10,90)
+contentFrame.BackgroundTransparency = 1
 
--- CONTENT FRAME
-local content = Instance.new("Frame", main)
-content.Position = UDim2.fromOffset(10,50)
-content.Size = UDim2.new(1,-20,1,-60)
-content.BackgroundTransparency = 1
-local layout = Instance.new("UIListLayout", content)
-layout.Padding = UDim.new(0,10)
-layout.SortOrder = Enum.SortOrder.LayoutOrder
+local tabs = {}
+local activeTab = nil
+
+local function createTab(name)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0,100,1,0)
+	btn.Text = name
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 16
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.BackgroundColor3 = Color3.fromRGB(50,50,70)
+	Instance.new("UICorner", btn)
+	btn.Parent = tabFrame
+	btn.Position = UDim2.new(0,#tabs*0,0,0)
+	tabs[name] = {Button = btn, Frame = Instance.new("Frame")}
+	tabs[name].Frame.Size = contentFrame.Size
+	tabs[name].Frame.Position = UDim2.fromOffset(0,0)
+	tabs[name].Frame.BackgroundTransparency = 1
+	tabs[name].Frame.Parent = contentFrame
+	tabs[name].Frame.Visible = false
+
+	btn.MouseButton1Click:Connect(function()
+		if activeTab then
+			tabs[activeTab].Frame.Visible = false
+		end
+		activeTab = name
+		tabs[name].Frame.Visible = true
+	end)
+	return tabs[name].Frame
+end
 
 -- UTILITY FUNCTIONS
-local function button(text, callback)
+local function button(parent, text, callback)
 	local b = Instance.new("TextButton")
 	b.Size = UDim2.new(1,0,0,45)
 	b.Text = text
@@ -118,12 +126,12 @@ local function button(text, callback)
 	b.TextColor3 = Color3.new(1,1,1)
 	b.BackgroundColor3 = Color3.fromRGB(60,60,90)
 	Instance.new("UICorner", b)
+	b.Parent = parent
 	b.MouseButton1Click:Connect(callback)
-	b.Parent = content
 	return b
 end
 
-local function inputBox(placeholder, callback)
+local function inputBox(parent, placeholder, callback)
 	local t = Instance.new("TextBox")
 	t.Size = UDim2.new(1,0,0,45)
 	t.PlaceholderText = placeholder
@@ -133,21 +141,26 @@ local function inputBox(placeholder, callback)
 	t.TextColor3 = Color3.new(1,1,1)
 	t.BackgroundColor3 = Color3.fromRGB(50,50,80)
 	Instance.new("UICorner", t)
+	t.Parent = parent
 	t.FocusLost:Connect(function()
 		local val = tonumber(t.Text)
 		if val then callback(val) end
 		t.Text = ""
 	end)
-	t.Parent = content
+	return t
 end
 
--- FEATURES
+-- CREATE TABS
+local playerTab = createTab("Player")
+local movementTab = createTab("Movement")
+
+-- ADD CONTENT TO PLAYER TAB
 local flyActive = false
 local noclipActive = false
 local flySpeed = 60
 local bv
 
-button("Toggle Fly", function()
+button(playerTab, "Toggle Fly", function()
 	flyActive = not flyActive
 	if flyActive then
 		bv = Instance.new("BodyVelocity", root)
@@ -157,10 +170,18 @@ button("Toggle Fly", function()
 	end
 end)
 
-inputBox("Fly Speed", function(v) flySpeed = math.clamp(v,10,300) end)
-button("Toggle Noclip", function() noclipActive = not noclipActive end)
-inputBox("WalkSpeed", function(v) hum.WalkSpeed = math.clamp(v,5,300) end)
-inputBox("JumpPower", function(v) hum.JumpPower = math.clamp(v,10,300) end)
+inputBox(playerTab, "Fly Speed", function(v) flySpeed = math.clamp(v,10,300) end)
+button(playerTab, "Toggle Noclip", function() noclipActive = not noclipActive end)
+inputBox(playerTab, "WalkSpeed", function(v) hum.WalkSpeed = math.clamp(v,5,300) end)
+inputBox(playerTab, "JumpPower", function(v) hum.JumpPower = math.clamp(v,10,300) end)
+
+-- ADD CONTENT TO MOVEMENT TAB
+-- Example toggle for fast sprint
+local fastSprint = false
+button(movementTab, "Toggle Fast Sprint", function() fastSprint = not fastSprint end)
+inputBox(movementTab, "Sprint Speed", function(v)
+	if fastSprint then hum.WalkSpeed = v end
+end)
 
 -- LOOPS
 RunService.Stepped:Connect(function()
