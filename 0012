@@ -1,4 +1,4 @@
---// SIMPLE WORKING EXECUTOR GUI
+--// Scrollable Script Executor GUI
 
 local Player = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
@@ -12,10 +12,12 @@ gui.Parent = Player:WaitForChild("PlayerGui")
 -- Main Frame
 local main = Instance.new("Frame")
 main.Parent = gui
-main.Size = UDim2.new(0, 500, 0, 300)
-main.Position = UDim2.new(0.3, 0, 0.25, 0)
+main.Size = UDim2.new(0, 500, 0, 350)
+main.Position = UDim2.new(0.3, 0, 0.2, 0)
 main.BackgroundColor3 = Color3.fromRGB(35,35,35)
 main.BorderSizePixel = 0
+
+Instance.new("UICorner", main).CornerRadius = UDim.new(0,10)
 
 -- Top Bar
 local top = Instance.new("Frame")
@@ -27,8 +29,8 @@ top.BorderSizePixel = 0
 -- Title
 local title = Instance.new("TextLabel")
 title.Parent = top
-title.Size = UDim2.new(1, -40, 1, 0)
-title.Position = UDim2.new(0, 10, 0, 0)
+title.Size = UDim2.new(1,-40,1,0)
+title.Position = UDim2.new(0,10,0,0)
 title.Text = "Script Executor"
 title.TextColor3 = Color3.new(1,1,1)
 title.BackgroundTransparency = 1
@@ -39,32 +41,43 @@ title.TextSize = 14
 -- Close Button
 local close = Instance.new("TextButton")
 close.Parent = top
-close.Size = UDim2.new(0, 30, 1, 0)
-close.Position = UDim2.new(1, -30, 0, 0)
+close.Size = UDim2.new(0,30,1,0)
+close.Position = UDim2.new(1,-30,0,0)
 close.Text = "X"
 close.TextColor3 = Color3.fromRGB(255,80,80)
 close.BackgroundTransparency = 1
 close.Font = Enum.Font.GothamBold
 close.TextSize = 14
-
 close.MouseButton1Click:Connect(function()
 	gui:Destroy()
 end)
 
--- TextBox (SCRIPT AREA)
+-- Scrolling Frame for TextBox
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Parent = main
+scrollFrame.Position = UDim2.new(0,10,0,40)
+scrollFrame.Size = UDim2.new(1,-20,1,-100)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(45,45,45)
+scrollFrame.BorderSizePixel = 0
+scrollFrame.CanvasSize = UDim2.new(0,0,2,0) -- make scrollable
+scrollFrame.ScrollBarThickness = 8
+
+Instance.new("UICorner", scrollFrame).CornerRadius = UDim.new(0,6)
+
+-- Script TextBox inside scrolling frame
 local box = Instance.new("TextBox")
-box.Parent = main
-box.Position = UDim2.new(0, 10, 0, 40)
-box.Size = UDim2.new(1, -20, 1, -90)
-box.BackgroundColor3 = Color3.fromRGB(45,45,45)
+box.Parent = scrollFrame
+box.Size = UDim2.new(1,-10,2,0) -- height larger than scrollFrame for scrolling
+box.Position = UDim2.new(0,5,0,0)
+box.BackgroundTransparency = 1
 box.TextColor3 = Color3.new(1,1,1)
-box.ClearTextOnFocus = false
-box.MultiLine = true
-box.TextWrapped = false
-box.TextXAlignment = Enum.TextXAlignment.Left
-box.TextYAlignment = Enum.TextYAlignment.Top
 box.Font = Enum.Font.Code
 box.TextSize = 14
+box.MultiLine = true
+box.TextWrapped = false
+box.ClearTextOnFocus = false
+box.TextXAlignment = Enum.TextXAlignment.Left
+box.TextYAlignment = Enum.TextYAlignment.Top
 box.Text = [[-- Paste your script here
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/2001", true))()
@@ -73,26 +86,25 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModD
 -- Execute Button
 local execute = Instance.new("TextButton")
 execute.Parent = main
-execute.Size = UDim2.new(0, 120, 0, 35)
-execute.Position = UDim2.new(0.5, -60, 1, -40)
-execute.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+execute.Size = UDim2.new(0,120,0,35)
+execute.Position = UDim2.new(0.5,-60,1,-45)
+execute.BackgroundColor3 = Color3.fromRGB(0,120,255)
 execute.Text = "EXECUTE"
 execute.TextColor3 = Color3.new(1,1,1)
 execute.Font = Enum.Font.GothamBold
 execute.TextSize = 14
 
--- EXECUTION LOGIC (WORKS)
 execute.MouseButton1Click:Connect(function()
 	local source = box.Text
 	local func, err = loadstring(source)
-	if not func then
-		warn("Error loading script:", err)
-		return
+	if func then
+		pcall(func)
+	else
+		warn("Loadstring error:", err)
 	end
-	pcall(func)
 end)
 
--- DRAGGING (FIXED)
+-- DRAGGING
 local dragging = false
 local dragStart
 local startPos
