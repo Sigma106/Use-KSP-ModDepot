@@ -1,0 +1,152 @@
+-- SERVICES
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+
+-- SETTINGS
+Players.RespawnTime = 0 -- instant respawn
+
+-- VARIABLES
+local enabled = false
+local lastDeathCFrame = nil
+local deathConnection = nil
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "InstantTeleportOnDeathGui"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 300, 0, 180)
+main.Position = UDim2.new(0.5, -150, 0.5, -90)
+main.BackgroundColor3 = Color3.fromRGB(30,30,30)
+main.BorderSizePixel = 0
+main.Parent = gui
+
+-- TITLE BAR
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1,0,0,35)
+titleBar.BackgroundColor3 = Color3.fromRGB(45,45,45)
+titleBar.Parent = main
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1,-40,1,0)
+title.Position = UDim2.new(0,10,0,0)
+title.BackgroundTransparency = 1
+title.Text = "INSANE RESPAWN TELEPORT"
+title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 15
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = titleBar
+
+-- CLOSE BUTTON
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0,35,1,0)
+closeBtn.Position = UDim2.new(1,-35,0,0)
+closeBtn.Text = "X"
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 18
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.BackgroundColor3 = Color3.fromRGB(170,50,50)
+closeBtn.Parent = titleBar
+
+closeBtn.MouseButton1Click:Connect(function()
+	gui:Destroy()
+end)
+
+-- START BUTTON
+local startBtn = Instance.new("TextButton")
+startBtn.Size = UDim2.new(0,120,0,40)
+startBtn.Position = UDim2.new(0.5,-130,0,90)
+startBtn.Text = "START"
+startBtn.Font = Enum.Font.GothamBold
+startBtn.TextSize = 16
+startBtn.TextColor3 = Color3.new(1,1,1)
+startBtn.BackgroundColor3 = Color3.fromRGB(50,170,50)
+startBtn.Parent = main
+
+-- STOP BUTTON
+local stopBtn = Instance.new("TextButton")
+stopBtn.Size = UDim2.new(0,120,0,40)
+stopBtn.Position = UDim2.new(0.5,10,0,90)
+stopBtn.Text = "STOP"
+stopBtn.Font = Enum.Font.GothamBold
+stopBtn.TextSize = 16
+stopBtn.TextColor3 = Color3.new(1,1,1)
+stopBtn.BackgroundColor3 = Color3.fromRGB(170,50,50)
+stopBtn.Parent = main
+
+-- DRAGGING
+local dragging = false
+local dragStart, startPos
+
+titleBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = main.Position
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		main.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+-- CHARACTER LOGIC (INSANE RESPAWN)
+local function onCharacter(char)
+	local humanoid = char:WaitForChild("Humanoid")
+	local root = char:WaitForChild("HumanoidRootPart")
+
+	-- TELEPORT IMMEDIATELY AFTER RESPAWN
+	if enabled and lastDeathCFrame then
+		task.wait()
+		root.CFrame = lastDeathCFrame
+	end
+
+	-- ON DEATH
+	if deathConnection then
+		deathConnection:Disconnect()
+	end
+
+	deathConnection = humanoid.Died:Connect(function()
+		if enabled then
+			lastDeathCFrame = root.CFrame
+			task.wait()
+			player:LoadCharacter() -- ⚡ INSTANT RESPAWN
+		end
+	end)
+end
+
+player.CharacterAdded:Connect(onCharacter)
+
+if player.Character then
+	onCharacter(player.Character)
+end
+
+-- BUTTON LOGIC
+startBtn.MouseButton1Click:Connect(function()
+	enabled = true
+	startBtn.Text = "RUNNING"
+end)
+
+stopBtn.MouseButton1Click:Connect(function()
+	enabled = false
+	lastDeathCFrame = nil
+	startBtn.Text = "START"
+end)
