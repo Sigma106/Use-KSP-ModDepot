@@ -67,7 +67,6 @@ ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 ScrollingFrame.BorderSizePixel = 0
 ScrollingFrame.Position = UDim2.new(0.0228690226, 0, 0, 0)
 ScrollingFrame.Size = UDim2.new(0, 469, 0, 327)
-ScrollingFrame.CanvasPosition = Vector2.new(0, 163.5)
 ScrollingFrame.CanvasSize = UDim2.new(0, 0, 1.5, 0)
 ScrollingFrame.VerticalScrollBarInset = Enum.ScrollBarInset.Always
 
