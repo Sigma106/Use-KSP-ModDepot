@@ -1,0 +1,146 @@
+--// WORKING Script Executor GUI (Scrollable + Executable)
+
+local Player = game.Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+
+-- ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = Player:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+-- Main Frame
+local Main = Instance.new("Frame")
+Main.Parent = ScreenGui
+Main.Size = UDim2.new(0, 520, 0, 330)
+Main.Position = UDim2.new(0.3, 0, 0.25, 0)
+Main.BackgroundColor3 = Color3.fromRGB(30,30,30)
+Main.BorderSizePixel = 0
+
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0,10)
+
+-- Top Bar
+local Top = Instance.new("Frame")
+Top.Parent = Main
+Top.Size = UDim2.new(1,0,0,36)
+Top.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Top.BorderSizePixel = 0
+
+-- Title
+local Title = Instance.new("TextLabel")
+Title.Parent = Top
+Title.Size = UDim2.new(1,-40,1,0)
+Title.Position = UDim2.new(0,10,0,0)
+Title.Text = "Lua Script Executor"
+Title.TextColor3 = Color3.new(1,1,1)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 14
+Title.TextXAlignment = Left
+
+-- Close
+local Close = Instance.new("TextButton")
+Close.Parent = Top
+Close.Size = UDim2.new(0,36,1,0)
+Close.Position = UDim2.new(1,-36,0,0)
+Close.Text = "X"
+Close.TextColor3 = Color3.fromRGB(255,80,80)
+Close.BackgroundTransparency = 1
+Close.Font = Enum.Font.GothamBold
+
+Close.MouseButton1Click:Connect(function()
+	ScreenGui:Destroy()
+end)
+
+-- Scrolling Frame
+local Scroll = Instance.new("ScrollingFrame")
+Scroll.Parent = Main
+Scroll.Position = UDim2.new(0,10,0,46)
+Scroll.Size = UDim2.new(1,-20,1,-110)
+Scroll.CanvasSize = UDim2.new(0,0,0,0)
+Scroll.ScrollBarImageTransparency = 0
+Scroll.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Scroll.BorderSizePixel = 0
+
+Instance.new("UICorner", Scroll).CornerRadius = UDim.new(0,6)
+
+-- Script Box
+local Box = Instance.new("TextBox")
+Box.Parent = Scroll
+Box.Size = UDim2.new(1,-10,0,200)
+Box.Position = UDim2.new(0,5,0,5)
+Box.BackgroundTransparency = 1
+Box.TextColor3 = Color3.new(1,1,1)
+Box.Font = Enum.Font.Code
+Box.TextSize = 14
+Box.MultiLine = true
+Box.TextWrapped = false
+Box.ClearTextOnFocus = false
+Box.TextXAlignment = Left
+Box.TextYAlignment = Top
+
+Box.Text = [[-- Paste your script here
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/2001", true))()
+]]
+
+-- Auto Resize
+local function Resize()
+	Box.Size = UDim2.new(1,-10,0,Box.TextBounds.Y + 20)
+	Scroll.CanvasSize = UDim2.new(0,0,0,Box.Size.Y.Offset + 10)
+end
+
+Box:GetPropertyChangedSignal("Text"):Connect(Resize)
+Resize()
+
+-- Execute Button
+local Execute = Instance.new("TextButton")
+Execute.Parent = Main
+Execute.Size = UDim2.new(0,140,0,36)
+Execute.Position = UDim2.new(0.5,-70,1,-46)
+Execute.BackgroundColor3 = Color3.fromRGB(70,130,255)
+Execute.Text = "EXECUTE"
+Execute.TextColor3 = Color3.new(1,1,1)
+Execute.Font = Enum.Font.GothamBold
+Execute.TextSize = 14
+
+Instance.new("UICorner", Execute).CornerRadius = UDim.new(0,6)
+
+-- Execute Script (Executor Safe)
+Execute.MouseButton1Click:Connect(function()
+	local src = Box.Text
+	local func, err = loadstring(src)
+	if func then
+		pcall(func)
+	else
+		warn("Loadstring error:", err)
+	end
+end)
+
+-- Dragging
+local drag, startPos, startInput
+
+Top.InputBegan:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		drag = true
+		startInput = i.Position
+		startPos = Main.Position
+	end
+end)
+
+UIS.InputChanged:Connect(function(i)
+	if drag and i.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = i.Position - startInput
+		Main.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+UIS.InputEnded:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		drag = false
+	end
+end)
