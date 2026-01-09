@@ -18,8 +18,8 @@ gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 340, 0, 260)
-main.Position = UDim2.new(0.5, -170, 0.5, -130)
+main.Size = UDim2.new(0, 340, 0, 310)
+main.Position = UDim2.new(0.5, -170, 0.5, -155)
 main.BackgroundColor3 = Color3.fromRGB(30,30,30)
 main.BorderSizePixel = 0
 main.Parent = gui
@@ -34,14 +34,14 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1,-40,1,0)
 title.Position = UDim2.new(0,10,0,0)
 title.BackgroundTransparency = 1
-title.Text = "FIXED TELEPORT ON DEATH"
+title.Text = "FIXED TELEPORT TOOL"
 title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 15
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = titleBar
 
--- CLOSE BUTTON
+-- CLOSE
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0,35,1,0)
 closeBtn.Position = UDim2.new(1,-35,0,0)
@@ -66,10 +66,9 @@ coordBox.Font = Enum.Font.Gotham
 coordBox.TextSize = 14
 coordBox.TextColor3 = Color3.new(1,1,1)
 coordBox.BackgroundColor3 = Color3.fromRGB(40,40,40)
-coordBox.Text = ""
 coordBox.Parent = main
 
--- COPY CORRECT POSITION BUTTON
+-- COPY BUTTON
 local copyBtn = Instance.new("TextButton")
 copyBtn.Size = UDim2.new(1, -20, 0, 35)
 copyBtn.Position = UDim2.new(0, 10, 0, 100)
@@ -80,10 +79,21 @@ copyBtn.TextColor3 = Color3.new(1,1,1)
 copyBtn.BackgroundColor3 = Color3.fromRGB(70,120,170)
 copyBtn.Parent = main
 
--- START BUTTON
+-- TELEPORT BUTTON
+local tpBtn = Instance.new("TextButton")
+tpBtn.Size = UDim2.new(1, -20, 0, 35)
+tpBtn.Position = UDim2.new(0, 10, 0, 145)
+tpBtn.Text = "TELEPORT HERE"
+tpBtn.Font = Enum.Font.GothamBold
+tpBtn.TextSize = 14
+tpBtn.TextColor3 = Color3.new(1,1,1)
+tpBtn.BackgroundColor3 = Color3.fromRGB(170,120,70)
+tpBtn.Parent = main
+
+-- START
 local startBtn = Instance.new("TextButton")
 startBtn.Size = UDim2.new(0.5, -15, 0, 40)
-startBtn.Position = UDim2.new(0, 10, 0, 150)
+startBtn.Position = UDim2.new(0, 10, 0, 195)
 startBtn.Text = "START"
 startBtn.Font = Enum.Font.GothamBold
 startBtn.TextSize = 16
@@ -91,10 +101,10 @@ startBtn.TextColor3 = Color3.new(1,1,1)
 startBtn.BackgroundColor3 = Color3.fromRGB(50,170,50)
 startBtn.Parent = main
 
--- STOP BUTTON
+-- STOP
 local stopBtn = Instance.new("TextButton")
 stopBtn.Size = UDim2.new(0.5, -15, 0, 40)
-stopBtn.Position = UDim2.new(0.5, 5, 0, 150)
+stopBtn.Position = UDim2.new(0.5, 5, 0, 195)
 stopBtn.Text = "STOP"
 stopBtn.Font = Enum.Font.GothamBold
 stopBtn.TextSize = 16
@@ -131,11 +141,10 @@ UserInputService.InputEnded:Connect(function(input)
 	end
 end)
 
--- COPY POSITION → AUTO PASTE INTO TEXTBOX
+-- COPY POSITION → AUTO PASTE
 copyBtn.MouseButton1Click:Connect(function()
 	local char = player.Character
 	if not char then return end
-
 	local root = char:FindFirstChild("HumanoidRootPart")
 	if not root then return end
 
@@ -145,8 +154,18 @@ copyBtn.MouseButton1Click:Connect(function()
 		math.floor(pos.Y),
 		math.floor(pos.Z)
 	)
-
 	savedCFrame = CFrame.new(pos)
+end)
+
+-- TELEPORT NOW
+tpBtn.MouseButton1Click:Connect(function()
+	if not savedCFrame then return end
+	local char = player.Character
+	if not char then return end
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	root.CFrame = savedCFrame
 end)
 
 -- START
@@ -190,7 +209,6 @@ local function onCharacter(char)
 end
 
 player.CharacterAdded:Connect(onCharacter)
-
 if player.Character then
 	onCharacter(player.Character)
 end
