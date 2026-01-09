@@ -578,7 +578,7 @@ flingall.MouseButton1Click:Connect(function()
 end)
 
 flingplayergui.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-FREAKY-FLING/main/kawaii_freaky_fling.lua"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fling%20player%20script"))()
 end)
 
 Espgui.MouseButton1Click:Connect(function()
