@@ -1,18 +1,16 @@
--- Custom Sky Loader GUI
+-- Custom Sky Loader GUI with input
 local Lighting = game:GetService("Lighting")
 local CoreGui = game:GetService("CoreGui")
 
--- Store custom skies
-local customSkies = {} -- {Name = {SkyboxBk=.., SkyboxFt=.., etc.}}
+local customSkies = {} -- {Name = {SkyboxBk=.., SkyboxFt=.., ...}}
 
--- Function to clear current skies
+-- Functions
 local function clearSkies()
     for _, s in pairs(Lighting:GetChildren()) do
         if s:IsA("Sky") then s:Destroy() end
     end
 end
 
--- Function to apply a sky by data table
 local function applySky(skyData)
     clearSkies()
     local sky = Instance.new("Sky")
@@ -27,12 +25,12 @@ end
 
 -- GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "CustomSkyGui"
+gui.Name = "CustomSkyInputGui"
 gui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0,300,0,220)
-main.Position = UDim2.new(0.5,-150,0.5,-110)
+main.Size = UDim2.new(0,320,0,300)
+main.Position = UDim2.new(0.5,-160,0.5,-150)
 main.BackgroundColor3 = Color3.fromRGB(35,35,35)
 main.BorderSizePixel = 0
 main.Active = true
@@ -55,69 +53,91 @@ title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 title.Parent = main
 
--- ScrollFrame at bottom-left for custom skies
+-- Input box for asset ID
+local inputBox = Instance.new("TextBox")
+inputBox.Size = UDim2.new(0.7,0,0,30)
+inputBox.Position = UDim2.new(0.05,0,0,50)
+inputBox.PlaceholderText = "Enter Sky Asset ID"
+inputBox.Text = ""
+inputBox.ClearTextOnFocus = false
+inputBox.BackgroundColor3 = Color3.fromRGB(50,50,50)
+inputBox.TextColor3 = Color3.new(1,1,1)
+inputBox.Font = Enum.Font.Gotham
+inputBox.TextSize = 16
+inputBox.BorderSizePixel = 0
+local cornerInput = Instance.new("UICorner")
+cornerInput.CornerRadius = UDim.new(0,6)
+cornerInput.Parent = inputBox
+inputBox.Parent = main
+
+-- Button to add new sky
+local addBtn = Instance.new("TextButton")
+addBtn.Size = UDim2.new(0.2,0,0,30)
+addBtn.Position = UDim2.new(0.78,0,0,50)
+addBtn.Text = "Add"
+addBtn.BackgroundColor3 = Color3.fromRGB(70,70,70)
+addBtn.TextColor3 = Color3.new(1,1,1)
+addBtn.Font = Enum.Font.GothamBold
+addBtn.TextSize = 16
+local cornerBtn = Instance.new("UICorner")
+cornerBtn.CornerRadius = UDim.new(0,6)
+cornerBtn.Parent = addBtn
+addBtn.Parent = main
+
+-- ScrollFrame at bottom-left
 local scroll = Instance.new("ScrollingFrame")
-scroll.Size = UDim2.new(1,-10,0,150)
-scroll.Position = UDim2.new(0,5,0,55)
+scroll.Size = UDim2.new(0.95,0,0.5,0)
+scroll.Position = UDim2.new(0.025,0,0.4,0)
 scroll.BackgroundTransparency = 1
 scroll.ScrollBarThickness = 6
 scroll.Parent = main
 
 local uiList = Instance.new("UIListLayout")
-uiList.Padding = UDim.new(0,8)
+uiList.Padding = UDim.new(0,6)
 uiList.SortOrder = Enum.SortOrder.LayoutOrder
 uiList.Parent = scroll
 
--- Update CanvasSize automatically
 uiList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     scroll.CanvasSize = UDim2.new(0,0,0,uiList.AbsoluteContentSize.Y + 5)
 end)
 
--- Button creator
-local function createButton(name, callback)
+-- Function to create sky button in scroll
+local function createSkyButton(name, skyData)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.9,0,0,35)
+    btn.Size = UDim2.new(0.95,0,0,35)
     btn.BackgroundColor3 = Color3.fromRGB(70,70,70)
     btn.TextColor3 = Color3.new(1,1,1)
     btn.Font = Enum.Font.GothamBold
     btn.TextSize = 16
     btn.Text = name
-
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0,6)
     corner.Parent = btn
-
-    btn.MouseButton1Click:Connect(callback)
+    btn.MouseButton1Click:Connect(function()
+        applySky(skyData)
+    end)
     btn.Parent = scroll
 end
 
--- Example: Load custom skies (replace these with your own textures)
-local function loadCustomSky(name, textures)
-    textures.Name = name
-    customSkies[name] = textures
-    createButton(name, function()
-        applySky(textures)
-    end)
-end
-
--- Example skies (you replace IDs with your own)
-loadCustomSky("Epic Face", {
-    SkyboxBk="rbxassetid://7817004",
-    SkyboxFt="rbxassetid://7817004",
-    SkyboxLf="rbxassetid://7817004",
-    SkyboxRt="rbxassetid://7817004",
-    SkyboxUp="rbxassetid://7817004",
-    SkyboxDn="rbxassetid://7817004"
-})
-
-loadCustomSky("Night", {
-    SkyboxBk="rbxassetid://6285719338",
-    SkyboxFt="rbxassetid://6285722964",
-    SkyboxLf="rbxassetid://6285724682",
-    SkyboxRt="rbxassetid://6285726335",
-    SkyboxUp="rbxassetid://6285730635",
-    SkyboxDn="rbxassetid://6285721078"
-})
+-- Add button functionality
+addBtn.MouseButton1Click:Connect(function()
+    local id = inputBox.Text:match("%d+")
+    if id and id ~= "" then
+        local skyName = "Sky "..(#customSkies + 1)
+        local skyData = {
+            Name = skyName,
+            SkyboxBk = "rbxassetid://"..id,
+            SkyboxFt = "rbxassetid://"..id,
+            SkyboxLf = "rbxassetid://"..id,
+            SkyboxRt = "rbxassetid://"..id,
+            SkyboxUp = "rbxassetid://"..id,
+            SkyboxDn = "rbxassetid://"..id
+        }
+        customSkies[skyName] = skyData
+        createSkyButton(skyName, skyData)
+        inputBox.Text = ""
+    end
+end)
 
 -- Close button
 local close = Instance.new("TextButton")
@@ -132,4 +152,4 @@ close.BorderSizePixel = 0
 close.Parent = main
 close.MouseButton1Click:Connect(function() gui:Destroy() end)
 
-print("Custom Sky Loader GUI loaded")
+print("Custom Sky Input GUI loaded")
