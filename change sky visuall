@@ -1,0 +1,228 @@
+-- Sky & Global Texture Changer GUI (all game textures)
+-- Executor-safe (CoreGui)
+
+local Lighting = game:GetService("Lighting")
+local CoreGui = game:GetService("CoreGui")
+local Workspace = game:GetService("Workspace")
+
+-- Remove old GUI if exists
+pcall(function()
+    CoreGui:FindFirstChild("SkyTextureGui"):Destroy()
+end)
+
+-- Save original skies
+local originalSkies = {}
+for _, s in pairs(Lighting:GetChildren()) do
+    if s:IsA("Sky") then
+        table.insert(originalSkies, s:Clone())
+    end
+end
+
+-- Save original textures of ALL parts/decals/meshes in Workspace
+local originalTextures = {}
+
+local function saveOriginalTextures()
+    for _, obj in pairs(Workspace:GetDescendants()) do
+        if obj:IsA("Decal") or obj:IsA("Texture") then
+            originalTextures[obj] = obj.Texture
+        elseif obj:IsA("MeshPart") then
+            originalTextures[obj] = obj.TextureID
+        elseif obj:IsA("SpecialMesh") then
+            originalTextures[obj] = obj.TextureId
+        end
+    end
+end
+
+saveOriginalTextures()
+
+-- Clear all skies from Lighting
+local function clearSkies()
+    for _, s in pairs(Lighting:GetChildren()) do
+        if s:IsA("Sky") then
+            s:Destroy()
+        end
+    end
+end
+
+-- Set Epic Face sky
+local function epicFaceSky()
+    clearSkies()
+    local sky = Instance.new("Sky")
+    sky.Name = "EpicFace"
+    local id = "rbxassetid://7817004"
+    sky.SkyboxBk = id
+    sky.SkyboxDn = id
+    sky.SkyboxFt = id
+    sky.SkyboxLf = id
+    sky.SkyboxRt = id
+    sky.SkyboxUp = id
+    sky.StarCount = 3000
+    sky.CelestialBodiesShown = true
+    sky.Parent = Lighting
+end
+
+-- Set Night sky
+local function nightSky()
+    clearSkies()
+    local sky = Instance.new("Sky")
+    sky.Name = "Night"
+    sky.SkyboxBk = "rbxassetid://6285719338"
+    sky.SkyboxDn = "rbxassetid://6285721078"
+    sky.SkyboxFt = "rbxassetid://6285722964"
+    sky.SkyboxLf = "rbxassetid://6285724682"
+    sky.SkyboxRt = "rbxassetid://6285726335"
+    sky.SkyboxUp = "rbxassetid://6285730635"
+    sky.CelestialBodiesShown = false
+    sky.Parent = Lighting
+end
+
+-- Restore original skies
+local function restoreSky()
+    clearSkies()
+    for _, s in pairs(originalSkies) do
+        s:Clone().Parent = Lighting
+    end
+end
+
+-- Apply Epic Face texture to ALL applicable objects in the entire Workspace
+local EPIC_TEXTURE = "rbxassetid://7817004"
+local function applyEpicTextures()
+    for obj, _ in pairs(originalTextures) do
+        if obj and obj.Parent then
+            if obj:IsA("Decal") or obj:IsA("Texture") then
+                obj.Texture = EPIC_TEXTURE
+            elseif obj:IsA("MeshPart") then
+                obj.TextureID = EPIC_TEXTURE
+            elseif obj:IsA("SpecialMesh") then
+                obj.TextureId = EPIC_TEXTURE
+            end
+        end
+    end
+end
+
+-- Restore ALL textures to their original values
+local function restoreTextures()
+    for obj, tex in pairs(originalTextures) do
+        if obj and obj.Parent then
+            if obj:IsA("Decal") or obj:IsA("Texture") then
+                obj.Texture = tex
+            elseif obj:IsA("MeshPart") then
+                obj.TextureID = tex
+            elseif obj:IsA("SpecialMesh") then
+                obj.TextureId = tex
+            end
+        end
+    end
+end
+
+-- GUI Setup
+local gui = Instance.new("ScreenGui")
+gui.Name = "SkyTextureGui"
+gui.IgnoreGuiInset = true
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+gui.Parent = CoreGui
+
+local main = Instance.new("Frame")
+main.Parent = gui
+main.Size = UDim2.new(0, 360, 0, 260)
+main.Position = UDim2.new(0.5, -180, 0.4, 0)
+main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+main.Active = true
+main.Draggable = true
+main.ZIndex = 100
+Instance.new("UICorner", main)
+
+local title = Instance.new("TextLabel", main)
+title.Text = "Sky & Texture Changer"
+title.Size = UDim2.new(1, -40, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 5)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.ZIndex = 101
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+local close = Instance.new("TextButton", main)
+close.Text = "X"
+close.Size = UDim2.new(0, 30, 0, 30)
+close.Position = UDim2.new(1, -35, 0, 5)
+close.BackgroundColor3 = Color3.fromRGB(170, 60, 60)
+close.TextColor3 = Color3.new(1, 1, 1)
+close.Font = Enum.Font.GothamBold
+close.ZIndex = 102
+Instance.new("UICorner", close)
+close.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+-- Tabs
+local tabSky = Instance.new("TextButton", main)
+tabSky.Text = "Change Sky"
+tabSky.Size = UDim2.new(0.5, 0, 0, 30)
+tabSky.Position = UDim2.new(0, 0, 0, 40)
+tabSky.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+tabSky.TextColor3 = Color3.new(1, 1, 1)
+tabSky.ZIndex = 101
+
+local tabTex = Instance.new("TextButton", main)
+tabTex.Text = "Change Textures"
+tabTex.Size = UDim2.new(0.5, 0, 0, 30)
+tabTex.Position = UDim2.new(0.5, 0, 0, 40)
+tabTex.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+tabTex.TextColor3 = Color3.new(1, 1, 1)
+tabTex.ZIndex = 101
+
+-- Pages
+local skyPage = Instance.new("Frame", main)
+skyPage.Size = UDim2.new(1, 0, 1, -80)
+skyPage.Position = UDim2.new(0, 0, 0, 80)
+skyPage.BackgroundTransparency = 1
+skyPage.ZIndex = 100
+
+local texPage = Instance.new("Frame", main)
+texPage.Size = skyPage.Size
+texPage.Position = skyPage.Position
+texPage.BackgroundTransparency = 1
+texPage.Visible = false
+texPage.ZIndex = 100
+
+-- Button Creator
+local function createButton(parent, text, y, callback)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(0.85, 0, 0, 36)
+    btn.Position = UDim2.new(0.075, 0, y, 0)
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(80, 130, 220)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamBold
+    btn.ZIndex = 101
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(callback)
+end
+
+-- Sky Tab Buttons
+createButton(skyPage, "Epic Face Sky", 0.1, epicFaceSky)
+createButton(skyPage, "Night Sky", 0.35, nightSky)
+createButton(skyPage, "Restore Sky", 0.6, restoreSky)
+
+-- Texture Tab Buttons
+createButton(texPage, "Epic Face All Textures", 0.3, applyEpicTextures)
+createButton(texPage, "Restore Textures", 0.6, restoreTextures)
+
+-- Tab switching logic
+tabSky.MouseButton1Click:Connect(function()
+    skyPage.Visible = true
+    texPage.Visible = false
+    tabSky.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tabTex.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+end)
+
+tabTex.MouseButton1Click:Connect(function()
+    skyPage.Visible = false
+    texPage.Visible = true
+    tabTex.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tabSky.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+end)
+
+print("Sky & Texture Changer GUI loaded")
