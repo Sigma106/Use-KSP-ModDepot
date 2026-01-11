@@ -496,6 +496,8 @@ TextLabel_7.TextScaled = true
 TextLabel_7.TextSize = 14.000
 TextLabel_7.TextWrapped = true
 
+--scripts buttton
+
 
 TextButton.MouseButton1Click:Connect(function()
 	Frame.Visible = false
@@ -576,61 +578,35 @@ flingall.MouseButton1Click:Connect(function()
 end)
 
 flingplayergui.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-FREAKY-FLING/main/kawaii_freaky_fling.lua"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fling%20player%20script"))()
 end)
 
 Espgui.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/esp%20gui%20best%20script"))()
 end)
 
-resetandteleporttothesamelocation.MouseButton1Click:Connect(function()
-	local Players = game:GetService("Players")
-	local player = Players.LocalPlayer
+teleportcorinates.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/faejnaergeraerg%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B"))()
+end)
 
-	-- Store last death/reset position
-	local lastPosition = nil
+Invisiblegui.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))()
+end)
 
-	-- Function to teleport character
-	local function teleportCharacter(character, position)
-		local hrp = character:WaitForChild("HumanoidRootPart")
-		task.wait(0.1) -- wait for physics
-		hrp.CFrame = CFrame.new(position)
-	end
+telpporttocordinatesandwhenyoudieitsteleporttocordinatesgui.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/2001'))()
+end)
 
-	-- Handle new character spawning
-	local function onCharacterAdded(character)
-		local humanoid = character:WaitForChild("Humanoid")
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/2002'))()
+end)
 
-		-- Teleport after respawn if we have a saved position
-		if lastPosition then
-			teleportCharacter(character, lastPosition)
-		end
+Reset.MouseButton1Click:Connect(function()
+	local player = game.Players.LocalPlayer
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
 
-		-- Save position when character dies
-		humanoid.Died:Connect(function()
-			local hrp = character:FindFirstChild("HumanoidRootPart")
-			if hrp then
-				lastPosition = hrp.Position
-			end
-		end)
-	end
-
-	-- Kill player function
-	local function resetCharacter()
-		local character = player.Character
-		if character then
-			local humanoid = character:FindFirstChild("Humanoid")
-			if humanoid then
-				humanoid.Health = 0
-			end
-		end
-	end
-
-	-- Connect character respawn
-	player.CharacterAdded:Connect(onCharacterAdded)
-
-	-- Optional: kill immediately on script run
-	resetCharacter()
+	humanoid.Health = 0
 
 end)
 
