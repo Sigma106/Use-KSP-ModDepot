@@ -1,10 +1,18 @@
--- FULL WORLD Epic Face Changer GUI
+-- FULL WORLD Epic Face Changer GUI (Tabbed)
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 
 local EPIC_TEXTURE = "rbxassetid://7817004"
+local NIGHT_SKY = {
+    SkyboxBk = "rbxassetid://6285719338",
+    SkyboxDn = "rbxassetid://6285721078",
+    SkyboxFt = "rbxassetid://6285722964",
+    SkyboxLf = "rbxassetid://6285724682",
+    SkyboxRt = "rbxassetid://6285726335",
+    SkyboxUp = "rbxassetid://6285730635"
+}
 
 -- Remove old GUI
 pcall(function() CoreGui:FindFirstChild("EpicFaceGui"):Destroy() end)
@@ -17,52 +25,61 @@ for _, s in pairs(Lighting:GetChildren()) do
     end
 end
 
--- Save original textures for restoration
-local originalTextures = {}
-
+-- Save original textures/colors/materials
+local originalProps = {}
 local function saveAllOriginal()
     for _, obj in pairs(Workspace:GetDescendants()) do
         pcall(function()
+            originalProps[obj] = {}
             if obj:IsA("Decal") or obj:IsA("Texture") then
-                originalTextures[obj] = originalTextures[obj] or {}
-                originalTextures[obj].Texture = obj.Texture
+                originalProps[obj].Texture = obj.Texture
             elseif obj:IsA("MeshPart") then
-                originalTextures[obj] = originalTextures[obj] or {}
-                originalTextures[obj].TextureID = obj.TextureID
+                originalProps[obj].TextureID = obj.TextureID
+                originalProps[obj].Material = obj.Material
+                originalProps[obj].Color = obj.Color
             elseif obj:IsA("SpecialMesh") then
-                originalTextures[obj] = originalTextures[obj] or {}
-                originalTextures[obj].TextureId = obj.TextureId
+                originalProps[obj].TextureId = obj.TextureId
             elseif obj:IsA("SurfaceAppearance") then
-                originalTextures[obj] = originalTextures[obj] or {}
-                originalTextures[obj].Texture = obj.Texture
+                originalProps[obj].Texture = obj.Texture
             elseif obj:IsA("BasePart") then
-                originalTextures[obj] = originalTextures[obj] or {}
-                originalTextures[obj].Material = obj.Material
-                originalTextures[obj].Color = obj.Color
+                originalProps[obj].Material = obj.Material
+                originalProps[obj].Color = obj.Color
             end
         end)
     end
 end
-
 saveAllOriginal()
 
--- Sky functions
+-- Sky Functions
 local function clearSkies()
     for _, s in pairs(Lighting:GetChildren()) do
         if s:IsA("Sky") then s:Destroy() end
     end
 end
 
-local function epicFaceSky()
+local function setEpicFaceSky()
     clearSkies()
     local sky = Instance.new("Sky")
     sky.Name = "EpicFace"
-    local id = EPIC_TEXTURE
-    sky.SkyboxBk,id,id
-    sky.SkyboxBk, sky.SkyboxDn, sky.SkyboxFt = id,id,id
-    sky.SkyboxLf, sky.SkyboxRt, sky.SkyboxUp = id,id,id
+    sky.SkyboxBk = EPIC_TEXTURE
+    sky.SkyboxDn = EPIC_TEXTURE
+    sky.SkyboxFt = EPIC_TEXTURE
+    sky.SkyboxLf = EPIC_TEXTURE
+    sky.SkyboxRt = EPIC_TEXTURE
+    sky.SkyboxUp = EPIC_TEXTURE
     sky.StarCount = 3000
     sky.CelestialBodiesShown = true
+    sky.Parent = Lighting
+end
+
+local function setNightSky()
+    clearSkies()
+    local sky = Instance.new("Sky")
+    sky.Name = "Night"
+    for k,v in pairs(NIGHT_SKY) do
+        sky[k] = v
+    end
+    sky.CelestialBodiesShown = false
     sky.Parent = Lighting
 end
 
@@ -73,31 +90,33 @@ local function restoreSky()
     end
 end
 
--- Apply Epic Face texture to EVERYTHING
+-- Apply Epic Face to all parts, meshes, decals, surface appearances, BaseParts
 local function applyEpicWorld()
-    epicFaceSky() -- change sky too
+    setEpicFaceSky()
     for _, obj in pairs(Workspace:GetDescendants()) do
         pcall(function()
             if obj:IsA("Decal") or obj:IsA("Texture") then
                 obj.Texture = EPIC_TEXTURE
             elseif obj:IsA("MeshPart") then
                 obj.TextureID = EPIC_TEXTURE
+                obj.Material = Enum.Material.SmoothPlastic
+                obj.Color = Color3.new(1,1,1)
             elseif obj:IsA("SpecialMesh") then
                 obj.TextureId = EPIC_TEXTURE
             elseif obj:IsA("SurfaceAppearance") then
                 obj.Texture = EPIC_TEXTURE
             elseif obj:IsA("BasePart") then
-                obj.Color = Color3.new(1,1,1)
                 obj.Material = Enum.Material.SmoothPlastic
+                obj.Color = Color3.new(1,1,1)
             end
         end)
     end
 end
 
--- Restore everything
+-- Restore original textures/colors/materials
 local function restoreWorld()
     restoreSky()
-    for obj, props in pairs(originalTextures) do
+    for obj, props in pairs(originalProps) do
         if obj and obj.Parent then
             pcall(function()
                 for k,v in pairs(props) do
@@ -116,7 +135,7 @@ gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 
 local main = Instance.new("Frame")
 main.Parent = gui
-main.Size = UDim2.new(0,360,0,260)
+main.Size = UDim2.new(0,360,0,280)
 main.Position = UDim2.new(0.5,-180,0.4,0)
 main.BackgroundColor3 = Color3.fromRGB(20,20,20)
 main.Active = true
@@ -143,7 +162,34 @@ close.Font = Enum.Font.GothamBold
 Instance.new("UICorner", close)
 close.MouseButton1Click:Connect(function() gui:Destroy() end)
 
--- Buttons
+-- Tabs
+local tabSky = Instance.new("TextButton", main)
+tabSky.Text = "Sky"
+tabSky.Size = UDim2.new(0.5,0,0,30)
+tabSky.Position = UDim2.new(0,0,0,40)
+tabSky.BackgroundColor3 = Color3.fromRGB(60,60,60)
+tabSky.TextColor3 = Color3.new(1,1,1)
+
+local tabWorld = Instance.new("TextButton", main)
+tabWorld.Text = "World"
+tabWorld.Size = UDim2.new(0.5,0,0,30)
+tabWorld.Position = UDim2.new(0.5,0,0,40)
+tabWorld.BackgroundColor3 = Color3.fromRGB(40,40,40)
+tabWorld.TextColor3 = Color3.new(1,1,1)
+
+-- Pages
+local skyPage = Instance.new("Frame", main)
+skyPage.Size = UDim2.new(1,0,1,-80)
+skyPage.Position = UDim2.new(0,0,0,80)
+skyPage.BackgroundTransparency = 1
+
+local worldPage = Instance.new("Frame", main)
+worldPage.Size = skyPage.Size
+worldPage.Position = skyPage.Position
+worldPage.BackgroundTransparency = 1
+worldPage.Visible = false
+
+-- Button Creator
 local function createButton(parent,text,y,callback)
     local btn = Instance.new("TextButton", parent)
     btn.Size = UDim2.new(0.85,0,0,36)
@@ -156,5 +202,28 @@ local function createButton(parent,text,y,callback)
     btn.MouseButton1Click:Connect(callback)
 end
 
-createButton(main,"Epic Face Everything",0.2,applyEpicWorld)
-createButton(main,"Restore Everything",0.6,restoreWorld)
+-- Sky Buttons
+createButton(skyPage,"Epic Face Sky",0.1,setEpicFaceSky)
+createButton(skyPage,"Night Sky",0.35,setNightSky)
+createButton(skyPage,"Restore Sky",0.6,restoreSky)
+
+-- World Buttons
+createButton(worldPage,"Epic Face Everything",0.1,applyEpicWorld)
+createButton(worldPage,"Restore Everything",0.5,restoreWorld)
+
+-- Tab switching
+tabSky.MouseButton1Click:Connect(function()
+    skyPage.Visible = true
+    worldPage.Visible = false
+    tabSky.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    tabWorld.BackgroundColor3 = Color3.fromRGB(40,40,40)
+end)
+
+tabWorld.MouseButton1Click:Connect(function()
+    skyPage.Visible = false
+    worldPage.Visible = true
+    tabWorld.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    tabSky.BackgroundColor3 = Color3.fromRGB(40,40,40)
+end)
+
+print("Epic Face World Changer GUI loaded")
