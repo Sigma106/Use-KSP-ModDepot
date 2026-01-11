@@ -1,18 +1,26 @@
--- Simple Sky Changer GUI
+-- Sky Changer GUI with ScrollFrame
 local Lighting = game:GetService("Lighting")
 local CoreGui = game:GetService("CoreGui")
 
 local EPIC_TEXTURE = "rbxassetid://7817004"
-local originalSkies = {}
+local NIGHT_SKY = {
+    SkyboxBk = "rbxassetid://6285719338",
+    SkyboxDn = "rbxassetid://6285721078",
+    SkyboxFt = "rbxassetid://6285722964",
+    SkyboxLf = "rbxassetid://6285724682",
+    SkyboxRt = "rbxassetid://6285726335",
+    SkyboxUp = "rbxassetid://6285730635"
+}
 
 -- Save original skies
+local originalSkies = {}
 for _, s in pairs(Lighting:GetChildren()) do
     if s:IsA("Sky") then
         table.insert(originalSkies, s:Clone())
     end
 end
 
--- Clear all skies
+-- Clear skies
 local function clearSkies()
     for _, s in pairs(Lighting:GetChildren()) do
         if s:IsA("Sky") then s:Destroy() end
@@ -35,7 +43,19 @@ local function setEpicSky()
     sky.Parent = Lighting
 end
 
--- Restore original sky
+-- Set Night sky
+local function setNightSky()
+    clearSkies()
+    local sky = Instance.new("Sky")
+    sky.Name = "Night"
+    for k,v in pairs(NIGHT_SKY) do
+        sky[k] = v
+    end
+    sky.CelestialBodiesShown = false
+    sky.Parent = Lighting
+end
+
+-- Restore original skies
 local function restoreSky()
     clearSkies()
     for _, s in pairs(originalSkies) do
@@ -49,28 +69,41 @@ gui.Name = "SkyChangerGui"
 gui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0,300,0,140)
-main.Position = UDim2.new(0.5,-150,0.5,-70)
+main.Size = UDim2.new(0,300,0,250)
+main.Position = UDim2.new(0.5,-150,0.5,-125)
 main.BackgroundColor3 = Color3.fromRGB(30,30,30)
 main.Active = true
 main.Draggable = true
 main.Parent = gui
 
-local function createButton(parent,text,posY,callback)
+-- ScrollFrame for buttons
+local scroll = Instance.new("ScrollingFrame", main)
+scroll.Size = UDim2.new(1,0,1,0)
+scroll.CanvasSize = UDim2.new(0,0,0,200)
+scroll.ScrollBarThickness = 8
+scroll.BackgroundTransparency = 1
+
+local uiList = Instance.new("UIListLayout", scroll)
+uiList.Padding = UDim.new(0,10)
+uiList.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Button creator
+local function createButton(parent,text,callback)
     local btn = Instance.new("TextButton", parent)
-    btn.Size = UDim2.new(0.8,0,0,40)
-    btn.Position = UDim2.new(0.1,0,posY,0)
+    btn.Size = UDim2.new(0.9,0,0,40)
     btn.Text = text
     btn.BackgroundColor3 = Color3.fromRGB(70,130,220)
     btn.TextColor3 = Color3.new(1,1,1)
     btn.Font = Enum.Font.GothamBold
     btn.TextSize = 18
+    btn.AutoButtonColor = true
     btn.MouseButton1Click:Connect(callback)
     return btn
 end
 
-createButton(main,"Epic Face Sky",0.1,setEpicSky)
-createButton(main,"Restore Sky",0.55,restoreSky)
+createButton(scroll,"Epic Face Sky",setEpicSky)
+createButton(scroll,"Night Sky",setNightSky)
+createButton(scroll,"Restore Sky",restoreSky)
 
 -- Close button
 local close = Instance.new("TextButton", main)
@@ -82,4 +115,4 @@ close.TextColor3 = Color3.new(1,1,1)
 close.Font = Enum.Font.GothamBold
 close.MouseButton1Click:Connect(function() gui:Destroy() end)
 
-print("Sky Changer GUI loaded")
+print("Sky Changer GUI with scroll loaded")
