@@ -1,4 +1,4 @@
--- Custom Sky Loader GUI with input
+-- Custom Sky Loader GUI (Bottom-Right Upwards)
 local Lighting = game:GetService("Lighting")
 local CoreGui = game:GetService("CoreGui")
 
@@ -25,12 +25,12 @@ end
 
 -- GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "CustomSkyInputGui"
+gui.Name = "CustomSkyBottomRight"
 gui.Parent = CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0,320,0,300)
-main.Position = UDim2.new(0.5,-160,0.5,-150)
+main.Size = UDim2.new(0,300,0,100)
+main.Position = UDim2.new(1,-310,1,-110) -- bottom-right
 main.BackgroundColor3 = Color3.fromRGB(35,35,35)
 main.BorderSizePixel = 0
 main.Active = true
@@ -44,20 +44,20 @@ corner.Parent = main
 
 -- Title
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1,0,0,35)
+title.Size = UDim2.new(1,0,0,30)
 title.BackgroundColor3 = Color3.fromRGB(25,25,25)
 title.BorderSizePixel = 0
 title.Text = "Custom Sky Loader"
 title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.GothamBold
-title.TextSize = 18
+title.TextSize = 16
 title.Parent = main
 
 -- Input box for asset ID
 local inputBox = Instance.new("TextBox")
 inputBox.Size = UDim2.new(0.7,0,0,30)
-inputBox.Position = UDim2.new(0.05,0,0,50)
-inputBox.PlaceholderText = "Enter Sky Asset ID"
+inputBox.Position = UDim2.new(0.05,0,0,35)
+inputBox.PlaceholderText = "Enter Asset ID"
 inputBox.Text = ""
 inputBox.ClearTextOnFocus = false
 inputBox.BackgroundColor3 = Color3.fromRGB(50,50,50)
@@ -70,10 +70,10 @@ cornerInput.CornerRadius = UDim.new(0,6)
 cornerInput.Parent = inputBox
 inputBox.Parent = main
 
--- Button to add new sky
+-- Add button
 local addBtn = Instance.new("TextButton")
 addBtn.Size = UDim2.new(0.2,0,0,30)
-addBtn.Position = UDim2.new(0.78,0,0,50)
+addBtn.Position = UDim2.new(0.78,0,0,35)
 addBtn.Text = "Add"
 addBtn.BackgroundColor3 = Color3.fromRGB(70,70,70)
 addBtn.TextColor3 = Color3.new(1,1,1)
@@ -84,39 +84,40 @@ cornerBtn.CornerRadius = UDim.new(0,6)
 cornerBtn.Parent = addBtn
 addBtn.Parent = main
 
--- ScrollFrame at bottom-left
-local scroll = Instance.new("ScrollingFrame")
-scroll.Size = UDim2.new(0.95,0,0.5,0)
-scroll.Position = UDim2.new(0.025,0,0.4,0)
-scroll.BackgroundTransparency = 1
-scroll.ScrollBarThickness = 6
-scroll.Parent = main
+-- Frame for sky buttons (grow upward)
+local btnFrame = Instance.new("Frame")
+btnFrame.Size = UDim2.new(0.95,0,0,150)
+btnFrame.Position = UDim2.new(0.025,0,0,-150) -- will grow upward
+btnFrame.BackgroundTransparency = 1
+btnFrame.Parent = main
 
 local uiList = Instance.new("UIListLayout")
-uiList.Padding = UDim.new(0,6)
 uiList.SortOrder = Enum.SortOrder.LayoutOrder
-uiList.Parent = scroll
-
+uiList.FillDirection = Enum.FillDirection.Vertical
+uiList.Padding = UDim.new(0,6)
+uiList.Parent = btnFrame
+uiList.HorizontalAlignment = Enum.HorizontalAlignment.Right
 uiList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    scroll.CanvasSize = UDim2.new(0,0,0,uiList.AbsoluteContentSize.Y + 5)
+    btnFrame.Size = UDim2.new(0.95,0,0,uiList.AbsoluteContentSize.Y)
+    btnFrame.Position = UDim2.new(0.025,0,0,-uiList.AbsoluteContentSize.Y)
 end)
 
--- Function to create sky button in scroll
+-- Function to create sky button
 local function createSkyButton(name, skyData)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.95,0,0,35)
+    btn.Size = UDim2.new(1,0,0,30)
     btn.BackgroundColor3 = Color3.fromRGB(70,70,70)
     btn.TextColor3 = Color3.new(1,1,1)
     btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 16
+    btn.TextSize = 14
     btn.Text = name
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0,6)
+    corner.CornerRadius = UDim.new(0,5)
     corner.Parent = btn
     btn.MouseButton1Click:Connect(function()
         applySky(skyData)
     end)
-    btn.Parent = scroll
+    btn.Parent = btnFrame
 end
 
 -- Add button functionality
@@ -152,4 +153,4 @@ close.BorderSizePixel = 0
 close.Parent = main
 close.MouseButton1Click:Connect(function() gui:Destroy() end)
 
-print("Custom Sky Input GUI loaded")
+print("Bottom-Right Upward Sky Loader GUI loaded")
