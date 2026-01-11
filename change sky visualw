@@ -1,4 +1,4 @@
--- Sky Changer GUI with ScrollFrame
+-- Sky Changer GUI with proper ScrollFrame
 local Lighting = game:GetService("Lighting")
 local CoreGui = game:GetService("CoreGui")
 
@@ -79,13 +79,18 @@ main.Parent = gui
 -- ScrollFrame for buttons
 local scroll = Instance.new("ScrollingFrame", main)
 scroll.Size = UDim2.new(1,0,1,0)
-scroll.CanvasSize = UDim2.new(0,0,0,200)
-scroll.ScrollBarThickness = 8
 scroll.BackgroundTransparency = 1
+scroll.ScrollBarThickness = 8
+scroll.CanvasSize = UDim2.new(0,0,0,0) -- will update automatically
 
 local uiList = Instance.new("UIListLayout", scroll)
 uiList.Padding = UDim.new(0,10)
 uiList.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Update CanvasSize automatically
+uiList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    scroll.CanvasSize = UDim2.new(0,0,0,uiList.AbsoluteContentSize.Y + 10)
+end)
 
 -- Button creator
 local function createButton(parent,text,callback)
@@ -101,9 +106,15 @@ local function createButton(parent,text,callback)
     return btn
 end
 
+-- Create buttons
 createButton(scroll,"Epic Face Sky",setEpicSky)
 createButton(scroll,"Night Sky",setNightSky)
 createButton(scroll,"Restore Sky",restoreSky)
+
+-- Add more buttons to test scrolling
+for i=1,10 do
+    createButton(scroll,"Extra Button "..i,function() print("Clicked "..i) end)
+end
 
 -- Close button
 local close = Instance.new("TextButton", main)
@@ -115,4 +126,4 @@ close.TextColor3 = Color3.new(1,1,1)
 close.Font = Enum.Font.GothamBold
 close.MouseButton1Click:Connect(function() gui:Destroy() end)
 
-print("Sky Changer GUI with scroll loaded")
+print("Sky Changer GUI with working scroll loaded")
