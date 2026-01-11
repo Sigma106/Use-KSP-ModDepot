@@ -633,3 +633,54 @@ resetandteleporttothesamelocation.MouseButton1Click:Connect(function()
 	resetCharacter()
 
 end)
+
+resetandteleporttothesamelocation.MouseButton1Click:Connect(function()
+	local Players = game:GetService("Players")
+	local player = Players.LocalPlayer
+
+	-- Store last death/reset position
+	local lastPosition = nil
+
+	-- Function to teleport character
+	local function teleportCharacter(character, position)
+		local hrp = character:WaitForChild("HumanoidRootPart")
+		task.wait(0.1) -- wait for physics
+		hrp.CFrame = CFrame.new(position)
+	end
+
+	-- Handle new character spawning
+	local function onCharacterAdded(character)
+		local humanoid = character:WaitForChild("Humanoid")
+
+		-- Teleport after respawn if we have a saved position
+		if lastPosition then
+			teleportCharacter(character, lastPosition)
+		end
+
+		-- Save position when character dies
+		humanoid.Died:Connect(function()
+			local hrp = character:FindFirstChild("HumanoidRootPart")
+			if hrp then
+				lastPosition = hrp.Position
+			end
+		end)
+	end
+
+	-- Kill player function
+	local function resetCharacter()
+		local character = player.Character
+		if character then
+			local humanoid = character:FindFirstChild("Humanoid")
+			if humanoid then
+				humanoid.Health = 0
+			end
+		end
+	end
+
+	-- Connect character respawn
+	player.CharacterAdded:Connect(onCharacterAdded)
+
+	-- Optional: kill immediately on script run
+	resetCharacter()
+
+end)
