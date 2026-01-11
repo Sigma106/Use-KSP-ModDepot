@@ -1,0 +1,85 @@
+-- Simple Sky Changer GUI
+local Lighting = game:GetService("Lighting")
+local CoreGui = game:GetService("CoreGui")
+
+local EPIC_TEXTURE = "rbxassetid://7817004"
+local originalSkies = {}
+
+-- Save original skies
+for _, s in pairs(Lighting:GetChildren()) do
+    if s:IsA("Sky") then
+        table.insert(originalSkies, s:Clone())
+    end
+end
+
+-- Clear all skies
+local function clearSkies()
+    for _, s in pairs(Lighting:GetChildren()) do
+        if s:IsA("Sky") then s:Destroy() end
+    end
+end
+
+-- Set Epic Face sky
+local function setEpicSky()
+    clearSkies()
+    local sky = Instance.new("Sky")
+    sky.Name = "EpicFace"
+    sky.SkyboxBk = EPIC_TEXTURE
+    sky.SkyboxDn = EPIC_TEXTURE
+    sky.SkyboxFt = EPIC_TEXTURE
+    sky.SkyboxLf = EPIC_TEXTURE
+    sky.SkyboxRt = EPIC_TEXTURE
+    sky.SkyboxUp = EPIC_TEXTURE
+    sky.StarCount = 3000
+    sky.CelestialBodiesShown = true
+    sky.Parent = Lighting
+end
+
+-- Restore original sky
+local function restoreSky()
+    clearSkies()
+    for _, s in pairs(originalSkies) do
+        s:Clone().Parent = Lighting
+    end
+end
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "SkyChangerGui"
+gui.Parent = CoreGui
+
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0,300,0,140)
+main.Position = UDim2.new(0.5,-150,0.5,-70)
+main.BackgroundColor3 = Color3.fromRGB(30,30,30)
+main.Active = true
+main.Draggable = true
+main.Parent = gui
+
+local function createButton(parent,text,posY,callback)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(0.8,0,0,40)
+    btn.Position = UDim2.new(0.1,0,posY,0)
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(70,130,220)
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 18
+    btn.MouseButton1Click:Connect(callback)
+    return btn
+end
+
+createButton(main,"Epic Face Sky",0.1,setEpicSky)
+createButton(main,"Restore Sky",0.55,restoreSky)
+
+-- Close button
+local close = Instance.new("TextButton", main)
+close.Size = UDim2.new(0,30,0,30)
+close.Position = UDim2.new(1,-35,0,5)
+close.Text = "X"
+close.BackgroundColor3 = Color3.fromRGB(170,60,60)
+close.TextColor3 = Color3.new(1,1,1)
+close.Font = Enum.Font.GothamBold
+close.MouseButton1Click:Connect(function() gui:Destroy() end)
+
+print("Sky Changer GUI loaded")
