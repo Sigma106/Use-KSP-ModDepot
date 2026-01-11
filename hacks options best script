@@ -612,51 +612,61 @@ end)
 
 resetandteleporttothesamelocation.MouseButton1Click:Connect(function()
 	local Players = game:GetService("Players")
-	local player = Players.LocalPlayer
+local player = Players.LocalPlayer
 
-	-- Store last death/reset position
-	local lastPosition = nil
+-- Store last death/reset position
+local lastPosition = nil
 
-	-- Function to teleport character
-	local function teleportCharacter(character, position)
-		local hrp = character:WaitForChild("HumanoidRootPart")
-		task.wait(1) -- wait for physics
-		hrp.CFrame = CFrame.new(position)
+-- Save initial position immediately
+if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+	lastPosition = player.Character.HumanoidRootPart.Position
+end
+
+-- Function to teleport character instantly
+local function teleportCharacter(character, position)
+	local hrp = character:WaitForChild("HumanoidRootPart")
+	hrp.CFrame = CFrame.new(position)
+end
+
+-- Handle new character spawning
+local function onCharacterAdded(character)
+	local humanoid = character:WaitForChild("Humanoid")
+
+	-- Teleport instantly after respawn if we have a saved position
+	if lastPosition then
+		teleportCharacter(character, lastPosition)
 	end
 
-	-- Handle new character spawning
-	local function onCharacterAdded(character)
-		local humanoid = character:WaitForChild("Humanoid")
-
-		-- Teleport after respawn if we have a saved position
-		if lastPosition then
-			teleportCharacter(character, lastPosition)
-		end
-
-		-- Save position when character dies
-		humanoid.Died:Connect(function()
+	-- Save position before death
+	humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+		if humanoid.Health <= 0 then
 			local hrp = character:FindFirstChild("HumanoidRootPart")
 			if hrp then
 				lastPosition = hrp.Position
 			end
-		end)
-	end
+		end
+	end)
+end
 
-	-- Kill player function
-	local function resetCharacter()
-		local character = player.Character
-		if character then
-			local humanoid = character:FindFirstChild("Humanoid")
-			if humanoid then
-				humanoid.Health = 0
-			end
+-- Kill player function (resets character)
+local function resetCharacter()
+	local character = player.Character
+	if character then
+		local humanoid = character:FindFirstChild("Humanoid")
+		if humanoid then
+			humanoid.Health = 0
 		end
 	end
+end
 
-	-- Connect character respawn
-	player.CharacterAdded:Connect(onCharacterAdded)
+-- Connect character respawn
+player.CharacterAdded:Connect(onCharacterAdded)
 
-	-- Optional: kill immediately on script run
-	resetCharacter()
+-- Ensure CharacterAdded fires if character already exists
+if player.Character then
+	onCharacterAdded(player.Character)
+end
 
+-- Kill immediately on script run (optional)
+resetCharacter()
 end)
