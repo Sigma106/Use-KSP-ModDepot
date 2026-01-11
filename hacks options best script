@@ -620,7 +620,7 @@ resetandteleporttothesamelocation.MouseButton1Click:Connect(function()
 	-- Function to teleport character
 	local function teleportCharacter(character, position)
 		local hrp = character:WaitForChild("HumanoidRootPart")
-		task.wait(0.1) -- wait for physics
+		task.wait(1) -- wait for physics
 		hrp.CFrame = CFrame.new(position)
 	end
 
