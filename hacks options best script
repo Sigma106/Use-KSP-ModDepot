@@ -7,19 +7,19 @@ local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local maintab = Instance.new("ImageLabel")
 local ScrollingFrame = Instance.new("ScrollingFrame")
-local fly = Instance.new("TextButton")
 local Noclip = Instance.new("TextButton")
-local Tptool = Instance.new("TextButton")
 local Spectateplayer = Instance.new("TextButton")
-local teleporttoplayer = Instance.new("TextButton")
-local speedgui = Instance.new("TextButton")
+local Tptool = Instance.new("TextButton")
 local dexgui = Instance.new("TextButton")
+local fly = Instance.new("TextButton")
+local speedgui = Instance.new("TextButton")
+local teleporttoplayer = Instance.new("TextButton")
 local walkonawallsnotrecomend = Instance.new("TextButton")
 local Reset = Instance.new("TextButton")
 local teleportcorinates = Instance.new("TextButton")
 local scriptyoudieteleportinsteadtoyourloactionwhereyoudie = Instance.new("TextButton")
 local telpporttocordinatesandwhenyoudieitsteleporttocordinatesgui = Instance.new("TextButton")
-local teleporttocordinatesclassicgui = Instance.new("TextButton")
+local resetandteleporttothesamelocation = Instance.new("TextButton")
 local Invisiblegui = Instance.new("TextButton")
 local TextLabel = Instance.new("TextLabel")
 local ImageLabel = Instance.new("ImageLabel")
@@ -70,20 +70,6 @@ ScrollingFrame.Size = UDim2.new(0, 469, 0, 327)
 ScrollingFrame.CanvasSize = UDim2.new(0, 0, 1.5, 0)
 ScrollingFrame.VerticalScrollBarInset = Enum.ScrollBarInset.Always
 
-fly.Name = "fly"
-fly.Parent = ScrollingFrame
-fly.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-fly.BorderColor3 = Color3.fromRGB(0, 0, 0)
-fly.BorderSizePixel = 0
-fly.Position = UDim2.new(0.0262823366, 0, 0.0229357798, 0)
-fly.Size = UDim2.new(0, 196, 0, 50)
-fly.Font = Enum.Font.SourceSans
-fly.Text = "FLy gui"
-fly.TextColor3 = Color3.fromRGB(255, 255, 255)
-fly.TextScaled = true
-fly.TextSize = 14.000
-fly.TextWrapped = true
-
 Noclip.Name = "Noclip"
 Noclip.Parent = ScrollingFrame
 Noclip.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -97,20 +83,6 @@ Noclip.TextColor3 = Color3.fromRGB(255, 255, 255)
 Noclip.TextScaled = true
 Noclip.TextSize = 14.000
 Noclip.TextWrapped = true
-
-Tptool.Name = "Tptool"
-Tptool.Parent = ScrollingFrame
-Tptool.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Tptool.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Tptool.BorderSizePixel = 0
-Tptool.Position = UDim2.new(0.0262823123, 0, 0.280835867, 0)
-Tptool.Size = UDim2.new(0, 196, 0, 50)
-Tptool.Font = Enum.Font.SourceSans
-Tptool.Text = "Tptool"
-Tptool.TextColor3 = Color3.fromRGB(255, 255, 255)
-Tptool.TextScaled = true
-Tptool.TextSize = 14.000
-Tptool.TextWrapped = true
 
 Spectateplayer.Name = "Spectate player"
 Spectateplayer.Parent = ScrollingFrame
@@ -126,19 +98,47 @@ Spectateplayer.TextScaled = true
 Spectateplayer.TextSize = 14.000
 Spectateplayer.TextWrapped = true
 
-teleporttoplayer.Name = "teleport to player"
-teleporttoplayer.Parent = ScrollingFrame
-teleporttoplayer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-teleporttoplayer.BorderColor3 = Color3.fromRGB(0, 0, 0)
-teleporttoplayer.BorderSizePixel = 0
-teleporttoplayer.Position = UDim2.new(0.485263079, 0, 0.0229357798, 0)
-teleporttoplayer.Size = UDim2.new(0, 214, 0, 50)
-teleporttoplayer.Font = Enum.Font.SourceSans
-teleporttoplayer.Text = "teleport to player gui"
-teleporttoplayer.TextColor3 = Color3.fromRGB(255, 255, 255)
-teleporttoplayer.TextScaled = true
-teleporttoplayer.TextSize = 14.000
-teleporttoplayer.TextWrapped = true
+Tptool.Name = "Tptool"
+Tptool.Parent = ScrollingFrame
+Tptool.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Tptool.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Tptool.BorderSizePixel = 0
+Tptool.Position = UDim2.new(0.0262823123, 0, 0.280835867, 0)
+Tptool.Size = UDim2.new(0, 196, 0, 50)
+Tptool.Font = Enum.Font.SourceSans
+Tptool.Text = "Tptool"
+Tptool.TextColor3 = Color3.fromRGB(255, 255, 255)
+Tptool.TextScaled = true
+Tptool.TextSize = 14.000
+Tptool.TextWrapped = true
+
+dexgui.Name = "dex gui"
+dexgui.Parent = ScrollingFrame
+dexgui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+dexgui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+dexgui.BorderSizePixel = 0
+dexgui.Position = UDim2.new(0.480886787, 0, 0.279816508, 0)
+dexgui.Size = UDim2.new(0, 214, 0, 50)
+dexgui.Font = Enum.Font.SourceSans
+dexgui.Text = "dex gui"
+dexgui.TextColor3 = Color3.fromRGB(255, 255, 255)
+dexgui.TextScaled = true
+dexgui.TextSize = 14.000
+dexgui.TextWrapped = true
+
+fly.Name = "fly"
+fly.Parent = ScrollingFrame
+fly.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+fly.BorderColor3 = Color3.fromRGB(0, 0, 0)
+fly.BorderSizePixel = 0
+fly.Position = UDim2.new(0.0262823366, 0, 0.0229357798, 0)
+fly.Size = UDim2.new(0, 196, 0, 50)
+fly.Font = Enum.Font.SourceSans
+fly.Text = "FLy gui"
+fly.TextColor3 = Color3.fromRGB(255, 255, 255)
+fly.TextScaled = true
+fly.TextSize = 14.000
+fly.TextWrapped = true
 
 speedgui.Name = "speed gui"
 speedgui.Parent = ScrollingFrame
@@ -154,19 +154,19 @@ speedgui.TextScaled = true
 speedgui.TextSize = 14.000
 speedgui.TextWrapped = true
 
-dexgui.Name = "dex gui"
-dexgui.Parent = ScrollingFrame
-dexgui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-dexgui.BorderColor3 = Color3.fromRGB(0, 0, 0)
-dexgui.BorderSizePixel = 0
-dexgui.Position = UDim2.new(0.480886787, 0, 0.279816508, 0)
-dexgui.Size = UDim2.new(0, 214, 0, 50)
-dexgui.Font = Enum.Font.SourceSans
-dexgui.Text = "dex gui"
-dexgui.TextColor3 = Color3.fromRGB(255, 255, 255)
-dexgui.TextScaled = true
-dexgui.TextSize = 14.000
-dexgui.TextWrapped = true
+teleporttoplayer.Name = "teleport to player"
+teleporttoplayer.Parent = ScrollingFrame
+teleporttoplayer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+teleporttoplayer.BorderColor3 = Color3.fromRGB(0, 0, 0)
+teleporttoplayer.BorderSizePixel = 0
+teleporttoplayer.Position = UDim2.new(0.485263079, 0, 0.0229357798, 0)
+teleporttoplayer.Size = UDim2.new(0, 214, 0, 50)
+teleporttoplayer.Font = Enum.Font.SourceSans
+teleporttoplayer.Text = "teleport to player gui"
+teleporttoplayer.TextColor3 = Color3.fromRGB(255, 255, 255)
+teleporttoplayer.TextScaled = true
+teleporttoplayer.TextSize = 14.000
+teleporttoplayer.TextWrapped = true
 
 walkonawallsnotrecomend.Name = "walk on a walls not recomend"
 walkonawallsnotrecomend.Parent = ScrollingFrame
@@ -238,19 +238,19 @@ telpporttocordinatesandwhenyoudieitsteleporttocordinatesgui.TextScaled = true
 telpporttocordinatesandwhenyoudieitsteleporttocordinatesgui.TextSize = 14.000
 telpporttocordinatesandwhenyoudieitsteleporttocordinatesgui.TextWrapped = true
 
-teleporttocordinatesclassicgui.Name = "teleport to cordinates classic gui"
-teleporttocordinatesclassicgui.Parent = ScrollingFrame
-teleporttocordinatesclassicgui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-teleporttocordinatesclassicgui.BorderColor3 = Color3.fromRGB(0, 0, 0)
-teleporttocordinatesclassicgui.BorderSizePixel = 0
-teleporttocordinatesclassicgui.Position = UDim2.new(0.0262823123, 0, 0.841997981, 0)
-teleporttocordinatesclassicgui.Size = UDim2.new(0, 196, 0, 50)
-teleporttocordinatesclassicgui.Font = Enum.Font.SourceSans
-teleporttocordinatesclassicgui.Text = "teleport to cordinates classic gui"
-teleporttocordinatesclassicgui.TextColor3 = Color3.fromRGB(255, 255, 255)
-teleporttocordinatesclassicgui.TextScaled = true
-teleporttocordinatesclassicgui.TextSize = 14.000
-teleporttocordinatesclassicgui.TextWrapped = true
+resetandteleporttothesamelocation.Name = "reset and teleport to the same location"
+resetandteleporttothesamelocation.Parent = ScrollingFrame
+resetandteleporttothesamelocation.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+resetandteleporttothesamelocation.BorderColor3 = Color3.fromRGB(0, 0, 0)
+resetandteleporttothesamelocation.BorderSizePixel = 0
+resetandteleporttothesamelocation.Position = UDim2.new(0.0262823123, 0, 0.841997981, 0)
+resetandteleporttothesamelocation.Size = UDim2.new(0, 196, 0, 50)
+resetandteleporttothesamelocation.Font = Enum.Font.SourceSans
+resetandteleporttothesamelocation.Text = "reset and teleport to the same location"
+resetandteleporttothesamelocation.TextColor3 = Color3.fromRGB(255, 255, 255)
+resetandteleporttothesamelocation.TextScaled = true
+resetandteleporttothesamelocation.TextSize = 14.000
+resetandteleporttothesamelocation.TextWrapped = true
 
 Invisiblegui.Name = "Invisible gui"
 Invisiblegui.Parent = ScrollingFrame
@@ -496,8 +496,6 @@ TextLabel_7.TextScaled = true
 TextLabel_7.TextSize = 14.000
 TextLabel_7.TextWrapped = true
 
---scripts buttton
-
 
 TextButton.MouseButton1Click:Connect(function()
 	Frame.Visible = false
@@ -578,34 +576,60 @@ flingall.MouseButton1Click:Connect(function()
 end)
 
 flingplayergui.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fling%20player%20script"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-FREAKY-FLING/main/kawaii_freaky_fling.lua"))()
 end)
 
 Espgui.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/esp%20gui%20best%20script"))()
 end)
 
-teleportcorinates.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/faejnaergeraerg%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B%5B"))()
-end)
+resetandteleporttothesamelocation.MouseButton1Click:Connect(function()
+	local Players = game:GetService("Players")
+	local player = Players.LocalPlayer
 
-Invisiblegui.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))()
-end)
+	-- Store last death/reset position
+	local lastPosition = nil
 
-telpporttocordinatesandwhenyoudieitsteleporttocordinatesgui.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/2001'))()
-end)
+	-- Function to teleport character
+	local function teleportCharacter(character, position)
+		local hrp = character:WaitForChild("HumanoidRootPart")
+		task.wait(0.1) -- wait for physics
+		hrp.CFrame = CFrame.new(position)
+	end
 
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/2002'))()
-end)
+	-- Handle new character spawning
+	local function onCharacterAdded(character)
+		local humanoid = character:WaitForChild("Humanoid")
 
-Reset.MouseButton1Click:Connect(function()
-	local player = game.Players.LocalPlayer
-	local character = player.Character or player.CharacterAdded:Wait()
-	local humanoid = character:WaitForChild("Humanoid")
+		-- Teleport after respawn if we have a saved position
+		if lastPosition then
+			teleportCharacter(character, lastPosition)
+		end
 
-	humanoid.Health = 0
+		-- Save position when character dies
+		humanoid.Died:Connect(function()
+			local hrp = character:FindFirstChild("HumanoidRootPart")
+			if hrp then
+				lastPosition = hrp.Position
+			end
+		end)
+	end
+
+	-- Kill player function
+	local function resetCharacter()
+		local character = player.Character
+		if character then
+			local humanoid = character:FindFirstChild("Humanoid")
+			if humanoid then
+				humanoid.Health = 0
+			end
+		end
+	end
+
+	-- Connect character respawn
+	player.CharacterAdded:Connect(onCharacterAdded)
+
+	-- Optional: kill immediately on script run
+	resetCharacter()
 
 end)
