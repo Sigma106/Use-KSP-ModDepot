@@ -6,9 +6,7 @@ local player = Players.LocalPlayer
 -- VARIABLES
 local enabled = false
 local lastDeathCFrame = nil
-
--- SPEED SETTINGS
-local DESIRED_SPEED = 100 -- CHANGE SPEED HERE
+local currentSpeed = 16 -- saved speed (used by ANY speed GUI)
 
 -- GUI
 local gui = Instance.new("ScreenGui")
@@ -107,19 +105,17 @@ UserInputService.InputEnded:Connect(function(input)
 	end
 end)
 
--- CHARACTER LOGIC (FIXED)
+-- CHARACTER LOGIC (SPEED SAFE)
 local function onCharacter(char)
 	local humanoid = char:WaitForChild("Humanoid")
 	local root = char:WaitForChild("HumanoidRootPart")
 
-	-- APPLY SPEED AFTER RESPAWN
-	humanoid.WalkSpeed = DESIRED_SPEED
+	-- RESTORE SPEED AFTER RESPAWN
+	humanoid.WalkSpeed = currentSpeed
 
-	-- LOCK SPEED (PREVENT RESET)
+	-- TRACK SPEED CHANGES FROM ANY GUI
 	humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
-		if humanoid.WalkSpeed ~= DESIRED_SPEED then
-			humanoid.WalkSpeed = DESIRED_SPEED
-		end
+		currentSpeed = humanoid.WalkSpeed
 	end)
 
 	-- TELEPORT AFTER RESPAWN
