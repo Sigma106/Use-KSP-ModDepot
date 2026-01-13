@@ -652,12 +652,17 @@ Startclambingonawallsbutton.MouseButton1Click:Connect(function()
 	if enabled then return end
 	enabled = true
 	loadAnimation()
+	Stopclambingonawallsbutton.Visible = true
+	Startclambingonawallsbutton.Visible = false
+	
 end)
 
 Stopclambingonawallsbutton.MouseButton1Click:Connect(function()
 	enabled = false
 	climbing = false
 	if track then track:Stop() end
+	Stopclambingonawallsbutton.Visible = false
+	Startclambingonawallsbutton.Visible = true
 end)
 
 RunService.RenderStepped:Connect(function()
