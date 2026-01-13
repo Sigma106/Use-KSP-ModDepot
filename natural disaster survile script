@@ -45,6 +45,7 @@ local resetandteleporttothesamelocation = Instance.new("TextButton")
 local Teleporttogame = Instance.new("TextButton")
 local walkingonawater = Instance.new("TextLabel")
 local climbingonawalls = Instance.new("TextLabel")
+local flyincar = Instance.new("TextButton")
 local trolltab = Instance.new("ImageLabel")
 local TextLabel_2 = Instance.new("TextLabel")
 local flingall = Instance.new("TextButton")
@@ -238,8 +239,8 @@ speedgui.Name = "speed gui"
 speedgui.Parent = maintab
 speedgui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 speedgui.BorderColor3 = Color3.fromRGB(0, 0, 0)
-speedgui.Position = UDim2.new(0.678304255, 0, 0.75939852, 0)
-speedgui.Size = UDim2.new(0, 115, 0, 54)
+speedgui.Position = UDim2.new(0.678304255, 0, 0.703007519, 0)
+speedgui.Size = UDim2.new(0, 115, 0, 30)
 speedgui.Font = Enum.Font.SourceSans
 speedgui.Text = "speed gui"
 speedgui.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -308,7 +309,7 @@ Teleporttospawn.Name = "Teleport to spawn"
 Teleporttospawn.Parent = maintab
 Teleporttospawn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 Teleporttospawn.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Teleporttospawn.Position = UDim2.new(0.678304255, 0, 0.413533837, 0)
+Teleporttospawn.Position = UDim2.new(0.678304255, 0, 0.357142866, 0)
 Teleporttospawn.Size = UDim2.new(0, 115, 0, 32)
 Teleporttospawn.Font = Enum.Font.SourceSans
 Teleporttospawn.Text = "Teleport to spawn"
@@ -321,7 +322,7 @@ Reset.Name = "Reset"
 Reset.Parent = maintab
 Reset.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 Reset.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Reset.Position = UDim2.new(0.678304255, 0, 0.597744346, 0)
+Reset.Position = UDim2.new(0.678304255, 0, 0.533834577, 0)
 Reset.Size = UDim2.new(0, 115, 0, 32)
 Reset.Font = Enum.Font.SourceSans
 Reset.Text = "Reset"
@@ -400,7 +401,7 @@ Teleporttogame.Name = "Teleport to game"
 Teleporttogame.Parent = maintab
 Teleporttogame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 Teleporttogame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Teleporttogame.Position = UDim2.new(0.678304255, 0, 0.225563914, 0)
+Teleporttogame.Position = UDim2.new(0.678304255, 0, 0.203007519, 0)
 Teleporttogame.Size = UDim2.new(0, 115, 0, 32)
 Teleporttogame.Font = Enum.Font.SourceSans
 Teleporttogame.Text = "Teleport to game"
@@ -440,6 +441,19 @@ climbingonawalls.TextScaled = true
 climbingonawalls.TextSize = 14.000
 climbingonawalls.TextStrokeTransparency = 0.000
 climbingonawalls.TextWrapped = true
+
+flyincar.Name = "fly in car"
+flyincar.Parent = maintab
+flyincar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+flyincar.BorderColor3 = Color3.fromRGB(0, 0, 0)
+flyincar.Position = UDim2.new(0.678304255, 0, 0.849624038, 0)
+flyincar.Size = UDim2.new(0, 115, 0, 30)
+flyincar.Font = Enum.Font.SourceSans
+flyincar.Text = "fly in car"
+flyincar.TextColor3 = Color3.fromRGB(0, 0, 0)
+flyincar.TextScaled = true
+flyincar.TextSize = 14.000
+flyincar.TextWrapped = true
 
 trolltab.Name = "troll tab"
 trolltab.Parent = Frame
@@ -862,4 +876,11 @@ end)
 
 flingplayergui.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fling%20player%20script"))()
+end)
+
+flyincar.MouseButton1Click:Connect(function()
+	--[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/ScpGuest666/Random-Roblox-script/refs/heads/main/Roblox%20Fe%20Vehicle%20Fly%20GUI%20script'))()
 end)
