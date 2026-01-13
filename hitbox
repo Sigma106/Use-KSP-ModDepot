@@ -1,4 +1,4 @@
--- Visible Hitbox Changer (LocalScript)
+-- Visible Hitbox Changer with HEX Color (LocalScript)
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -8,14 +8,15 @@ local LocalPlayer = Players.LocalPlayer
 local HitboxEnabled = false -- default OFF
 local HitboxSize = 10
 local HitboxTransparency = 0.5
+local HitboxColor = Color3.fromRGB(255, 0, 0)
 
 -- GUI
 local gui = Instance.new("ScreenGui", game.CoreGui)
 gui.Name = "HitboxGUI"
 
 local main = Instance.new("Frame", gui)
-main.Size = UDim2.new(0, 260, 0, 160)
-main.Position = UDim2.new(0.5, -130, 0.5, -80)
+main.Size = UDim2.new(0, 260, 0, 220)
+main.Position = UDim2.new(0.5, -130, 0.5, -110)
 main.BackgroundColor3 = Color3.fromRGB(30,30,30)
 main.Active = true
 main.Draggable = true
@@ -72,6 +73,44 @@ sizeBox.FocusLost:Connect(function()
 	end
 end)
 
+-- HEX Color TextBox
+local colorBox = Instance.new("TextBox", main)
+colorBox.Size = UDim2.new(1, -20, 0, 30)
+colorBox.Position = UDim2.new(0, 10, 0, 120)
+colorBox.BackgroundColor3 = Color3.fromRGB(40,40,40)
+colorBox.TextColor3 = Color3.new(1,1,1)
+colorBox.PlaceholderText = "HEX Color (ex: #822817)"
+colorBox.Text = "#FF0000"
+
+-- Apply Color Button
+local applyColor = Instance.new("TextButton", main)
+applyColor.Size = UDim2.new(1, -20, 0, 30)
+applyColor.Position = UDim2.new(0, 10, 0, 160)
+applyColor.BackgroundColor3 = Color3.fromRGB(50,50,50)
+applyColor.TextColor3 = Color3.new(1,1,1)
+applyColor.Text = "Apply Color"
+
+-- HEX → Color3
+local function hexToColor3(hex)
+	hex = hex:gsub("#","")
+	if #hex ~= 6 then return end
+
+	local r = tonumber(hex:sub(1,2),16)
+	local g = tonumber(hex:sub(3,4),16)
+	local b = tonumber(hex:sub(5,6),16)
+
+	if r and g and b then
+		return Color3.fromRGB(r,g,b)
+	end
+end
+
+applyColor.MouseButton1Click:Connect(function()
+	local color = hexToColor3(colorBox.Text)
+	if color then
+		HitboxColor = color
+	end
+end)
+
 -- HITBOX LOGIC
 RunService.RenderStepped:Connect(function()
 	for _,plr in pairs(Players:GetPlayers()) do
@@ -85,11 +124,10 @@ RunService.RenderStepped:Connect(function()
 				hrp.Size = Vector3.new(HitboxSize, HitboxSize, HitboxSize)
 				hrp.Transparency = HitboxTransparency
 				hrp.Material = Enum.Material.ForceField
-				hrp.Color = Color3.fromRGB(255, 0, 0)
+				hrp.Color = HitboxColor
 				hrp.CanCollide = false
 			else
-				-- reset (approximate default)
-				hrp.Size = Vector3.new(2, 2, 1)
+				hrp.Size = Vector3.new(2,2,1)
 				hrp.Transparency = 1
 				hrp.Material = Enum.Material.Plastic
 				hrp.Color = Color3.new(1,1,1)
