@@ -1,0 +1,168 @@
+--[[----------INFO----------
+	DETAILS: Model To Lua
+	VERSION: 1.1
+--]]----------INFO----------
+
+-- TARGET POSITION (WHERE THE HOUSE WILL SPAWN)
+local TARGET_POSITION = Vector3.new(-361.71, 17.28, 352.48)
+
+-- ORIGINAL HOUSE CENTER (DO NOT CHANGE)
+local BASE_POSITION = Vector3.new(-58, 0, -100)
+
+-- CREATE MODEL
+myhous = Instance.new('Model')
+myhous.Name = 'myhous'
+myhous.Parent = workspace
+
+------------------------------------------------
+-- PART 1
+------------------------------------------------
+local Part1 = Instance.new('Part', myhous)
+Part1.Name = 'Part1'
+Part1.Anchored = true
+Part1.Material = Enum.Material.WoodPlanks
+Part1.Size = Vector3.new(34, 1, 38)
+Part1.CFrame = CFrame.new(-58, 0.500001013, -100)
+
+------------------------------------------------
+-- PART 2
+------------------------------------------------
+local Part2 = Instance.new('Part', myhous)
+Part2.Name = 'Part2'
+Part2.Anchored = true
+Part2.Material = Enum.Material.Brick
+Part2.Size = Vector3.new(1, 17, 38)
+Part2.CFrame = CFrame.new(-41.5, 9.50000095, -100)
+
+------------------------------------------------
+-- PART 3
+------------------------------------------------
+local Part3 = Instance.new('Part', myhous)
+Part3.Name = 'Part3'
+Part3.Anchored = true
+Part3.Material = Enum.Material.Concrete
+Part3.Size = Vector3.new(1, 17, 35)
+Part3.CFrame = CFrame.new(-42.5, 9.50000095, -99.5)
+
+------------------------------------------------
+-- PART 4
+------------------------------------------------
+local Part4 = Instance.new('Part', myhous)
+Part4.Name = 'Part4'
+Part4.Anchored = true
+Part4.Material = Enum.Material.Brick
+Part4.Size = Vector3.new(1, 17, 38)
+Part4.CFrame = CFrame.new(-74.5, 9.50000095, -100) * CFrame.Angles(0, math.rad(180), 0)
+
+------------------------------------------------
+-- PART 5
+------------------------------------------------
+local Part5 = Instance.new('Part', myhous)
+Part5.Name = 'Part5'
+Part5.Anchored = true
+Part5.Material = Enum.Material.Concrete
+Part5.Size = Vector3.new(1, 17, 34)
+Part5.CFrame = CFrame.new(-73.5, 9.50000095, -100) * CFrame.Angles(0, math.rad(180), 0)
+
+------------------------------------------------
+-- PART 6
+------------------------------------------------
+local Part6 = Instance.new('Part', myhous)
+Part6.Name = 'Part6'
+Part6.Anchored = true
+Part6.Material = Enum.Material.Sandstone
+Part6.Size = Vector3.new(34, 1, 38)
+Part6.CFrame = CFrame.new(-58, 18.5000019, -100)
+
+------------------------------------------------
+-- PART 7
+------------------------------------------------
+local Part7 = Instance.new('Part', myhous)
+Part7.Name = 'Part7'
+Part7.Anchored = true
+Part7.Material = Enum.Material.Brick
+Part7.Size = Vector3.new(1, 17, 32)
+Part7.CFrame = CFrame.new(-58, 9.50000095, -118.5) * CFrame.Angles(0, math.rad(90), 0)
+
+------------------------------------------------
+-- PART 8
+------------------------------------------------
+local Part8 = Instance.new('Part', myhous)
+Part8.Name = 'Part8'
+Part8.Anchored = true
+Part8.Material = Enum.Material.Concrete
+Part8.Size = Vector3.new(1, 17, 31)
+Part8.CFrame = CFrame.new(-57.5, 9.50000095, -117.5) * CFrame.Angles(0, math.rad(90), 0)
+
+------------------------------------------------
+-- PART 9
+------------------------------------------------
+local Part9 = Instance.new('Part', myhous)
+Part9.Name = 'Part9'
+Part9.Anchored = true
+Part9.Material = Enum.Material.Brick
+Part9.Size = Vector3.new(1, 17, 12)
+Part9.CFrame = CFrame.new(-68, 9.50000095, -81.5) * CFrame.Angles(0, math.rad(-90), 0)
+
+------------------------------------------------
+-- PART 10
+------------------------------------------------
+local Part10 = Instance.new('Part', myhous)
+Part10.Name = 'Part10'
+Part10.Anchored = true
+Part10.Material = Enum.Material.Concrete
+Part10.Size = Vector3.new(1, 17, 12)
+Part10.CFrame = CFrame.new(-68, 9.50000095, -82.5) * CFrame.Angles(0, math.rad(-90), 0)
+
+------------------------------------------------
+-- PART 11
+------------------------------------------------
+local Part11 = Instance.new('Part', myhous)
+Part11.Name = 'Part11'
+Part11.Anchored = true
+Part11.Material = Enum.Material.Brick
+Part11.Size = Vector3.new(1, 17, 12)
+Part11.CFrame = CFrame.new(-48, 9.50000095, -81.5) * CFrame.Angles(0, math.rad(-90), 0)
+
+------------------------------------------------
+-- PART 12
+------------------------------------------------
+local Part12 = Instance.new('Part', myhous)
+Part12.Name = 'Part12'
+Part12.Anchored = true
+Part12.Material = Enum.Material.Concrete
+Part12.Size = Vector3.new(1, 17, 12)
+Part12.CFrame = CFrame.new(-48, 9.50000095, -82.5) * CFrame.Angles(0, math.rad(-90), 0)
+
+------------------------------------------------
+-- PART 13
+------------------------------------------------
+local Part13 = Instance.new('Part', myhous)
+Part13.Name = 'Part13'
+Part13.Anchored = true
+Part13.Material = Enum.Material.Brick
+Part13.Size = Vector3.new(1, 4, 8)
+Part13.CFrame = CFrame.new(-58, 16, -81.5) * CFrame.Angles(0, math.rad(-90), 0)
+
+------------------------------------------------
+-- PART 14
+------------------------------------------------
+local Part14 = Instance.new('Part', myhous)
+Part14.Name = 'Part14'
+Part14.Anchored = true
+Part14.Material = Enum.Material.Concrete
+Part14.Size = Vector3.new(1, 4, 8)
+Part14.CFrame = CFrame.new(-58, 16, -82.5) * CFrame.Angles(0, math.rad(-90), 0)
+
+------------------------------------------------
+-- MOVE HOUSE TO TARGET POSITION
+------------------------------------------------
+local offset = TARGET_POSITION - BASE_POSITION
+
+for _, obj in ipairs(myhous:GetDescendants()) do
+	if obj:IsA("BasePart") then
+		obj.CFrame = obj.CFrame + offset
+	end
+end
+
+print("✅ House spawned at:", TARGET_POSITION)
