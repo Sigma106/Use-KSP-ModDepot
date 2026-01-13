@@ -3,10 +3,13 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
--- VARIABLES
+-- STATE
 local enabled = false
 local lastDeathCFrame = nil
-local currentSpeed = 16 -- saved speed (used by ANY speed GUI)
+
+-- SPEED STATE (shared & reset-safe)
+local currentSpeed = 16
+local currentHumanoid = nil
 
 -- GUI
 local gui = Instance.new("ScreenGui")
@@ -105,18 +108,15 @@ UserInputService.InputEnded:Connect(function(input)
 	end
 end)
 
--- CHARACTER LOGIC (SPEED SAFE)
+-- CHARACTER LOGIC (FINAL & SAFE)
 local function onCharacter(char)
 	local humanoid = char:WaitForChild("Humanoid")
 	local root = char:WaitForChild("HumanoidRootPart")
 
-	-- RESTORE SPEED AFTER RESPAWN
-	humanoid.WalkSpeed = currentSpeed
+	currentHumanoid = humanoid
 
-	-- TRACK SPEED CHANGES FROM ANY GUI
-	humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
-		currentSpeed = humanoid.WalkSpeed
-	end)
+	-- RESTORE SPEED
+	humanoid.WalkSpeed = currentSpeed
 
 	-- TELEPORT AFTER RESPAWN
 	if enabled and lastDeathCFrame then
@@ -124,11 +124,12 @@ local function onCharacter(char)
 		root.CFrame = lastDeathCFrame
 	end
 
-	-- SAVE POSITION ON DEATH
+	-- SAVE POSITION & SPEED ON DEATH
 	humanoid.Died:Connect(function()
 		if enabled then
 			lastDeathCFrame = root.CFrame
 		end
+		currentSpeed = humanoid.WalkSpeed
 	end)
 end
 
@@ -149,3 +150,11 @@ stopBtn.MouseButton1Click:Connect(function()
 	lastDeathCFrame = nil
 	startBtn.Text = "START"
 end)
+
+-- 🟢 PUBLIC SPEED API (FOR ANY SPEED GUI)
+_G.SetPlayerSpeed = function(speed)
+	currentSpeed = speed
+	if currentHumanoid then
+		currentHumanoid.WalkSpeed = speed
+	end
+end
