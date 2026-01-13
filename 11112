@@ -1,0 +1,55 @@
+v15("LOL!373O00028O00027O00...
+----------------------------------------------------
+-- UI UPDATE: REMOVE TITLE + MAKE WINDOW CLOSABLE
+----------------------------------------------------
+
+task.wait(2) -- wait for GUI to be created
+
+local player = game.Players.LocalPlayer
+local gui
+
+-- get the newest ScreenGui (usually from the obfuscated script)
+local latestTime = 0
+for _, g in ipairs(player.PlayerGui:GetChildren()) do
+    if g:IsA("ScreenGui") then
+        local t = g:GetAttribute("Created") or g:GetDebugId()
+        gui = g
+    end
+end
+if not gui then return end
+
+-- get main frame
+local frame
+for _, f in ipairs(gui:GetDescendants()) do
+    if f:IsA("Frame") then
+        frame = f
+        break
+    end
+end
+if not frame then return end
+
+-- remove title
+for _, v in ipairs(frame:GetDescendants()) do
+    if (v:IsA("TextLabel") or v:IsA("TextButton")) and v.Size.Y.Scale <= 0.15 then
+        v.Visible = false
+    end
+end
+
+-- make draggable
+frame.Active = true
+frame.Draggable = true
+
+-- close button
+local close = Instance.new("TextButton")
+close.Size = UDim2.new(0, 28, 0, 28)
+close.Position = UDim2.new(1, -32, 0, 4)
+close.Text = "✕"
+close.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
+close.TextColor3 = Color3.new(1,1,1)
+close.BorderSizePixel = 0
+close.Parent = frame
+
+close.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+"
