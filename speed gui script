@@ -1,159 +1,106 @@
---// Variables
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
+-- Services
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
--- Store original speed
-local originalSpeed = humanoid.WalkSpeed
+-- Character / Humanoid
+local function getHumanoid()
+    local character = player.Character or player.CharacterAdded:Wait()
+    return character:WaitForChild("Humanoid")
+end
 
--- GUI Setup
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "SpeedGui"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = player:WaitForChild("PlayerGui")
+local humanoid = getHumanoid()
+local normalSpeed = humanoid.WalkSpeed -- Save original speed
 
--- Main Frame
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 300, 0, 180)
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -90)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-mainFrame.BorderSizePixel = 0
-mainFrame.Parent = screenGui
-
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 10)
-corner.Parent = mainFrame
-
--- Title Bar (Draggable)
-local titleBar = Instance.new("Frame")
-titleBar.Size = UDim2.new(1, 0, 0, 40)
-titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-titleBar.Parent = mainFrame
-
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(1, -50, 1, 0)
-titleLabel.Position = UDim2.new(0, 10, 0, 0)
-titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "            Speed Controller"
-titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextSize = 20
-titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-titleLabel.Parent = titleBar
-
--- Close Button
-local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0, 40, 0, 40)
-closeButton.Position = UDim2.new(1, -40, 0, 0)
-closeButton.Text = "X"
-closeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.Font = Enum.Font.GothamBold
-closeButton.TextSize = 20
-closeButton.Parent = titleBar
-
-local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 6)
-closeCorner.Parent = closeButton
-
-closeButton.MouseButton1Click:Connect(function()
-    humanoid.WalkSpeed = originalSpeed
-    screenGui:Destroy()
+-- Update humanoid on respawn
+player.CharacterAdded:Connect(function(char)
+    humanoid = char:WaitForChild("Humanoid")
+    humanoid.WalkSpeed = normalSpeed
 end)
 
--- Speed Input Box (stretches across frame)
-local speedBox = Instance.new("TextBox")
-speedBox.Size = UDim2.new(1, -20, 0, 40) -- width = 100% of frame minus 20px for margin
-speedBox.Position = UDim2.new(0, 10, 0, 60) -- 10px left margin
-speedBox.PlaceholderText = "Enter speed"
-speedBox.Text = ""
-speedBox.ClearTextOnFocus = false
-speedBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-speedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-speedBox.Font = Enum.Font.Gotham
-speedBox.TextSize = 18
-speedBox.Parent = mainFrame
+-- Create GUI
+local screenGui = Instance.new("ScreenGui", game.CoreGui)
+screenGui.Name = "SpeedBoostGUI"
 
-local inputCorner = Instance.new("UICorner")
-inputCorner.CornerRadius = UDim.new(0, 6)
-inputCorner.Parent = speedBox
+local frame = Instance.new("Frame", screenGui)
+local title = Instance.new("TextLabel", frame)
+local textBox = Instance.new("TextBox", frame)
+local setButton = Instance.new("TextButton", frame)
+local normalButton = Instance.new("TextButton", frame)
+local closeButton = Instance.new("TextButton", frame)
 
+-- Frame
+frame.Size = UDim2.new(0, 300, 0, 260)
+frame.Position = UDim2.new(0.5, -150, 0.5, -130)
+frame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.Active = true
+frame.Draggable = true
+
+-- Title
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+title.Text = "Speed Boost"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextScaled = true
+title.Font = Enum.Font.GothamBold
+title.BorderSizePixel = 0
+
+-- Close Button
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -35, 0, 5)
+closeButton.Text = "X"
+closeButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
+closeButton.TextColor3 = Color3.new(1, 1, 1)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextScaled = true
+
+-- TextBox
+textBox.Size = UDim2.new(0.8, 0, 0, 40)
+textBox.Position = UDim2.new(0.1, 0, 0.35, 0)
+textBox.PlaceholderText = "Enter Speed"
+textBox.TextScaled = true
+textBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+textBox.TextColor3 = Color3.new(1,1,1)
+textBox.BorderSizePixel = 0
 
 -- Set Speed Button
-local setSpeedButton = Instance.new("TextButton")
-setSpeedButton.Size = UDim2.new(0, 120, 0, 40)
-setSpeedButton.Position = UDim2.new(0, 10, 0, 110)
-setSpeedButton.Text = "Set Speed"
-setSpeedButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
-setSpeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-setSpeedButton.Font = Enum.Font.GothamBold
-setSpeedButton.TextSize = 18
-setSpeedButton.Parent = mainFrame
-
-local setCorner = Instance.new("UICorner")
-setCorner.CornerRadius = UDim.new(0, 6)
-setCorner.Parent = setSpeedButton
+setButton.Size = UDim2.new(0.8, 0, 0, 40)
+setButton.Position = UDim2.new(0.1, 0, 0.55, 0)
+setButton.Text = "Set Speed"
+setButton.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+setButton.TextColor3 = Color3.new(1,1,1)
+setButton.Font = Enum.Font.GothamBold
+setButton.TextScaled = true
 
 -- Normal Speed Button
-local normalSpeedButton = Instance.new("TextButton")
-normalSpeedButton.Size = UDim2.new(0, 120, 0, 40)
-normalSpeedButton.Position = UDim2.new(0, 160, 0, 110)
-normalSpeedButton.Text = "Normal"
-normalSpeedButton.BackgroundColor3 = Color3.fromRGB(70, 70, 200)
-normalSpeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-normalSpeedButton.Font = Enum.Font.GothamBold
-normalSpeedButton.TextSize = 18
-normalSpeedButton.Parent = mainFrame
+normalButton.Size = UDim2.new(0.8, 0, 0, 40)
+normalButton.Position = UDim2.new(0.1, 0, 0.75, 0)
+normalButton.Text = "Normal Speed"
+normalButton.BackgroundColor3 = Color3.fromRGB(100, 180, 100)
+normalButton.TextColor3 = Color3.new(1,1,1)
+normalButton.Font = Enum.Font.GothamBold
+normalButton.TextScaled = true
 
-local normalCorner = Instance.new("UICorner")
-normalCorner.CornerRadius = UDim.new(0, 6)
-normalCorner.Parent = normalSpeedButton
-
--- Button Functions
-setSpeedButton.MouseButton1Click:Connect(function()
-    local speed = tonumber(speedBox.Text)
+-- Functions
+local function setSpeed()
+    local speed = tonumber(textBox.Text)
     if speed then
         humanoid.WalkSpeed = speed
     end
+end
+
+local function resetSpeed()
+    humanoid.WalkSpeed = normalSpeed
+end
+
+-- Connections
+setButton.MouseButton1Click:Connect(setSpeed)
+normalButton.MouseButton1Click:Connect(resetSpeed)
+
+closeButton.MouseButton1Click:Connect(function()
+    resetSpeed()
+    screenGui:Destroy()
 end)
 
-normalSpeedButton.MouseButton1Click:Connect(function()
-    humanoid.WalkSpeed = originalSpeed
-end)
-
--- Manual Dragging System
-local dragging = false
-local dragInput, dragStart, startPos
-
-titleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = mainFrame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-titleBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
-    end
-end)
-
-game:GetService("UserInputService").InputChanged:Connect(function(input)
-    if dragging and input == dragInput then
-        local delta = input.Position - dragStart
-        mainFrame.Position = UDim2.new(
-            startPos.X.Scale,
-            startPos.X.Offset + delta.X,
-            startPos.Y.Scale,
-            startPos.Y.Offset + delta.Y
-        )
-    end
-end)
+-- Reset speed on death
+humanoid.Died:Connect(resetSpeed)
