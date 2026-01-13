@@ -3,13 +3,12 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
--- SETTINGS
-Players.RespawnTime = 0 -- instant respawn
-
 -- VARIABLES
 local enabled = false
 local lastDeathCFrame = nil
-local deathConnection = nil
+
+-- SPEED SETTINGS
+local DESIRED_SPEED = 100 -- CHANGE SPEED HERE
 
 -- GUI
 local gui = Instance.new("ScreenGui")
@@ -108,27 +107,31 @@ UserInputService.InputEnded:Connect(function(input)
 	end
 end)
 
--- CHARACTER LOGIC (INSANE RESPAWN)
+-- CHARACTER LOGIC (FIXED)
 local function onCharacter(char)
 	local humanoid = char:WaitForChild("Humanoid")
 	local root = char:WaitForChild("HumanoidRootPart")
 
-	-- TELEPORT IMMEDIATELY AFTER RESPAWN
+	-- APPLY SPEED AFTER RESPAWN
+	humanoid.WalkSpeed = DESIRED_SPEED
+
+	-- LOCK SPEED (PREVENT RESET)
+	humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+		if humanoid.WalkSpeed ~= DESIRED_SPEED then
+			humanoid.WalkSpeed = DESIRED_SPEED
+		end
+	end)
+
+	-- TELEPORT AFTER RESPAWN
 	if enabled and lastDeathCFrame then
 		task.wait()
 		root.CFrame = lastDeathCFrame
 	end
 
-	-- ON DEATH
-	if deathConnection then
-		deathConnection:Disconnect()
-	end
-
-	deathConnection = humanoid.Died:Connect(function()
+	-- SAVE POSITION ON DEATH
+	humanoid.Died:Connect(function()
 		if enabled then
 			lastDeathCFrame = root.CFrame
-			task.wait()
-			player:LoadCharacter() -- ⚡ INSTANT RESPAWN
 		end
 	end)
 end
