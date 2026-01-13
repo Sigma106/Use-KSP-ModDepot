@@ -30,7 +30,7 @@ local flybutton = Instance.new("TextButton")
 local nofalldamage = Instance.new("TextButton")
 local noclipbutton = Instance.new("TextButton")
 local Invisiblegui = Instance.new("TextButton")
-local scriptyoudieteleportinsteadtoyourloactionwhereyoudie = Instance.new("TextButton")
+local speedgui = Instance.new("TextButton")
 local scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui = Instance.new("TextButton")
 local Startclambingonawallsbutton = Instance.new("TextButton")
 local Stopclambingonawallsbutton = Instance.new("TextButton")
@@ -234,18 +234,18 @@ Invisiblegui.TextScaled = true
 Invisiblegui.TextSize = 14.000
 Invisiblegui.TextWrapped = true
 
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Name = "script you die teleport instead to your loaction where you die"
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Parent = maintab
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.BorderColor3 = Color3.fromRGB(0, 0, 0)
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Position = UDim2.new(0.678304255, 0, 0.75939852, 0)
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Size = UDim2.new(0, 115, 0, 54)
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Font = Enum.Font.SourceSans
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Text = "script you die teleport instead to your loaction where you die gui"
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.TextColor3 = Color3.fromRGB(0, 0, 0)
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.TextScaled = true
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.TextSize = 14.000
-scriptyoudieteleportinsteadtoyourloactionwhereyoudie.TextWrapped = true
+speedgui.Name = "speed gui"
+speedgui.Parent = maintab
+speedgui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+speedgui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+speedgui.Position = UDim2.new(0.678304255, 0, 0.75939852, 0)
+speedgui.Size = UDim2.new(0, 115, 0, 54)
+speedgui.Font = Enum.Font.SourceSans
+speedgui.Text = "speed gui"
+speedgui.TextColor3 = Color3.fromRGB(0, 0, 0)
+speedgui.TextScaled = true
+speedgui.TextSize = 14.000
+speedgui.TextWrapped = true
 
 scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.Name = "script you die teleport instead to your loaction where you die gui"
 scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.Parent = maintab
@@ -569,7 +569,7 @@ Startwalingonawaterbutton.MouseButton1Click:Connect(function()
 
 	brick = Instance.new("Part")
 	brick.Name = "SpawnedBrick"
-	brick.Size = Vector3.new(1000000, 0.10000000149011612, 1000000)
+	brick.Size = Vector3.new(10000000, 0.10000000149011612, 10000000)
 	brick.Position = Vector3.new(0, 14, 0)
 	brick.Anchored = true
 
@@ -660,7 +660,7 @@ Startclambingonawallsbutton.MouseButton1Click:Connect(function()
 	loadAnimation()
 	Stopclambingonawallsbutton.Visible = true
 	Startclambingonawallsbutton.Visible = false
-	
+
 end)
 
 Stopclambingonawallsbutton.MouseButton1Click:Connect(function()
@@ -715,4 +715,151 @@ end)
 
 Animationsgui.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/M1ZZ001/R4D-Revamp/refs/heads/main/Official%20R4D%20Revamp'))()
+end)
+
+speedgui.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/speed%20gui%20script"))()
+end)
+
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/2002'))()
+end)
+
+Invisiblegui.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))()
+end)
+
+resetandteleporttothesamelocation.MouseButton1Click:Connect(function()
+	local Players = game:GetService("Players")
+	local player = Players.LocalPlayer
+
+	-- Store last death/reset position
+	local lastPosition = nil
+
+	-- Save initial position immediately
+	if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+		lastPosition = player.Character.HumanoidRootPart.Position
+	end
+
+	-- Function to teleport character instantly
+	local function teleportCharacter(character, position)
+		local hrp = character:WaitForChild("HumanoidRootPart")
+		hrp.CFrame = CFrame.new(position)
+	end
+
+	-- Handle new character spawning
+	local function onCharacterAdded(character)
+		local humanoid = character:WaitForChild("Humanoid")
+
+		-- Teleport instantly after respawn if we have a saved position
+		if lastPosition then
+			teleportCharacter(character, lastPosition)
+		end
+
+		-- Save position before death
+		humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+			if humanoid.Health <= 0 then
+				local hrp = character:FindFirstChild("HumanoidRootPart")
+				if hrp then
+					lastPosition = hrp.Position
+				end
+			end
+		end)
+	end
+
+	-- Kill player function (resets character)
+	local function resetCharacter()
+		local character = player.Character
+		if character then
+			local humanoid = character:FindFirstChild("Humanoid")
+			if humanoid then
+				humanoid.Health = 0
+			end
+		end
+	end
+
+	-- Connect character respawn
+	player.CharacterAdded:Connect(onCharacterAdded)
+
+	-- Ensure CharacterAdded fires if character already exists
+	if player.Character then
+		onCharacterAdded(player.Character)
+	end
+
+	-- Kill immediately on script run (optional)
+	resetCharacter()
+end)
+
+Teleporttogame.MouseButton1Click:Connect(function()
+	-- Teleport destination
+	local destination = Vector3.new(-103.88, 48.04, 10.31)
+
+	-- Get player and character
+	local player = game.Players.LocalPlayer
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+	-- Teleport
+	humanoidRootPart.CFrame = CFrame.new(destination)
+
+end)
+
+Teleporttospawn.MouseButton1Click:Connect(function()
+	-- Teleport destination
+	local destination = Vector3.new(-253.13, 179.83, 318.79)
+
+	-- Get player and character
+	local player = game.Players.LocalPlayer
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+	-- Teleport
+	humanoidRootPart.CFrame = CFrame.new(destination)
+
+end)
+
+
+Reset.MouseButton1Click:Connect(function()
+	local player = game.Players.LocalPlayer
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
+
+	humanoid.Health = 0
+
+end)
+
+Maintabbutton.MouseButton1Click:Connect(function()
+	maintab.Visible = true
+	trolltab.Visible = false
+	Localgraphicstab.Visible = false
+end)
+
+Trolltabbutton.MouseButton1Click:Connect(function()
+	maintab.Visible = false
+	trolltab.Visible = true
+	Localgraphicstab.Visible = false
+end)
+
+Localgraphicstabbutton.MouseButton1Click:Connect(function()
+	maintab.Visible = false
+	trolltab.Visible = false
+	Localgraphicstab.Visible = true
+end)
+
+espgui.MouseButton1Click:Connect(function()
+	maintab.Visible = false
+	trolltab.Visible = false
+	Localgraphicstab.Visible = true
+end)
+
+espgui.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/esp%20gui%20best%20script"))()
+end)
+
+flingall.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://pastebin.com/raw/zqyDSUWX"))()
+end)
+
+flingplayergui.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fling%20player%20script"))()
 end)
