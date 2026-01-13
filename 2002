@@ -1,130 +1,106 @@
--- SERVICES
+-- Services
 local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
-----------------------------------------------------------------
--- STATE
-----------------------------------------------------------------
-local enabled = false
-local lastDeathCFrame = nil
-
--- speed state
-local currentSpeed = 16
-local humanoid = nil
-
-----------------------------------------------------------------
--- CHARACTER HANDLING (RESET SAFE)
-----------------------------------------------------------------
-local function bindCharacter(char)
-	humanoid = char:WaitForChild("Humanoid")
-	humanoid.WalkSpeed = currentSpeed
-
-	humanoid.Died:Connect(function()
-		if enabled then
-			local root = char:FindFirstChild("HumanoidRootPart")
-			if root then
-				lastDeathCFrame = root.CFrame
-			end
-		end
-		currentSpeed = humanoid.WalkSpeed
-	end)
+-- Character / Humanoid
+local function getHumanoid()
+    local character = player.Character or player.CharacterAdded:Wait()
+    return character:WaitForChild("Humanoid")
 end
 
-player.CharacterAdded:Connect(bindCharacter)
-if player.Character then
-	bindCharacter(player.Character)
-end
+local humanoid = getHumanoid()
+local normalSpeed = humanoid.WalkSpeed -- Save original speed
 
-----------------------------------------------------------------
--- GUI
-----------------------------------------------------------------
-local gui = Instance.new("ScreenGui")
-gui.Name = "RespawnTeleportGui"
-gui.ResetOnSpawn = false
-gui.Parent = player:WaitForChild("PlayerGui")
-
-local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 320, 0, 230)
-main.Position = UDim2.new(0.5, -160, 0.5, -115)
-main.BackgroundColor3 = Color3.fromRGB(30,30,30)
-main.Parent = gui
-
--- title
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1,0,0,35)
-title.BackgroundColor3 = Color3.fromRGB(45,45,45)
-title.Text = "RESPAWN TELEPORT + SPEED"
-title.TextColor3 = Color3.new(1,1,1)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 15
-title.Parent = main
-
-----------------------------------------------------------------
--- SPEED BUTTONS (RESET SAFE)
-----------------------------------------------------------------
-local function makeButton(text, pos, speed)
-	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(0,120,0,40)
-	btn.Position = pos
-	btn.Text = text
-	btn.Font = Enum.Font.GothamBold
-	btn.TextSize = 16
-	btn.TextColor3 = Color3.new(1,1,1)
-	btn.BackgroundColor3 = Color3.fromRGB(70,130,180)
-	btn.Parent = main
-
-	btn.MouseButton1Click:Connect(function()
-		if humanoid then
-			currentSpeed = speed
-			humanoid.WalkSpeed = speed
-		end
-	end)
-end
-
-makeButton("Speed 25", UDim2.new(0.1,0,0.3,0), 25)
-makeButton("Speed 50", UDim2.new(0.55,0,0.3,0), 50)
-makeButton("Speed 100", UDim2.new(0.1,0,0.55,0), 100)
-
-----------------------------------------------------------------
--- TELEPORT TO DEATH POSITION
-----------------------------------------------------------------
-local startBtn = Instance.new("TextButton")
-startBtn.Size = UDim2.new(0,120,0,40)
-startBtn.Position = UDim2.new(0.1,0,0.8,0)
-startBtn.Text = "START TP"
-startBtn.Font = Enum.Font.GothamBold
-startBtn.TextSize = 16
-startBtn.TextColor3 = Color3.new(1,1,1)
-startBtn.BackgroundColor3 = Color3.fromRGB(50,170,50)
-startBtn.Parent = main
-
-local stopBtn = Instance.new("TextButton")
-stopBtn.Size = UDim2.new(0,120,0,40)
-stopBtn.Position = UDim2.new(0.55,0,0.8,0)
-stopBtn.Text = "STOP TP"
-stopBtn.Font = Enum.Font.GothamBold
-stopBtn.TextSize = 16
-stopBtn.TextColor3 = Color3.new(1,1,1)
-stopBtn.BackgroundColor3 = Color3.fromRGB(170,50,50)
-stopBtn.Parent = main
-
-startBtn.MouseButton1Click:Connect(function()
-	enabled = true
-end)
-
-stopBtn.MouseButton1Click:Connect(function()
-	enabled = false
-	lastDeathCFrame = nil
-end)
-
-----------------------------------------------------------------
--- TELEPORT AFTER RESPAWN
-----------------------------------------------------------------
+-- Update humanoid on respawn
 player.CharacterAdded:Connect(function(char)
-	if enabled and lastDeathCFrame then
-		local root = char:WaitForChild("HumanoidRootPart")
-		task.wait()
-		root.CFrame = lastDeathCFrame
-	end
+    humanoid = char:WaitForChild("Humanoid")
+    humanoid.WalkSpeed = normalSpeed
 end)
+
+-- Create GUI
+local screenGui = Instance.new("ScreenGui", game.CoreGui)
+screenGui.Name = "SpeedBoostGUI"
+
+local frame = Instance.new("Frame", screenGui)
+local title = Instance.new("TextLabel", frame)
+local textBox = Instance.new("TextBox", frame)
+local setButton = Instance.new("TextButton", frame)
+local normalButton = Instance.new("TextButton", frame)
+local closeButton = Instance.new("TextButton", frame)
+
+-- Frame
+frame.Size = UDim2.new(0, 300, 0, 260)
+frame.Position = UDim2.new(0.5, -150, 0.5, -130)
+frame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.Active = true
+frame.Draggable = true
+
+-- Title
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+title.Text = "Speed Boost GUI"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextScaled = true
+title.Font = Enum.Font.GothamBold
+title.BorderSizePixel = 0
+
+-- Close Button
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -35, 0, 5)
+closeButton.Text = "X"
+closeButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
+closeButton.TextColor3 = Color3.new(1, 1, 1)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextScaled = true
+
+-- TextBox
+textBox.Size = UDim2.new(0.8, 0, 0, 40)
+textBox.Position = UDim2.new(0.1, 0, 0.35, 0)
+textBox.PlaceholderText = "Enter Speed"
+textBox.TextScaled = true
+textBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+textBox.TextColor3 = Color3.new(1,1,1)
+textBox.BorderSizePixel = 0
+
+-- Set Speed Button
+setButton.Size = UDim2.new(0.8, 0, 0, 40)
+setButton.Position = UDim2.new(0.1, 0, 0.55, 0)
+setButton.Text = "Set Speed"
+setButton.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+setButton.TextColor3 = Color3.new(1,1,1)
+setButton.Font = Enum.Font.GothamBold
+setButton.TextScaled = true
+
+-- Normal Speed Button
+normalButton.Size = UDim2.new(0.8, 0, 0, 40)
+normalButton.Position = UDim2.new(0.1, 0, 0.75, 0)
+normalButton.Text = "Normal Speed"
+normalButton.BackgroundColor3 = Color3.fromRGB(100, 180, 100)
+normalButton.TextColor3 = Color3.new(1,1,1)
+normalButton.Font = Enum.Font.GothamBold
+normalButton.TextScaled = true
+
+-- Functions
+local function setSpeed()
+    local speed = tonumber(textBox.Text)
+    if speed then
+        humanoid.WalkSpeed = speed
+    end
+end
+
+local function resetSpeed()
+    humanoid.WalkSpeed = normalSpeed
+end
+
+-- Connections
+setButton.MouseButton1Click:Connect(setSpeed)
+normalButton.MouseButton1Click:Connect(resetSpeed)
+
+closeButton.MouseButton1Click:Connect(function()
+    resetSpeed()
+    screenGui:Destroy()
+end)
+
+-- Reset speed on death
+humanoid.Died:Connect(resetSpeed)
