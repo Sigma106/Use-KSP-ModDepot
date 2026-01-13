@@ -1,0 +1,600 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+local pid = game.PlaceId
+if pid ~= 189707 then
+	print("Error not found natural disasters survival game!")
+	return
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+local title = Instance.new("TextLabel")
+local Localgraphicstab = Instance.new("ImageLabel")
+local espgui = Instance.new("TextButton")
+local TextLabel = Instance.new("TextLabel")
+local tabs = Instance.new("ImageLabel")
+local Maintabbutton = Instance.new("TextButton")
+local Localgraphicstabbutton = Instance.new("TextButton")
+local Trolltabbutton = Instance.new("TextButton")
+local maintab = Instance.new("ImageLabel")
+local flybutton = Instance.new("TextButton")
+local nofalldamage = Instance.new("TextButton")
+local noclipbutton = Instance.new("TextButton")
+local Invisiblegui = Instance.new("TextButton")
+local scriptyoudieteleportinsteadtoyourloactionwhereyoudie = Instance.new("TextButton")
+local scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui = Instance.new("TextButton")
+local Startclambingonawallsbutton = Instance.new("TextButton")
+local Stopclambingonawallsbutton = Instance.new("TextButton")
+local Stopwalingonawaterbutton = Instance.new("TextButton")
+local Teleporttospawn = Instance.new("TextButton")
+local Reset = Instance.new("TextButton")
+local ringguibutton = Instance.new("TextButton")
+local Startwalingonawaterbutton = Instance.new("TextButton")
+local inversegravityguibutton = Instance.new("TextButton")
+local Animationsgui = Instance.new("TextButton")
+local resetandteleporttothesamelocation = Instance.new("TextButton")
+local Teleporttogame = Instance.new("TextButton")
+local walkingonawater = Instance.new("TextLabel")
+local climbingonawalls = Instance.new("TextLabel")
+local trolltab = Instance.new("ImageLabel")
+local TextLabel_2 = Instance.new("TextLabel")
+local flingall = Instance.new("TextButton")
+local flingplayergui = Instance.new("TextButton")
+local uidrag = Instance.new("UIDragDetector")
+--Properties:
+
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(77, 77, 77)
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame.Position = UDim2.new(0.116013072, 0, 0.189295039, 0)
+Frame.Size = UDim2.new(0, 401, 0, 39)
+
+uidrag.Parent = Frame
+
+TextButton.Parent = Frame
+TextButton.BackgroundColor3 = Color3.fromRGB(153, 0, 3)
+TextButton.BackgroundTransparency = 1.000
+TextButton.BorderColor3 = Color3.fromRGB(255, 0, 4)
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.906963408, 0, 0.0769230798, 0)
+TextButton.Size = UDim2.new(0, 31, 0, 33)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = "X"
+TextButton.TextColor3 = Color3.fromRGB(255, 0, 4)
+TextButton.TextScaled = true
+TextButton.TextSize = 14.000
+TextButton.TextStrokeTransparency = 0.000
+TextButton.TextWrapped = true
+
+title.Name = "title"
+title.Parent = Frame
+title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1.000
+title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+title.Position = UDim2.new(0.209476307, 0, 0.179487377, 0)
+title.Size = UDim2.new(0, 232, 0, 25)
+title.Font = Enum.Font.SourceSans
+title.Text = "natural disaster survile gui"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextScaled = true
+title.TextSize = 14.000
+title.TextStrokeTransparency = 0.000
+title.TextWrapped = true
+
+Localgraphicstab.Name = "Local graphics tab"
+Localgraphicstab.Parent = Frame
+Localgraphicstab.BackgroundColor3 = Color3.fromRGB(132, 132, 132)
+Localgraphicstab.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Localgraphicstab.Position = UDim2.new(0, 0, 2.28205132, 0)
+Localgraphicstab.Size = UDim2.new(0, 401, 0, 266)
+Localgraphicstab.Visible = false
+
+espgui.Name = "esp gui"
+espgui.Parent = Localgraphicstab
+espgui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+espgui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+espgui.Position = UDim2.new(0.0324189514, 0, 0.439849615, 0)
+espgui.Size = UDim2.new(0, 374, 0, 104)
+espgui.Font = Enum.Font.SourceSans
+espgui.Text = "esp gui"
+espgui.TextColor3 = Color3.fromRGB(0, 0, 0)
+espgui.TextScaled = true
+espgui.TextSize = 14.000
+espgui.TextWrapped = true
+
+TextLabel.Parent = Localgraphicstab
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Position = UDim2.new(0.0170674697, 0, 0.033639092, 0)
+TextLabel.Size = UDim2.new(0, 385, 0, 92)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "This script have only one esp script but its pretty good :)"
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextStrokeTransparency = 0.000
+TextLabel.TextWrapped = true
+
+tabs.Name = "tabs"
+tabs.Parent = Frame
+tabs.BackgroundColor3 = Color3.fromRGB(132, 132, 132)
+tabs.BorderColor3 = Color3.fromRGB(0, 0, 0)
+tabs.Position = UDim2.new(0, 0, 1, 0)
+tabs.Size = UDim2.new(0, 401, 0, 50)
+
+Maintabbutton.Name = "Main tab button"
+Maintabbutton.Parent = tabs
+Maintabbutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Maintabbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Maintabbutton.Position = UDim2.new(0.0324189514, 0, 0.180000007, 0)
+Maintabbutton.Size = UDim2.new(0, 111, 0, 31)
+Maintabbutton.Font = Enum.Font.SourceSans
+Maintabbutton.Text = "Main"
+Maintabbutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+Maintabbutton.TextScaled = true
+Maintabbutton.TextSize = 14.000
+Maintabbutton.TextWrapped = true
+
+Localgraphicstabbutton.Name = "Local graphics tab button"
+Localgraphicstabbutton.Parent = tabs
+Localgraphicstabbutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Localgraphicstabbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Localgraphicstabbutton.Position = UDim2.new(0.344139665, 0, 0.180000007, 0)
+Localgraphicstabbutton.Size = UDim2.new(0, 121, 0, 31)
+Localgraphicstabbutton.Font = Enum.Font.SourceSans
+Localgraphicstabbutton.Text = "Local graphics "
+Localgraphicstabbutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+Localgraphicstabbutton.TextScaled = true
+Localgraphicstabbutton.TextSize = 14.000
+Localgraphicstabbutton.TextWrapped = true
+
+Trolltabbutton.Name = "Troll tab button"
+Trolltabbutton.Parent = tabs
+Trolltabbutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Trolltabbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Trolltabbutton.Position = UDim2.new(0.678304255, 0, 0.180000007, 0)
+Trolltabbutton.Size = UDim2.new(0, 115, 0, 31)
+Trolltabbutton.Font = Enum.Font.SourceSans
+Trolltabbutton.Text = "Troll"
+Trolltabbutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+Trolltabbutton.TextScaled = true
+Trolltabbutton.TextSize = 14.000
+Trolltabbutton.TextWrapped = true
+
+maintab.Name = "main tab"
+maintab.Parent = Frame
+maintab.BackgroundColor3 = Color3.fromRGB(132, 132, 132)
+maintab.BorderColor3 = Color3.fromRGB(0, 0, 0)
+maintab.Position = UDim2.new(0, 0, 2.28205132, 0)
+maintab.Size = UDim2.new(0, 401, 0, 266)
+
+flybutton.Name = "fly button"
+flybutton.Parent = maintab
+flybutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+flybutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+flybutton.Position = UDim2.new(0.0324189514, 0, 0.0413533822, 0)
+flybutton.Size = UDim2.new(0, 111, 0, 32)
+flybutton.Font = Enum.Font.SourceSans
+flybutton.Text = "fly gui"
+flybutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+flybutton.TextScaled = true
+flybutton.TextSize = 14.000
+flybutton.TextWrapped = true
+
+nofalldamage.Name = "no fall damage"
+nofalldamage.Parent = maintab
+nofalldamage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+nofalldamage.BorderColor3 = Color3.fromRGB(0, 0, 0)
+nofalldamage.Position = UDim2.new(0.0324189514, 0, 0.413533837, 0)
+nofalldamage.Size = UDim2.new(0, 111, 0, 32)
+nofalldamage.Font = Enum.Font.SourceSans
+nofalldamage.Text = "no fall damage"
+nofalldamage.TextColor3 = Color3.fromRGB(0, 0, 0)
+nofalldamage.TextScaled = true
+nofalldamage.TextSize = 14.000
+nofalldamage.TextWrapped = true
+
+noclipbutton.Name = "noclip button"
+noclipbutton.Parent = maintab
+noclipbutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+noclipbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+noclipbutton.Position = UDim2.new(0.0324189514, 0, 0.225563914, 0)
+noclipbutton.Size = UDim2.new(0, 111, 0, 32)
+noclipbutton.Font = Enum.Font.SourceSans
+noclipbutton.Text = "noclip gui"
+noclipbutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+noclipbutton.TextScaled = true
+noclipbutton.TextSize = 14.000
+noclipbutton.TextWrapped = true
+
+Invisiblegui.Name = "Invisible gui"
+Invisiblegui.Parent = maintab
+Invisiblegui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Invisiblegui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Invisiblegui.Position = UDim2.new(0.344139665, 0, 0.842105269, 0)
+Invisiblegui.Size = UDim2.new(0, 120, 0, 32)
+Invisiblegui.Font = Enum.Font.SourceSans
+Invisiblegui.Text = "Invisible gui not close able "
+Invisiblegui.TextColor3 = Color3.fromRGB(0, 0, 0)
+Invisiblegui.TextScaled = true
+Invisiblegui.TextSize = 14.000
+Invisiblegui.TextWrapped = true
+
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Name = "script you die teleport instead to your loaction where you die"
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Parent = maintab
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.BorderColor3 = Color3.fromRGB(0, 0, 0)
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Position = UDim2.new(0.678304255, 0, 0.75939852, 0)
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Size = UDim2.new(0, 115, 0, 54)
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Font = Enum.Font.SourceSans
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.Text = "script you die teleport instead to your loaction where you die gui"
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.TextColor3 = Color3.fromRGB(0, 0, 0)
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.TextScaled = true
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.TextSize = 14.000
+scriptyoudieteleportinsteadtoyourloactionwhereyoudie.TextWrapped = true
+
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.Name = "script you die teleport instead to your loaction where you die gui"
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.Parent = maintab
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.Position = UDim2.new(0.344139665, 0, 0.63909775, 0)
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.Size = UDim2.new(0, 120, 0, 47)
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.Font = Enum.Font.SourceSans
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.Text = "script you die teleport instead to your loaction where you die gui"
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.TextColor3 = Color3.fromRGB(0, 0, 0)
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.TextScaled = true
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.TextSize = 14.000
+scriptyoudieteleportinsteadtoyourloactionwhereyoudiegui.TextWrapped = true
+
+Startclambingonawallsbutton.Name = "Start clambing on a walls button"
+Startclambingonawallsbutton.Parent = maintab
+Startclambingonawallsbutton.BackgroundColor3 = Color3.fromRGB(26, 206, 32)
+Startclambingonawallsbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Startclambingonawallsbutton.Position = UDim2.new(0.344139665, 0, 0.105263159, 0)
+Startclambingonawallsbutton.Size = UDim2.new(0, 121, 0, 32)
+Startclambingonawallsbutton.Font = Enum.Font.SourceSans
+Startclambingonawallsbutton.Text = "Start"
+Startclambingonawallsbutton.TextColor3 = Color3.fromRGB(255, 255, 255)
+Startclambingonawallsbutton.TextScaled = true
+Startclambingonawallsbutton.TextSize = 14.000
+Startclambingonawallsbutton.TextStrokeTransparency = 0.000
+Startclambingonawallsbutton.TextWrapped = true
+
+Stopclambingonawallsbutton.Name = "Stop clambing on a walls button"
+Stopclambingonawallsbutton.Parent = maintab
+Stopclambingonawallsbutton.BackgroundColor3 = Color3.fromRGB(206, 0, 3)
+Stopclambingonawallsbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Stopclambingonawallsbutton.Position = UDim2.new(0.344139665, 0, 0.105263159, 0)
+Stopclambingonawallsbutton.Size = UDim2.new(0, 121, 0, 32)
+Stopclambingonawallsbutton.Visible = false
+Stopclambingonawallsbutton.Font = Enum.Font.SourceSans
+Stopclambingonawallsbutton.Text = "Stop"
+Stopclambingonawallsbutton.TextColor3 = Color3.fromRGB(255, 255, 255)
+Stopclambingonawallsbutton.TextScaled = true
+Stopclambingonawallsbutton.TextSize = 14.000
+Stopclambingonawallsbutton.TextStrokeTransparency = 0.000
+Stopclambingonawallsbutton.TextWrapped = true
+
+Stopwalingonawaterbutton.Name = "Stop waling on a water button"
+Stopwalingonawaterbutton.Parent = maintab
+Stopwalingonawaterbutton.BackgroundColor3 = Color3.fromRGB(206, 0, 3)
+Stopwalingonawaterbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Stopwalingonawaterbutton.Position = UDim2.new(0.0324189514, 0, 0.63909775, 0)
+Stopwalingonawaterbutton.Size = UDim2.new(0, 111, 0, 32)
+Stopwalingonawaterbutton.Visible = false
+Stopwalingonawaterbutton.Font = Enum.Font.SourceSans
+Stopwalingonawaterbutton.Text = "Stop"
+Stopwalingonawaterbutton.TextColor3 = Color3.fromRGB(255, 255, 255)
+Stopwalingonawaterbutton.TextScaled = true
+Stopwalingonawaterbutton.TextSize = 14.000
+Stopwalingonawaterbutton.TextStrokeTransparency = 0.000
+Stopwalingonawaterbutton.TextWrapped = true
+
+Teleporttospawn.Name = "Teleport to spawn"
+Teleporttospawn.Parent = maintab
+Teleporttospawn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Teleporttospawn.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Teleporttospawn.Position = UDim2.new(0.678304255, 0, 0.413533837, 0)
+Teleporttospawn.Size = UDim2.new(0, 115, 0, 32)
+Teleporttospawn.Font = Enum.Font.SourceSans
+Teleporttospawn.Text = "Teleport to spawn"
+Teleporttospawn.TextColor3 = Color3.fromRGB(0, 0, 0)
+Teleporttospawn.TextScaled = true
+Teleporttospawn.TextSize = 14.000
+Teleporttospawn.TextWrapped = true
+
+Reset.Name = "Reset"
+Reset.Parent = maintab
+Reset.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Reset.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Reset.Position = UDim2.new(0.678304255, 0, 0.597744346, 0)
+Reset.Size = UDim2.new(0, 115, 0, 32)
+Reset.Font = Enum.Font.SourceSans
+Reset.Text = "Reset"
+Reset.TextColor3 = Color3.fromRGB(0, 0, 0)
+Reset.TextScaled = true
+Reset.TextSize = 14.000
+Reset.TextWrapped = true
+
+ringguibutton.Name = "ring gui button"
+ringguibutton.Parent = maintab
+ringguibutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ringguibutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ringguibutton.Position = UDim2.new(0.344139665, 0, 0.293233097, 0)
+ringguibutton.Size = UDim2.new(0, 121, 0, 32)
+ringguibutton.Font = Enum.Font.SourceSans
+ringguibutton.Text = "ring gui"
+ringguibutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+ringguibutton.TextScaled = true
+ringguibutton.TextSize = 14.000
+ringguibutton.TextWrapped = true
+
+Startwalingonawaterbutton.Name = "Start waling on a water button"
+Startwalingonawaterbutton.Parent = maintab
+Startwalingonawaterbutton.BackgroundColor3 = Color3.fromRGB(26, 206, 32)
+Startwalingonawaterbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Startwalingonawaterbutton.Position = UDim2.new(0.0324189514, 0, 0.63909775, 0)
+Startwalingonawaterbutton.Size = UDim2.new(0, 111, 0, 32)
+Startwalingonawaterbutton.Font = Enum.Font.SourceSans
+Startwalingonawaterbutton.Text = "Start"
+Startwalingonawaterbutton.TextColor3 = Color3.fromRGB(255, 255, 255)
+Startwalingonawaterbutton.TextScaled = true
+Startwalingonawaterbutton.TextSize = 14.000
+Startwalingonawaterbutton.TextStrokeTransparency = 0.000
+Startwalingonawaterbutton.TextWrapped = true
+
+inversegravityguibutton.Name = "inverse gravity gui button"
+inversegravityguibutton.Parent = maintab
+inversegravityguibutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+inversegravityguibutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+inversegravityguibutton.Position = UDim2.new(0.0324189514, 0, 0.815789461, 0)
+inversegravityguibutton.Size = UDim2.new(0, 111, 0, 32)
+inversegravityguibutton.Font = Enum.Font.SourceSans
+inversegravityguibutton.Text = "inverse gravity gui"
+inversegravityguibutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+inversegravityguibutton.TextScaled = true
+inversegravityguibutton.TextSize = 14.000
+inversegravityguibutton.TextWrapped = true
+
+Animationsgui.Name = "Animations gui"
+Animationsgui.Parent = maintab
+Animationsgui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Animationsgui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Animationsgui.Position = UDim2.new(0.344139665, 0, 0.477443606, 0)
+Animationsgui.Size = UDim2.new(0, 120, 0, 32)
+Animationsgui.Font = Enum.Font.SourceSans
+Animationsgui.Text = "Animations gui"
+Animationsgui.TextColor3 = Color3.fromRGB(0, 0, 0)
+Animationsgui.TextScaled = true
+Animationsgui.TextSize = 14.000
+Animationsgui.TextWrapped = true
+
+resetandteleporttothesamelocation.Name = "reset and teleport to the same location"
+resetandteleporttothesamelocation.Parent = maintab
+resetandteleporttothesamelocation.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+resetandteleporttothesamelocation.BorderColor3 = Color3.fromRGB(0, 0, 0)
+resetandteleporttothesamelocation.Position = UDim2.new(0.678304255, 0, 0.0413533822, 0)
+resetandteleporttothesamelocation.Size = UDim2.new(0, 115, 0, 32)
+resetandteleporttothesamelocation.Font = Enum.Font.SourceSans
+resetandteleporttothesamelocation.Text = "reset and teleport to the same location"
+resetandteleporttothesamelocation.TextColor3 = Color3.fromRGB(0, 0, 0)
+resetandteleporttothesamelocation.TextScaled = true
+resetandteleporttothesamelocation.TextSize = 14.000
+resetandteleporttothesamelocation.TextWrapped = true
+
+Teleporttogame.Name = "Teleport to game"
+Teleporttogame.Parent = maintab
+Teleporttogame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Teleporttogame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Teleporttogame.Position = UDim2.new(0.678304255, 0, 0.225563914, 0)
+Teleporttogame.Size = UDim2.new(0, 115, 0, 32)
+Teleporttogame.Font = Enum.Font.SourceSans
+Teleporttogame.Text = "Teleport to game"
+Teleporttogame.TextColor3 = Color3.fromRGB(0, 0, 0)
+Teleporttogame.TextScaled = true
+Teleporttogame.TextSize = 14.000
+Teleporttogame.TextWrapped = true
+
+walkingonawater.Name = "↓walking on a water↓"
+walkingonawater.Parent = maintab
+walkingonawater.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+walkingonawater.BackgroundTransparency = 1.000
+walkingonawater.BorderColor3 = Color3.fromRGB(0, 0, 0)
+walkingonawater.BorderSizePixel = 0
+walkingonawater.Position = UDim2.new(0.0149625931, 0, 0.533834577, 0)
+walkingonawater.Size = UDim2.new(0, 125, 0, 28)
+walkingonawater.Font = Enum.Font.SourceSans
+walkingonawater.Text = "↓walking on a water↓"
+walkingonawater.TextColor3 = Color3.fromRGB(255, 255, 255)
+walkingonawater.TextScaled = true
+walkingonawater.TextSize = 14.000
+walkingonawater.TextStrokeTransparency = 0.000
+walkingonawater.TextWrapped = true
+
+climbingonawalls.Name = "↓climbing on a walls↓"
+climbingonawalls.Parent = maintab
+climbingonawalls.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+climbingonawalls.BackgroundTransparency = 1.000
+climbingonawalls.BorderColor3 = Color3.fromRGB(0, 0, 0)
+climbingonawalls.BorderSizePixel = 0
+climbingonawalls.Position = UDim2.new(0.339152128, 0, 0, 0)
+climbingonawalls.Size = UDim2.new(0, 125, 0, 28)
+climbingonawalls.Font = Enum.Font.SourceSans
+climbingonawalls.Text = "↓climbing on a walls↓"
+climbingonawalls.TextColor3 = Color3.fromRGB(255, 255, 255)
+climbingonawalls.TextScaled = true
+climbingonawalls.TextSize = 14.000
+climbingonawalls.TextStrokeTransparency = 0.000
+climbingonawalls.TextWrapped = true
+
+trolltab.Name = "troll tab"
+trolltab.Parent = Frame
+trolltab.BackgroundColor3 = Color3.fromRGB(132, 132, 132)
+trolltab.BorderColor3 = Color3.fromRGB(0, 0, 0)
+trolltab.Position = UDim2.new(0, 0, 2.28205132, 0)
+trolltab.Size = UDim2.new(0, 401, 0, 266)
+trolltab.Visible = false
+
+TextLabel_2.Parent = trolltab
+TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_2.BackgroundTransparency = 1.000
+TextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel_2.BorderSizePixel = 0
+TextLabel_2.Position = UDim2.new(0.041999951, 0, 0.0225563906, 0)
+TextLabel_2.Size = UDim2.new(0, 377, 0, 51)
+TextLabel_2.Font = Enum.Font.SourceSans
+TextLabel_2.Text = "Here only fling but its already pretty good to troll players "
+TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_2.TextScaled = true
+TextLabel_2.TextSize = 14.000
+TextLabel_2.TextStrokeTransparency = 0.000
+TextLabel_2.TextWrapped = true
+
+flingall.Name = "fling all"
+flingall.Parent = trolltab
+flingall.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+flingall.BorderColor3 = Color3.fromRGB(0, 0, 0)
+flingall.Position = UDim2.new(0.0673628747, 0, 0.593784392, 0)
+flingall.Size = UDim2.new(0, 342, 0, 87)
+flingall.Font = Enum.Font.SourceSans
+flingall.Text = "Fling all"
+flingall.TextColor3 = Color3.fromRGB(0, 0, 0)
+flingall.TextScaled = true
+flingall.TextSize = 14.000
+flingall.TextWrapped = true
+
+flingplayergui.Name = "fling player gui"
+flingplayergui.Parent = trolltab
+flingplayergui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+flingplayergui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+flingplayergui.Position = UDim2.new(0.0673628747, 0, 0.242823094, 0)
+flingplayergui.Size = UDim2.new(0, 342, 0, 87)
+flingplayergui.Font = Enum.Font.SourceSans
+flingplayergui.Text = "fling player gui"
+flingplayergui.TextColor3 = Color3.fromRGB(0, 0, 0)
+flingplayergui.TextScaled = true
+flingplayergui.TextSize = 14.000
+flingplayergui.TextWrapped = true
+
+TextButton.MouseButton1Click:Connect(function()
+	Frame.Visible = false
+end)
+
+-- Hover effect for close button
+TextButton.MouseEnter:Connect(function()
+	TextButton.BackgroundTransparency = 0
+end)
+
+TextButton.MouseLeave:Connect(function()
+	TextButton.BackgroundTransparency = 1
+end)
+
+flybutton.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fly%20script%20v3"))()
+end)
+
+noclipbutton.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/efeefefewewfewfefffffffffffffffffff'))()
+end)
+
+nofalldamage.MouseButton1Click:Connect(function()
+	--[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+
+
+	local rs = game:GetService("RunService")
+	local hb = rs.Heartbeat
+	local rsd = rs.RenderStepped
+	local lp = game.Players.LocalPlayer
+	local z = Vector3.zero
+	local function f(c)
+		local r = c:WaitForChild("HumanoidRootPart")
+		if r then
+			local con
+			con = hb:Connect(function()
+				if not r.Parent then
+					con:Disconnect()
+				end
+				local v = r.AssemblyLinearVelocity
+				r.AssemblyLinearVelocity = z
+				rsd:Wait()
+				r.AssemblyLinearVelocity = v
+			end)
+		end
+	end
+	f(lp.Character)
+	lp.CharacterAdded:Connect(f)
+end)
+
+local brick = nil
+local storedWater = nil
+
+local function setLowerRocksCollision(state)
+	for _, obj in ipairs(workspace:GetDescendants()) do
+		if obj:IsA("BasePart") and obj.Name == "LowerRocks" then
+			obj.CanCollide = state
+		end
+	end
+end
+
+
+Startwalingonawaterbutton.MouseButton1Click:Connect(function()
+	-- Enable collision on LowerRocks
+	setLowerRocksCollision(true)
+
+	-- Remove WaterLevel
+	local water = workspace:FindFirstChild("WaterLevel")
+	if water and not storedWater then
+		storedWater = water:Clone()
+		water:Destroy()
+	end
+
+	-- Spawn brick
+	if brick and brick.Parent then return end
+
+	brick = Instance.new("Part")
+	brick.Name = "SpawnedBrick"
+	brick.Size = Vector3.new(10000, 0.10000000149011612, 10000)
+	brick.Position = Vector3.new(0, 14, 0)
+	brick.Anchored = true
+
+	-- Grass appearance
+	brick.BrickColor = BrickColor.new("Dark green")
+	brick.Color = Color3.fromRGB(40, 127, 71)
+	brick.Material = Enum.Material.Plastic
+	brick.Transparency = 0
+	brick.Reflectance = 0
+	brick.CastShadow = true
+
+	brick.Parent = workspace
+	Stopwalingonawaterbutton.Visible = true
+	Startwalingonawaterbutton.Visible = false
+end)
+
+Stopwalingonawaterbutton.MouseButton1Click:Connect(function()
+	Stopwalingonawaterbutton.Visible = false
+	Startwalingonawaterbutton.Visible = true
+	-- Disable collision on LowerRocks
+	setLowerRocksCollision(false)
+
+	-- Restore WaterLevel
+	if storedWater and not workspace:FindFirstChild("WaterLevel") then
+		storedWater.Parent = workspace
+		storedWater = nil
+	end
+
+	-- Delete brick
+	if brick and brick.Parent then
+		brick:Destroy()
+		brick = nil
+	end
+end)
