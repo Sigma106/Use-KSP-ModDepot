@@ -3,158 +3,128 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
+----------------------------------------------------------------
 -- STATE
+----------------------------------------------------------------
 local enabled = false
 local lastDeathCFrame = nil
 
--- SPEED STATE (shared & reset-safe)
+-- speed state
 local currentSpeed = 16
-local currentHumanoid = nil
+local humanoid = nil
 
+----------------------------------------------------------------
+-- CHARACTER HANDLING (RESET SAFE)
+----------------------------------------------------------------
+local function bindCharacter(char)
+	humanoid = char:WaitForChild("Humanoid")
+	humanoid.WalkSpeed = currentSpeed
+
+	humanoid.Died:Connect(function()
+		if enabled then
+			local root = char:FindFirstChild("HumanoidRootPart")
+			if root then
+				lastDeathCFrame = root.CFrame
+			end
+		end
+		currentSpeed = humanoid.WalkSpeed
+	end)
+end
+
+player.CharacterAdded:Connect(bindCharacter)
+if player.Character then
+	bindCharacter(player.Character)
+end
+
+----------------------------------------------------------------
 -- GUI
+----------------------------------------------------------------
 local gui = Instance.new("ScreenGui")
-gui.Name = "InstantTeleportOnDeathGui"
+gui.Name = "RespawnTeleportGui"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 300, 0, 180)
-main.Position = UDim2.new(0.5, -150, 0.5, -90)
+main.Size = UDim2.new(0, 320, 0, 230)
+main.Position = UDim2.new(0.5, -160, 0.5, -115)
 main.BackgroundColor3 = Color3.fromRGB(30,30,30)
-main.BorderSizePixel = 0
 main.Parent = gui
 
--- TITLE BAR
-local titleBar = Instance.new("Frame")
-titleBar.Size = UDim2.new(1,0,0,35)
-titleBar.BackgroundColor3 = Color3.fromRGB(45,45,45)
-titleBar.Parent = main
-
+-- title
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1,-40,1,0)
-title.Position = UDim2.new(0,10,0,0)
-title.BackgroundTransparency = 1
-title.Text = "INSANE RESPAWN TELEPORT"
+title.Size = UDim2.new(1,0,0,35)
+title.BackgroundColor3 = Color3.fromRGB(45,45,45)
+title.Text = "RESPAWN TELEPORT + SPEED"
 title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 15
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.Parent = titleBar
+title.Parent = main
 
--- CLOSE BUTTON
-local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0,35,1,0)
-closeBtn.Position = UDim2.new(1,-35,0,0)
-closeBtn.Text = "X"
-closeBtn.Font = Enum.Font.GothamBold
-closeBtn.TextSize = 18
-closeBtn.TextColor3 = Color3.new(1,1,1)
-closeBtn.BackgroundColor3 = Color3.fromRGB(170,50,50)
-closeBtn.Parent = titleBar
+----------------------------------------------------------------
+-- SPEED BUTTONS (RESET SAFE)
+----------------------------------------------------------------
+local function makeButton(text, pos, speed)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0,120,0,40)
+	btn.Position = pos
+	btn.Text = text
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 16
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.BackgroundColor3 = Color3.fromRGB(70,130,180)
+	btn.Parent = main
 
-closeBtn.MouseButton1Click:Connect(function()
-	gui:Destroy()
-end)
+	btn.MouseButton1Click:Connect(function()
+		if humanoid then
+			currentSpeed = speed
+			humanoid.WalkSpeed = speed
+		end
+	end)
+end
 
--- START BUTTON
+makeButton("Speed 25", UDim2.new(0.1,0,0.3,0), 25)
+makeButton("Speed 50", UDim2.new(0.55,0,0.3,0), 50)
+makeButton("Speed 100", UDim2.new(0.1,0,0.55,0), 100)
+
+----------------------------------------------------------------
+-- TELEPORT TO DEATH POSITION
+----------------------------------------------------------------
 local startBtn = Instance.new("TextButton")
 startBtn.Size = UDim2.new(0,120,0,40)
-startBtn.Position = UDim2.new(0.5,-130,0,90)
-startBtn.Text = "START"
+startBtn.Position = UDim2.new(0.1,0,0.8,0)
+startBtn.Text = "START TP"
 startBtn.Font = Enum.Font.GothamBold
 startBtn.TextSize = 16
 startBtn.TextColor3 = Color3.new(1,1,1)
 startBtn.BackgroundColor3 = Color3.fromRGB(50,170,50)
 startBtn.Parent = main
 
--- STOP BUTTON
 local stopBtn = Instance.new("TextButton")
 stopBtn.Size = UDim2.new(0,120,0,40)
-stopBtn.Position = UDim2.new(0.5,10,0,90)
-stopBtn.Text = "STOP"
+stopBtn.Position = UDim2.new(0.55,0,0.8,0)
+stopBtn.Text = "STOP TP"
 stopBtn.Font = Enum.Font.GothamBold
 stopBtn.TextSize = 16
 stopBtn.TextColor3 = Color3.new(1,1,1)
 stopBtn.BackgroundColor3 = Color3.fromRGB(170,50,50)
 stopBtn.Parent = main
 
--- DRAGGING
-local dragging = false
-local dragStart, startPos
-
-titleBar.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = true
-		dragStart = input.Position
-		startPos = main.Position
-	end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-		local delta = input.Position - dragStart
-		main.Position = UDim2.new(
-			startPos.X.Scale,
-			startPos.X.Offset + delta.X,
-			startPos.Y.Scale,
-			startPos.Y.Offset + delta.Y
-		)
-	end
-end)
-
-UserInputService.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = false
-	end
-end)
-
--- CHARACTER LOGIC (FINAL & SAFE)
-local function onCharacter(char)
-	local humanoid = char:WaitForChild("Humanoid")
-	local root = char:WaitForChild("HumanoidRootPart")
-
-	currentHumanoid = humanoid
-
-	-- RESTORE SPEED
-	humanoid.WalkSpeed = currentSpeed
-
-	-- TELEPORT AFTER RESPAWN
-	if enabled and lastDeathCFrame then
-		task.wait()
-		root.CFrame = lastDeathCFrame
-	end
-
-	-- SAVE POSITION & SPEED ON DEATH
-	humanoid.Died:Connect(function()
-		if enabled then
-			lastDeathCFrame = root.CFrame
-		end
-		currentSpeed = humanoid.WalkSpeed
-	end)
-end
-
-player.CharacterAdded:Connect(onCharacter)
-
-if player.Character then
-	onCharacter(player.Character)
-end
-
--- BUTTON LOGIC
 startBtn.MouseButton1Click:Connect(function()
 	enabled = true
-	startBtn.Text = "RUNNING"
 end)
 
 stopBtn.MouseButton1Click:Connect(function()
 	enabled = false
 	lastDeathCFrame = nil
-	startBtn.Text = "START"
 end)
 
--- 🟢 PUBLIC SPEED API (FOR ANY SPEED GUI)
-_G.SetPlayerSpeed = function(speed)
-	currentSpeed = speed
-	if currentHumanoid then
-		currentHumanoid.WalkSpeed = speed
+----------------------------------------------------------------
+-- TELEPORT AFTER RESPAWN
+----------------------------------------------------------------
+player.CharacterAdded:Connect(function(char)
+	if enabled and lastDeathCFrame then
+		local root = char:WaitForChild("HumanoidRootPart")
+		task.wait()
+		root.CFrame = lastDeathCFrame
 	end
-end
+end)
