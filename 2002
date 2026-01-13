@@ -39,7 +39,7 @@ frame.Draggable = true
 -- Title
 title.Size = UDim2.new(1, 0, 0, 40)
 title.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-title.Text = "Speed Boost GUI"
+title.Text = "Speed Boost"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextScaled = true
 title.Font = Enum.Font.GothamBold
