@@ -569,7 +569,7 @@ Startwalingonawaterbutton.MouseButton1Click:Connect(function()
 
 	brick = Instance.new("Part")
 	brick.Name = "SpawnedBrick"
-	brick.Size = Vector3.new(1000000000, 0.10000000149011612, 1000000000)
+	brick.Size = Vector3.new(1000000, 0.10000000149011612, 1000000)
 	brick.Position = Vector3.new(0, 14, 0)
 	brick.Anchored = true
 
