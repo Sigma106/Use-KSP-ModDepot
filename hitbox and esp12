@@ -322,11 +322,10 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
---// GUI REFERENCES (already created above)
--- ScreenGui, Frame, window, buttons, textboxes already exist
-
---// HITBOX SETTINGS
+--// HITBOX STATE
 local HitboxEnabled = false
+Togglehitboxbutton.Text = "Hitbox OFF"
+
 local HitboxSizeValue = tonumber(HitboxSizetextbox.Text) or 10
 local HitboxTransparencyValue = tonumber(ApplyTransparencytextbox.Text) or 0
 local HitboxBrickColor = BrickColor.new("Really red")
@@ -343,13 +342,13 @@ buttonminimaze.MouseButton1Click:Connect(function()
 	window.Visible = not minimized
 end)
 
---// TOGGLE HITBOX
+--// TOGGLE HITBOX (FIXED)
 Togglehitboxbutton.MouseButton1Click:Connect(function()
 	HitboxEnabled = not HitboxEnabled
 	Togglehitboxbutton.Text = HitboxEnabled and "Hitbox ON" or "Hitbox OFF"
 end)
 
---// APPLY SIZE
+--// APPLY HITBOX SIZE
 applyhitboxsizebutton.MouseButton1Click:Connect(function()
 	local size = tonumber(HitboxSizetextbox.Text)
 	if size and size >= 2 and size <= 100 then
@@ -365,7 +364,7 @@ ApplyTransparencybutton.MouseButton1Click:Connect(function()
 	end
 end)
 
---// HEX TO BRICKCOLOR
+--// HEX → BRICKCOLOR
 local function HexToBrickColor(hex)
 	hex = hex:gsub("#","")
 	if #hex ~= 6 then return end
@@ -419,11 +418,8 @@ RunService.RenderStepped:Connect(function()
 			if HitboxEnabled then
 				updateHitbox(player.Character)
 			else
-				local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-				if hrp then
-					local hb = player.Character:FindFirstChild("FakeHitbox")
-					if hb then hb:Destroy() end
-				end
+				local hb = player.Character:FindFirstChild("FakeHitbox")
+				if hb then hb:Destroy() end
 			end
 		end
 	end
