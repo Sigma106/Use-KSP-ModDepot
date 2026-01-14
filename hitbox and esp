@@ -1,0 +1,388 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local window = Instance.new("Frame")
+local colorhitboxtextbox = Instance.new("TextBox")
+local Togglehitboxbutton = Instance.new("TextButton")
+local ApplyColorbutton = Instance.new("TextButton")
+local Toggleespbutton = Instance.new("TextButton")
+local hitboxdoggle = Instance.new("TextLabel")
+local espdoggle = Instance.new("TextLabel")
+local colorhitboxchanger = Instance.new("TextLabel")
+local HitboxSize = Instance.new("TextLabel")
+local applyhitboxsizebutton = Instance.new("TextButton")
+local HitboxSizetextbox = Instance.new("TextBox")
+local ApplyTransparencybutton = Instance.new("TextButton")
+local ApplyTransparencytextbox = Instance.new("TextBox")
+local HitboxTransparency01 = Instance.new("TextLabel")
+local flyguibutton = Instance.new("TextButton")
+local noclipguibutton = Instance.new("TextButton")
+local tptoolbutton = Instance.new("TextButton")
+local buttonclose = Instance.new("TextButton")
+local title = Instance.new("TextLabel")
+local buttonminimaze = Instance.new("TextButton")
+local uidrag = Instance.new("UIDragDetector")
+--Properties:
+
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame.Position = UDim2.new(0.111111149, 0, 0.141971275, 0)
+Frame.Size = UDim2.new(0, 445, 0, 37)
+
+uidrag.Parent = Frame
+
+window.Name = "window"
+window.Parent = Frame
+window.BackgroundColor3 = Color3.fromRGB(90, 90, 90)
+window.BorderColor3 = Color3.fromRGB(0, 0, 0)
+window.Position = UDim2.new(0, 0, 0.986133695, 0)
+window.Size = UDim2.new(0, 445, 0, 324)
+
+colorhitboxtextbox.Name = "color hitbox textbox"
+colorhitboxtextbox.Parent = window
+colorhitboxtextbox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+colorhitboxtextbox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+colorhitboxtextbox.Position = UDim2.new(0.0269662924, 0, 0.700617313, 0)
+colorhitboxtextbox.Size = UDim2.new(0, 198, 0, 33)
+colorhitboxtextbox.Font = Enum.Font.SourceSans
+colorhitboxtextbox.Text = "#FF0000"
+colorhitboxtextbox.TextColor3 = Color3.fromRGB(0, 0, 0)
+colorhitboxtextbox.TextScaled = true
+colorhitboxtextbox.TextSize = 14.000
+colorhitboxtextbox.TextWrapped = true
+
+Togglehitboxbutton.Name = "Toggle hitbox button"
+Togglehitboxbutton.Parent = window
+Togglehitboxbutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Togglehitboxbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Togglehitboxbutton.Position = UDim2.new(0.0269662924, 0, 0.132716045, 0)
+Togglehitboxbutton.Size = UDim2.new(0, 198, 0, 37)
+Togglehitboxbutton.Font = Enum.Font.SourceSans
+Togglehitboxbutton.Text = "Toggle hitbox"
+Togglehitboxbutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+Togglehitboxbutton.TextScaled = true
+Togglehitboxbutton.TextSize = 14.000
+Togglehitboxbutton.TextWrapped = true
+
+ApplyColorbutton.Name = "Apply Color button"
+ApplyColorbutton.Parent = window
+ApplyColorbutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ApplyColorbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ApplyColorbutton.Position = UDim2.new(0.0269662924, 0, 0.854938269, 0)
+ApplyColorbutton.Size = UDim2.new(0, 198, 0, 37)
+ApplyColorbutton.Font = Enum.Font.SourceSans
+ApplyColorbutton.Text = "Apply Color"
+ApplyColorbutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+ApplyColorbutton.TextScaled = true
+ApplyColorbutton.TextSize = 14.000
+ApplyColorbutton.TextWrapped = true
+
+Toggleespbutton.Name = "Toggle esp button"
+Toggleespbutton.Parent = window
+Toggleespbutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Toggleespbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Toggleespbutton.Position = UDim2.new(0.523595512, 0, 0.132716045, 0)
+Toggleespbutton.Size = UDim2.new(0, 196, 0, 37)
+Toggleespbutton.Font = Enum.Font.SourceSans
+Toggleespbutton.Text = "Toggle esp button"
+Toggleespbutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+Toggleespbutton.TextScaled = true
+Toggleespbutton.TextSize = 14.000
+Toggleespbutton.TextWrapped = true
+
+hitboxdoggle.Name = " ↓hitbox doggle ↓"
+hitboxdoggle.Parent = window
+hitboxdoggle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+hitboxdoggle.BackgroundTransparency = 1.000
+hitboxdoggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+hitboxdoggle.BorderSizePixel = 0
+hitboxdoggle.Position = UDim2.new(0.0269662924, 0, -4.23855255e-07, 0)
+hitboxdoggle.Size = UDim2.new(0, 198, 0, 33)
+hitboxdoggle.Font = Enum.Font.SourceSans
+hitboxdoggle.Text = " ↓hitbox doggle ↓"
+hitboxdoggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+hitboxdoggle.TextScaled = true
+hitboxdoggle.TextSize = 14.000
+hitboxdoggle.TextStrokeTransparency = 0.000
+hitboxdoggle.TextWrapped = true
+
+espdoggle.Name = " ↓esp doggle ↓"
+espdoggle.Parent = window
+espdoggle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+espdoggle.BackgroundTransparency = 1.000
+espdoggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+espdoggle.BorderSizePixel = 0
+espdoggle.Position = UDim2.new(0.543820202, 0, -4.23855255e-07, 0)
+espdoggle.Size = UDim2.new(0, 177, 0, 33)
+espdoggle.Font = Enum.Font.SourceSans
+espdoggle.Text = " ↓esp doggle ↓"
+espdoggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+espdoggle.TextScaled = true
+espdoggle.TextSize = 14.000
+espdoggle.TextStrokeTransparency = 0.000
+espdoggle.TextWrapped = true
+
+colorhitboxchanger.Name = " ↓color hitbox changer ↓"
+colorhitboxchanger.Parent = window
+colorhitboxchanger.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+colorhitboxchanger.BackgroundTransparency = 1.000
+colorhitboxchanger.BorderColor3 = Color3.fromRGB(0, 0, 0)
+colorhitboxchanger.BorderSizePixel = 0
+colorhitboxchanger.Position = UDim2.new(0.0269662924, 0, 0.611110747, 0)
+colorhitboxchanger.Size = UDim2.new(0, 198, 0, 29)
+colorhitboxchanger.Font = Enum.Font.SourceSans
+colorhitboxchanger.Text = " ↓color hitbox changer ↓"
+colorhitboxchanger.TextColor3 = Color3.fromRGB(255, 255, 255)
+colorhitboxchanger.TextScaled = true
+colorhitboxchanger.TextSize = 14.000
+colorhitboxchanger.TextStrokeTransparency = 0.000
+colorhitboxchanger.TextWrapped = true
+
+HitboxSize.Name = " ↓Hitbox Size ↓"
+HitboxSize.Parent = window
+HitboxSize.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+HitboxSize.BackgroundTransparency = 1.000
+HitboxSize.BorderColor3 = Color3.fromRGB(0, 0, 0)
+HitboxSize.BorderSizePixel = 0
+HitboxSize.Position = UDim2.new(0.0269662924, 0, 0.246913105, 0)
+HitboxSize.Size = UDim2.new(0, 198, 0, 31)
+HitboxSize.Font = Enum.Font.SourceSans
+HitboxSize.Text = " ↓Hitbox Size ↓"
+HitboxSize.TextColor3 = Color3.fromRGB(255, 255, 255)
+HitboxSize.TextScaled = true
+HitboxSize.TextSize = 14.000
+HitboxSize.TextStrokeTransparency = 0.000
+HitboxSize.TextWrapped = true
+
+applyhitboxsizebutton.Name = "apply hitbox size button"
+applyhitboxsizebutton.Parent = window
+applyhitboxsizebutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+applyhitboxsizebutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+applyhitboxsizebutton.Position = UDim2.new(0.0269662924, 0, 0.496913582, 0)
+applyhitboxsizebutton.Size = UDim2.new(0, 198, 0, 37)
+applyhitboxsizebutton.Font = Enum.Font.SourceSans
+applyhitboxsizebutton.Text = "apply hitbox size"
+applyhitboxsizebutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+applyhitboxsizebutton.TextScaled = true
+applyhitboxsizebutton.TextSize = 14.000
+applyhitboxsizebutton.TextWrapped = true
+
+HitboxSizetextbox.Name = " ↓Hitbox Size ↓ textbox"
+HitboxSizetextbox.Parent = window
+HitboxSizetextbox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+HitboxSizetextbox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+HitboxSizetextbox.Position = UDim2.new(0.0269662924, 0, 0.342592597, 0)
+HitboxSizetextbox.Size = UDim2.new(0, 198, 0, 33)
+HitboxSizetextbox.Font = Enum.Font.SourceSans
+HitboxSizetextbox.Text = "10"
+HitboxSizetextbox.TextColor3 = Color3.fromRGB(0, 0, 0)
+HitboxSizetextbox.TextScaled = true
+HitboxSizetextbox.TextSize = 14.000
+HitboxSizetextbox.TextWrapped = true
+
+ApplyTransparencybutton.Name = "Apply Transparency button"
+ApplyTransparencybutton.Parent = window
+ApplyTransparencybutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ApplyTransparencybutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ApplyTransparencybutton.Position = UDim2.new(0.523595512, 0, 0.496913582, 0)
+ApplyTransparencybutton.Size = UDim2.new(0, 198, 0, 37)
+ApplyTransparencybutton.Font = Enum.Font.SourceSans
+ApplyTransparencybutton.Text = "Apply Transparency hitbox"
+ApplyTransparencybutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+ApplyTransparencybutton.TextScaled = true
+ApplyTransparencybutton.TextSize = 14.000
+ApplyTransparencybutton.TextWrapped = true
+
+ApplyTransparencytextbox.Name = "Apply Transparency textbox"
+ApplyTransparencytextbox.Parent = window
+ApplyTransparencytextbox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ApplyTransparencytextbox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ApplyTransparencytextbox.Position = UDim2.new(0.523595512, 0, 0.342592597, 0)
+ApplyTransparencytextbox.Size = UDim2.new(0, 198, 0, 33)
+ApplyTransparencytextbox.Font = Enum.Font.SourceSans
+ApplyTransparencytextbox.Text = "0.3"
+ApplyTransparencytextbox.TextColor3 = Color3.fromRGB(0, 0, 0)
+ApplyTransparencytextbox.TextScaled = true
+ApplyTransparencytextbox.TextSize = 14.000
+ApplyTransparencytextbox.TextWrapped = true
+
+HitboxTransparency01.Name = " ↓Hitbox Transparency (0 - 1)↓"
+HitboxTransparency01.Parent = window
+HitboxTransparency01.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+HitboxTransparency01.BackgroundTransparency = 1.000
+HitboxTransparency01.BorderColor3 = Color3.fromRGB(0, 0, 0)
+HitboxTransparency01.BorderSizePixel = 0
+HitboxTransparency01.Position = UDim2.new(0.523595512, 0, 0.25308603, 0)
+HitboxTransparency01.Size = UDim2.new(0, 198, 0, 29)
+HitboxTransparency01.Font = Enum.Font.SourceSans
+HitboxTransparency01.Text = " ↓Hitbox Transparency (0 - 1)↓"
+HitboxTransparency01.TextColor3 = Color3.fromRGB(255, 255, 255)
+HitboxTransparency01.TextScaled = true
+HitboxTransparency01.TextSize = 14.000
+HitboxTransparency01.TextStrokeTransparency = 0.000
+HitboxTransparency01.TextWrapped = true
+
+flyguibutton.Name = "fly gui button"
+flyguibutton.Parent = window
+flyguibutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+flyguibutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+flyguibutton.Position = UDim2.new(0.519101143, 0, 0.63271606, 0)
+flyguibutton.Size = UDim2.new(0, 198, 0, 33)
+flyguibutton.Font = Enum.Font.SourceSans
+flyguibutton.Text = "fly gui"
+flyguibutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+flyguibutton.TextScaled = true
+flyguibutton.TextSize = 14.000
+flyguibutton.TextWrapped = true
+
+noclipguibutton.Name = "noclip gui button"
+noclipguibutton.Parent = window
+noclipguibutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+noclipguibutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+noclipguibutton.Position = UDim2.new(0.519101143, 0, 0.753086448, 0)
+noclipguibutton.Size = UDim2.new(0, 198, 0, 33)
+noclipguibutton.Font = Enum.Font.SourceSans
+noclipguibutton.Text = "noclip gui"
+noclipguibutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+noclipguibutton.TextScaled = true
+noclipguibutton.TextSize = 14.000
+noclipguibutton.TextWrapped = true
+
+tptoolbutton.Name = "tptool button"
+tptoolbutton.Parent = window
+tptoolbutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+tptoolbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+tptoolbutton.Position = UDim2.new(0.519101143, 0, 0.873456776, 0)
+tptoolbutton.Size = UDim2.new(0, 198, 0, 31)
+tptoolbutton.Font = Enum.Font.SourceSans
+tptoolbutton.Text = "tptool "
+tptoolbutton.TextColor3 = Color3.fromRGB(0, 0, 0)
+tptoolbutton.TextScaled = true
+tptoolbutton.TextSize = 14.000
+tptoolbutton.TextWrapped = true
+
+buttonclose.Name = "button close"
+buttonclose.Parent = Frame
+buttonclose.BackgroundColor3 = Color3.fromRGB(153, 0, 3)
+buttonclose.BackgroundTransparency = 1.000
+buttonclose.BorderColor3 = Color3.fromRGB(255, 0, 4)
+buttonclose.BorderSizePixel = 0
+buttonclose.Position = UDim2.new(0.929435253, 0, 0.0498960353, 0)
+buttonclose.Size = UDim2.new(0, 31, 0, 33)
+buttonclose.Font = Enum.Font.SourceSans
+buttonclose.Text = "X"
+buttonclose.TextColor3 = Color3.fromRGB(255, 0, 4)
+buttonclose.TextScaled = true
+buttonclose.TextSize = 14.000
+buttonclose.TextStrokeTransparency = 0.000
+buttonclose.TextWrapped = true
+
+title.Name = "title"
+title.Parent = Frame
+title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1.000
+title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+title.BorderSizePixel = 0
+title.Position = UDim2.new(0.146067411, 0, -4.12399714e-07, 0)
+title.Size = UDim2.new(0, 315, 0, 33)
+title.Font = Enum.Font.SourceSans
+title.Text = "hitbox for any game!"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextScaled = true
+title.TextSize = 14.000
+title.TextStrokeTransparency = 0.000
+title.TextWrapped = true
+
+buttonminimaze.Name = "button minimaze"
+buttonminimaze.Parent = Frame
+buttonminimaze.BackgroundColor3 = Color3.fromRGB(177, 177, 177)
+buttonminimaze.BackgroundTransparency = 1.000
+buttonminimaze.BorderColor3 = Color3.fromRGB(156, 156, 156)
+buttonminimaze.BorderSizePixel = 0
+buttonminimaze.Position = UDim2.new(0.853030801, 0, 0.0498960353, 0)
+buttonminimaze.Size = UDim2.new(0, 31, 0, 33)
+buttonminimaze.Font = Enum.Font.SourceSans
+buttonminimaze.Text = "–"
+buttonminimaze.TextColor3 = Color3.fromRGB(255, 255, 255)
+buttonminimaze.TextScaled = true
+buttonminimaze.TextSize = 14.000
+buttonminimaze.TextStrokeTransparency = 0.000
+buttonminimaze.TextWrapped = true
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+-- SETTINGS
+local HitboxEnabled = false
+local HitboxSize = 10
+local HitboxColor = Color3.fromRGB(255, 0, 0)
+local HitboxTransparency = 0
+
+buttonclose.MouseButton1Click:Connect(function()
+	ScreenGui:Destroy()
+end)
+
+Togglehitboxbutton.MouseButton1Click:Connect(function()
+	HitboxEnabled = not HitboxEnabled
+	status.Text = "Hitbox: " .. (HitboxEnabled and "ON" or "OFF")
+end)
+
+ApplyColorbutton.MouseButton1Click:Connect(function()
+	local n = tonumber(HitboxSizetextbox.Text)
+	if n and n >= 2 and n <= 100 then
+		HitboxSize = n
+	end
+end)
+
+local function hexToColor3(hex)
+	hex = hex:gsub("#","")
+	if #hex ~= 6 then return end
+	return Color3.fromRGB(
+		tonumber(hex:sub(1,2),16),
+		tonumber(hex:sub(3,4),16),
+		tonumber(hex:sub(5,6),16)
+	)
+end
+
+ApplyColorbutton.MouseButton1Click:Connect(function()
+	local c = hexToColor3(colorhitboxtextbox.Text)
+	if c then HitboxColor = c end
+end)
+
+
+ApplyTransparencybutton.MouseButton1Click:Connect(function()
+	local t = tonumber(ApplyTransparencytextbox.Text)
+	if t then
+		HitboxTransparency = math.clamp(t, 0, 1)
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	for _,plr in pairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+			local hrp = plr.Character.HumanoidRootPart
+
+			if HitboxEnabled then
+				hrp.Size = Vector3.new(HitboxSize, HitboxSize, HitboxSize)
+				hrp.Material = Enum.Material.Plastic
+				hrp.Color = HitboxColor
+				hrp.Transparency = HitboxTransparency
+				hrp.CanCollide = false
+			else
+				hrp.Size = Vector3.new(2,2,1)
+				hrp.Material = Enum.Material.Plastic
+				hrp.Transparency = 1
+				hrp.CanCollide = true
+			end
+		end
+	end
+end)
