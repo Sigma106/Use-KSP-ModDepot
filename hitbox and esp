@@ -278,6 +278,15 @@ tptoolBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
+local btoolsBtn = Instance.new("TextButton", PlayerPage)
+btoolsBtn.Position = UDim2.new(0,0,0,180)
+btoolsBtn.Size = UDim2.new(1,0,0,35)
+btoolsBtn.Text = "Load Noclip"
+
+btoolsBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://cdn.wearedevs.net/scripts/BTools.txt"))()
+end)
+
 -------------------------------------------------
 -- HITBOX LOOP (OLD & STABLE)
 -------------------------------------------------
