@@ -250,7 +250,7 @@ noclipBtn.MouseButton1Click:Connect(function()
 end)
 
 local speedBtn = Instance.new("TextButton", PlayerPage)
-speedBtn.Position = UDim2.new(0,0,0,100)
+speedBtn.Position = UDim2.new(0,0,0,90)
 speedBtn.Size = UDim2.new(1,0,0,35)
 speedBtn.Text = "Load Speed boost"
 
