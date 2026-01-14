@@ -249,6 +249,15 @@ noclipBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/efeefefewewfewfefffffffffffffffffff"))()
 end)
 
+local speedBtn = Instance.new("TextButton", PlayerPage)
+speedBtn.Position = UDim2.new(0,0,0,100)
+speedBtn.Size = UDim2.new(1,0,0,35)
+speedBtn.Text = "Load Speed boost"
+
+speedBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/speed%20gui%20script"))()
+end)
+
 -------------------------------------------------
 -- HITBOX LOOP (OLD & STABLE)
 -------------------------------------------------
