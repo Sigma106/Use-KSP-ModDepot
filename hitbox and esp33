@@ -259,7 +259,7 @@ speedBtn.MouseButton1Click:Connect(function()
 end)
 
 local tptoolBtn = Instance.new("TextButton", PlayerPage)
-tptoolBtn.Position = UDim2.new(0,0,0,180)
+tptoolBtn.Position = UDim2.new(0,0,0,135)
 tptoolBtn.Size = UDim2.new(1,0,0,35)
 tptoolBtn.Text = "tptool"
 
