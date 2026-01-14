@@ -1,0 +1,172 @@
+-- SERVICES
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+
+------------------------------------------------
+-- HITBOX SETTINGS (OLD SYSTEM)
+------------------------------------------------
+local HitboxEnabled = false
+local HitboxSize = 10
+local HitboxColor = Color3.fromRGB(255,0,0)
+local HitboxTransparency = 0
+
+------------------------------------------------
+-- GUI
+------------------------------------------------
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "Hitbox_ESP_GUI"
+gui.ResetOnSpawn = false
+
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.new(0, 300, 0, 300)
+main.Position = UDim2.new(0.5, -150, 0.5, -150)
+main.BackgroundColor3 = Color3.fromRGB(30,30,30)
+main.Active = true
+main.Draggable = true
+
+-- TITLE
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1, -40, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.Text = "Hitbox + ESP"
+title.TextColor3 = Color3.new(1,1,1)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- CLOSE
+local close = Instance.new("TextButton", main)
+close.Size = UDim2.new(0, 30, 0, 30)
+close.Position = UDim2.new(1, -30, 0, 0)
+close.Text = "X"
+close.BackgroundColor3 = Color3.fromRGB(60,60,60)
+close.TextColor3 = Color3.new(1,1,1)
+close.MouseButton1Click:Connect(function()
+	gui:Destroy()
+end)
+
+------------------------------------------------
+-- HITBOX TOGGLE
+------------------------------------------------
+local hitboxStatus = Instance.new("TextLabel", main)
+hitboxStatus.Position = UDim2.new(0,10,0,40)
+hitboxStatus.Size = UDim2.new(1,-20,0,20)
+hitboxStatus.Text = "Hitbox: OFF"
+hitboxStatus.TextColor3 = Color3.new(1,1,1)
+hitboxStatus.BackgroundTransparency = 1
+hitboxStatus.TextXAlignment = Enum.TextXAlignment.Left
+
+local hitboxToggle = Instance.new("TextButton", main)
+hitboxToggle.Position = UDim2.new(0,10,0,65)
+hitboxToggle.Size = UDim2.new(1,-20,0,30)
+hitboxToggle.Text = "Toggle Hitbox"
+hitboxToggle.BackgroundColor3 = Color3.fromRGB(45,45,45)
+hitboxToggle.TextColor3 = Color3.new(1,1,1)
+
+hitboxToggle.MouseButton1Click:Connect(function()
+	HitboxEnabled = not HitboxEnabled
+	hitboxStatus.Text = "Hitbox: " .. (HitboxEnabled and "ON" or "OFF")
+end)
+
+------------------------------------------------
+-- HITBOX SIZE
+------------------------------------------------
+local sizeBox = Instance.new("TextBox", main)
+sizeBox.Position = UDim2.new(0,10,0,105)
+sizeBox.Size = UDim2.new(1,-20,0,30)
+sizeBox.Text = tostring(HitboxSize)
+sizeBox.BackgroundColor3 = Color3.fromRGB(40,40,40)
+sizeBox.TextColor3 = Color3.new(1,1,1)
+
+local applySize = Instance.new("TextButton", main)
+applySize.Position = UDim2.new(0,10,0,140)
+applySize.Size = UDim2.new(1,-20,0,25)
+applySize.Text = "Apply Size"
+applySize.BackgroundColor3 = Color3.fromRGB(50,50,50)
+applySize.TextColor3 = Color3.new(1,1,1)
+
+applySize.MouseButton1Click:Connect(function()
+	local n = tonumber(sizeBox.Text)
+	if n then
+		HitboxSize = math.clamp(n, 2, 100)
+	end
+end)
+
+------------------------------------------------
+-- HITBOX COLOR (HEX)
+------------------------------------------------
+local colorBox = Instance.new("TextBox", main)
+colorBox.Position = UDim2.new(0,10,0,175)
+colorBox.Size = UDim2.new(1,-20,0,30)
+colorBox.Text = "#FF0000"
+colorBox.BackgroundColor3 = Color3.fromRGB(40,40,40)
+colorBox.TextColor3 = Color3.new(1,1,1)
+
+local function hexToColor3(hex)
+	hex = hex:gsub("#","")
+	if #hex ~= 6 then return nil end
+	return Color3.fromRGB(
+		tonumber(hex:sub(1,2),16),
+		tonumber(hex:sub(3,4),16),
+		tonumber(hex:sub(5,6),16)
+	)
+end
+
+local applyColor = Instance.new("TextButton", main)
+applyColor.Position = UDim2.new(0,10,0,210)
+applyColor.Size = UDim2.new(1,-20,0,25)
+applyColor.Text = "Apply Color"
+applyColor.BackgroundColor3 = Color3.fromRGB(50,50,50)
+applyColor.TextColor3 = Color3.new(1,1,1)
+
+applyColor.MouseButton1Click:Connect(function()
+	local c = hexToColor3(colorBox.Text)
+	if c then HitboxColor = c end
+end)
+
+------------------------------------------------
+-- HITBOX TRANSPARENCY
+------------------------------------------------
+local transBox = Instance.new("TextBox", main)
+transBox.Position = UDim2.new(0,10,0,245)
+transBox.Size = UDim2.new(1,-20,0,30)
+transBox.Text = tostring(HitboxTransparency)
+transBox.BackgroundColor3 = Color3.fromRGB(40,40,40)
+transBox.TextColor3 = Color3.new(1,1,1)
+
+local applyTrans = Instance.new("TextButton", main)
+applyTrans.Position = UDim2.new(0,10,0,280)
+applyTrans.Size = UDim2.new(1,-20,0,25)
+applyTrans.Text = "Apply Transparency"
+applyTrans.BackgroundColor3 = Color3.fromRGB(50,50,50)
+applyTrans.TextColor3 = Color3.new(1,1,1)
+
+applyTrans.MouseButton1Click:Connect(function()
+	local t = tonumber(transBox.Text)
+	if t then HitboxTransparency = math.clamp(t, 0, 1) end
+end)
+
+------------------------------------------------
+-- HITBOX LOOP (OLD, WORKING)
+------------------------------------------------
+RunService.RenderStepped:Connect(function()
+	for _,plr in pairs(Players:GetPlayers()) do
+		if plr ~= player and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+			local hrp = plr.Character.HumanoidRootPart
+
+			if HitboxEnabled then
+				hrp.Size = Vector3.new(HitboxSize,HitboxSize,HitboxSize)
+				hrp.Transparency = HitboxTransparency
+				hrp.Color = HitboxColor
+				hrp.Material = Enum.Material.Plastic
+				hrp.CanCollide = false
+			else
+				hrp.Size = Vector3.new(2,2,1)
+				hrp.Transparency = 1
+				hrp.CanCollide = true
+			end
+		end
+	end
+end)
