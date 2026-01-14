@@ -317,6 +317,7 @@ buttonminimaze.TextSize = 14.000
 buttonminimaze.TextStrokeTransparency = 0.000
 buttonminimaze.TextWrapped = true
 
+-- SERVICES
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
@@ -325,49 +326,82 @@ local LocalPlayer = Players.LocalPlayer
 local HitboxEnabled = false
 local HitboxSize = 10
 local HitboxColor = Color3.fromRGB(255, 0, 0)
-local HitboxTransparency = 0
+local HitboxTransparency = 0.3
 
-buttonclose.MouseButton1Click:Connect(function()
-	ScreenGui:Destroy()
-end)
+-- HITBOX STORAGE
+local Hitboxes = {}
 
-Togglehitboxbutton.MouseButton1Click:Connect(function()
-	HitboxEnabled = not HitboxEnabled
-end)
-
-
-ApplyColorbutton.MouseButton1Click:Connect(function()
-	local n = tonumber(HitboxSizetextbox.Text)
-	if n and n >= 2 and n <= 100 then
-		HitboxSize = n
-	end
-end)
-
-
+-- SAFE HEX → COLOR
 local function hexToColor3(hex)
 	if typeof(hex) ~= "string" then return nil end
-
 	hex = hex:gsub("#", "")
-
 	if #hex ~= 6 then return nil end
 
-	local r = tonumber(hex:sub(1, 2), 16)
-	local g = tonumber(hex:sub(3, 4), 16)
-	local b = tonumber(hex:sub(5, 6), 16)
+	local r = tonumber(hex:sub(1,2), 16)
+	local g = tonumber(hex:sub(3,4), 16)
+	local b = tonumber(hex:sub(5,6), 16)
 
 	if not (r and g and b) then return nil end
-
-	return Color3.fromRGB(r, g, b)
+	return Color3.fromRGB(r,g,b)
 end
 
+-- CREATE HITBOX
+local function createHitbox(character)
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	if not hrp then return end
 
-ApplyColorbutton.MouseButton1Click:Connect(function()
-	local c = hexToColor3(colorhitboxtextbox.Text)
-	if c then
-		HitboxColor = c
+	local box = Instance.new("Part")
+	box.Name = "FakeHitbox"
+	box.Anchored = false
+	box.CanCollide = false
+	box.Massless = true
+	box.Material = Enum.Material.Neon
+	box.Size = Vector3.new(HitboxSize, HitboxSize, HitboxSize)
+	box.Color = HitboxColor
+	box.Transparency = HitboxTransparency
+	box.Parent = character
+
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = box
+	weld.Part1 = hrp
+	weld.Parent = box
+
+	box.CFrame = hrp.CFrame
+
+	return box
+end
+
+-- REMOVE HITBOX
+local function removeHitbox(character)
+	if character and character:FindFirstChild("FakeHitbox") then
+		character.FakeHitbox:Destroy()
+	end
+end
+
+-- UPDATE HITBOX
+local function updateHitbox(box)
+	box.Size = Vector3.new(HitboxSize, HitboxSize, HitboxSize)
+	box.Color = HitboxColor
+	box.Transparency = HitboxTransparency
+end
+
+-- BUTTON LOGIC (CONNECT TO YOUR GUI)
+Togglehitboxbutton.MouseButton1Click:Connect(function()
+	HitboxEnabled = not HitboxEnabled
+
+	for _,plr in ipairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer and plr.Character then
+			if HitboxEnabled then
+				removeHitbox(plr.Character)
+				local box = createHitbox(plr.Character)
+				Hitboxes[plr] = box
+			else
+				removeHitbox(plr.Character)
+				Hitboxes[plr] = nil
+			end
+		end
 	end
 end)
-
 
 applyhitboxsizebutton.MouseButton1Click:Connect(function()
 	local n = tonumber(HitboxSizetextbox.Text)
@@ -376,6 +410,12 @@ applyhitboxsizebutton.MouseButton1Click:Connect(function()
 	end
 end)
 
+ApplyColorbutton.MouseButton1Click:Connect(function()
+	local c = hexToColor3(colorhitboxtextbox.Text)
+	if c then
+		HitboxColor = c
+	end
+end)
 
 ApplyTransparencybutton.MouseButton1Click:Connect(function()
 	local t = tonumber(ApplyTransparencytextbox.Text)
@@ -384,23 +424,24 @@ ApplyTransparencybutton.MouseButton1Click:Connect(function()
 	end
 end)
 
+-- LIVE UPDATE LOOP
 RunService.RenderStepped:Connect(function()
-	for _,plr in pairs(Players:GetPlayers()) do
-		if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-			local hrp = plr.Character.HumanoidRootPart
+	if not HitboxEnabled then return end
 
-			if HitboxEnabled then
-				hrp.Size = Vector3.new(HitboxSize, HitboxSize, HitboxSize)
-				hrp.Material = Enum.Material.Plastic
-				hrp.Color = HitboxColor
-				hrp.Transparency = HitboxTransparency
-				hrp.CanCollide = false
-			else
-				hrp.Size = Vector3.new(2,2,1)
-				hrp.Material = Enum.Material.Plastic
-				hrp.Transparency = 1
-				hrp.CanCollide = true
-			end
+	for plr,box in pairs(Hitboxes) do
+		if plr.Character and box and box.Parent then
+			updateHitbox(box)
 		end
 	end
+end)
+
+-- AUTO HANDLE NEW PLAYERS
+Players.PlayerAdded:Connect(function(plr)
+	plr.CharacterAdded:Connect(function(char)
+		if HitboxEnabled then
+			task.wait(1)
+			local box = createHitbox(char)
+			Hitboxes[plr] = box
+		end
+	end)
 end)
