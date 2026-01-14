@@ -384,19 +384,30 @@ end)
 -- Hitbox Loop
 RunService.RenderStepped:Connect(function()
 	for _, plr in pairs(Players:GetPlayers()) do
-		if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-			local hrp = plr.Character.HumanoidRootPart
+		if plr ~= LocalPlayer and plr.Character then
+			local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
 
-			if HitboxEnabled then
-				hrp.Size = Vector3.new(HitboxSizeValue, HitboxSizeValue, HitboxSizeValue)
-				hrp.Transparency = HitboxTransparencyValue
-				hrp.Color = HitboxColorValue
-				hrp.Material = Enum.Material.Plastic
-				hrp.CanCollide = false
-			else
-				hrp.Size = Vector3.new(2,2,1)
-				hrp.Transparency = 1
-				hrp.CanCollide = true
+			if hrp then
+				if HitboxEnabled then
+					hrp.Size = Vector3.new(HitboxSizeValue, HitboxSizeValue, HitboxSizeValue)
+					hrp.Transparency = HitboxTransparencyValue
+					hrp.Color = HitboxColorValue
+					hrp.Material = Enum.Material.Plastic
+					hrp.CanCollide = false
+
+					-- 🔥 THIS LINE FIXES SIZE RESET
+					if hrp:FindFirstChild("OriginalSize") then
+						hrp.OriginalSize = hrp.Size
+					end
+				else
+					hrp.Size = Vector3.new(2,2,1)
+					hrp.Transparency = 1
+					hrp.CanCollide = true
+
+					if hrp:FindFirstChild("OriginalSize") then
+						hrp.OriginalSize = hrp.Size
+					end
+				end
 			end
 		end
 	end
