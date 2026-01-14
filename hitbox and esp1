@@ -317,36 +317,39 @@ buttonminimaze.TextSize = 14.000
 buttonminimaze.TextStrokeTransparency = 0.000
 buttonminimaze.TextWrapped = true
 
--- === STABLE HITBOX SYSTEM ===
-
+--// SERVICES
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
+--// GUI REFERENCES (already created above)
+-- ScreenGui, Frame, window, buttons, textboxes already exist
+
+--// HITBOX SETTINGS
 local HitboxEnabled = false
-local HitboxSizeValue = 10
-local HitboxTransparencyValue = 0
+local HitboxSizeValue = tonumber(HitboxSizetextbox.Text) or 10
+local HitboxTransparencyValue = tonumber(ApplyTransparencytextbox.Text) or 0
 local HitboxBrickColor = BrickColor.new("Really red")
 
--- Close
+--// CLOSE GUI
 buttonclose.MouseButton1Click:Connect(function()
 	ScreenGui:Destroy()
 end)
 
--- Minimize
+--// MINIMIZE GUI
 local minimized = false
 buttonminimaze.MouseButton1Click:Connect(function()
 	minimized = not minimized
 	window.Visible = not minimized
 end)
 
--- Toggle Hitbox
+--// TOGGLE HITBOX
 Togglehitboxbutton.MouseButton1Click:Connect(function()
 	HitboxEnabled = not HitboxEnabled
 	Togglehitboxbutton.Text = HitboxEnabled and "Hitbox ON" or "Hitbox OFF"
 end)
 
--- Apply Size
+--// APPLY SIZE
 applyhitboxsizebutton.MouseButton1Click:Connect(function()
 	local size = tonumber(HitboxSizetextbox.Text)
 	if size and size >= 2 and size <= 100 then
@@ -354,7 +357,7 @@ applyhitboxsizebutton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- Apply Transparency
+--// APPLY TRANSPARENCY
 ApplyTransparencybutton.MouseButton1Click:Connect(function()
 	local t = tonumber(ApplyTransparencytextbox.Text)
 	if t then
@@ -362,7 +365,7 @@ ApplyTransparencybutton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- HEX → BrickColor
+--// HEX TO BRICKCOLOR
 local function HexToBrickColor(hex)
 	hex = hex:gsub("#","")
 	if #hex ~= 6 then return end
@@ -373,7 +376,7 @@ local function HexToBrickColor(hex)
 		))
 end
 
--- Apply Color
+--// APPLY COLOR
 ApplyColorbutton.MouseButton1Click:Connect(function()
 	local bc = HexToBrickColor(colorhitboxtextbox.Text)
 	if bc then
@@ -381,12 +384,12 @@ ApplyColorbutton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- Create / Update Hitbox
-local function applyHitbox(char)
-	local hrp = char:FindFirstChild("HumanoidRootPart")
+--// CREATE / UPDATE HITBOX
+local function updateHitbox(character)
+	local hrp = character:FindFirstChild("HumanoidRootPart")
 	if not hrp then return end
 
-	local hb = hrp:FindFirstChild("FakeHitbox")
+	local hb = character:FindFirstChild("FakeHitbox")
 
 	if not hb then
 		hb = Instance.new("Part")
@@ -394,7 +397,8 @@ local function applyHitbox(char)
 		hb.Anchored = false
 		hb.CanCollide = false
 		hb.Massless = true
-		hb.Parent = hrp
+		hb.Material = Enum.Material.Neon
+		hb.Parent = character
 
 		local weld = Instance.new("WeldConstraint")
 		weld.Part0 = hb
@@ -403,21 +407,21 @@ local function applyHitbox(char)
 	end
 
 	hb.Size = Vector3.new(HitboxSizeValue, HitboxSizeValue, HitboxSizeValue)
+	hb.CFrame = hrp.CFrame
 	hb.Transparency = HitboxTransparencyValue
 	hb.BrickColor = HitboxBrickColor
-	hb.Material = Enum.Material.Plastic
 end
 
--- Main Loop
+--// MAIN LOOP
 RunService.RenderStepped:Connect(function()
-	for _, plr in pairs(Players:GetPlayers()) do
-		if plr ~= LocalPlayer and plr.Character then
-			local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
-			if hrp then
-				if HitboxEnabled then
-					applyHitbox(plr.Character)
-				else
-					local hb = hrp:FindFirstChild("FakeHitbox")
+	for _, player in pairs(Players:GetPlayers()) do
+		if player ~= LocalPlayer and player.Character then
+			if HitboxEnabled then
+				updateHitbox(player.Character)
+			else
+				local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+				if hrp then
+					local hb = player.Character:FindFirstChild("FakeHitbox")
 					if hb then hb:Destroy() end
 				end
 			end
