@@ -1,4 +1,5 @@
--- Clean Hitbox GUI (LocalScript)
+-- Hitbox GUI (LocalScript)
+-- 0 Transparency = Solid Cube
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -8,7 +9,7 @@ local LocalPlayer = Players.LocalPlayer
 local HitboxEnabled = false
 local HitboxSize = 10
 local HitboxColor = Color3.fromRGB(255, 0, 0)
-local HitboxTransparency = 0.5
+local HitboxTransparency = 0
 
 -- GUI
 local gui = Instance.new("ScreenGui", game.CoreGui)
@@ -42,14 +43,14 @@ close.MouseButton1Click:Connect(function()
 	gui:Destroy()
 end)
 
--- Hitbox toggle label
-local toggleLabel = Instance.new("TextLabel", main)
-toggleLabel.Size = UDim2.new(1, -20, 0, 20)
-toggleLabel.Position = UDim2.new(0, 10, 0, 40)
-toggleLabel.Text = "Hitbox: OFF"
-toggleLabel.TextColor3 = Color3.new(1,1,1)
-toggleLabel.BackgroundTransparency = 1
-toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+-- Hitbox status label
+local statusLabel = Instance.new("TextLabel", main)
+statusLabel.Size = UDim2.new(1, -20, 0, 20)
+statusLabel.Position = UDim2.new(0, 10, 0, 40)
+statusLabel.Text = "Hitbox: OFF"
+statusLabel.TextColor3 = Color3.new(1,1,1)
+statusLabel.BackgroundTransparency = 1
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 -- Toggle button
 local toggle = Instance.new("TextButton", main)
@@ -61,7 +62,7 @@ toggle.TextColor3 = Color3.new(1,1,1)
 
 toggle.MouseButton1Click:Connect(function()
 	HitboxEnabled = not HitboxEnabled
-	toggleLabel.Text = "Hitbox: " .. (HitboxEnabled and "ON" or "OFF")
+	statusLabel.Text = "Hitbox: " .. (HitboxEnabled and "ON" or "OFF")
 end)
 
 -- Size label
@@ -123,7 +124,7 @@ local transBox = Instance.new("TextBox", main)
 transBox.Size = UDim2.new(1, -20, 0, 30)
 transBox.Position = UDim2.new(0, 10, 0, 245)
 transBox.Text = tostring(HitboxTransparency)
-transBox.PlaceholderText = "Example: 0.5"
+transBox.PlaceholderText = "Example: 0"
 transBox.BackgroundColor3 = Color3.fromRGB(40,40,40)
 transBox.TextColor3 = Color3.new(1,1,1)
 
@@ -135,7 +136,7 @@ apply.Text = "Apply Color & Transparency"
 apply.BackgroundColor3 = Color3.fromRGB(50,50,50)
 apply.TextColor3 = Color3.new(1,1,1)
 
--- HEX → Color3
+-- HEX to Color3
 local function hexToColor3(hex)
 	hex = hex:gsub("#","")
 	if #hex ~= 6 then return end
@@ -154,14 +155,14 @@ apply.MouseButton1Click:Connect(function()
 	end
 
 	local t = tonumber(transBox.Text)
-	if t and t >= 0 and t <= 1 then
-		HitboxTransparency = t
+	if t then
+		HitboxTransparency = math.clamp(t, 0, 1)
 	else
 		transBox.Text = tostring(HitboxTransparency)
 	end
 end)
 
--- HITBOX LOGIC
+-- HITBOX LOOP
 RunService.RenderStepped:Connect(function()
 	for _,plr in pairs(Players:GetPlayers()) do
 		if plr ~= LocalPlayer
@@ -174,7 +175,7 @@ RunService.RenderStepped:Connect(function()
 				hrp.Size = Vector3.new(HitboxSize, HitboxSize, HitboxSize)
 				hrp.Material = Enum.Material.ForceField
 				hrp.Color = HitboxColor
-				hrp.Transparency = HitboxTransparency
+				hrp.Transparency = HitboxTransparency -- 0 = solid
 				hrp.CanCollide = false
 			else
 				hrp.Size = Vector3.new(2,2,1)
