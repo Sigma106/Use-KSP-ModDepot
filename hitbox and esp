@@ -317,18 +317,18 @@ buttonminimaze.TextSize = 14.000
 buttonminimaze.TextStrokeTransparency = 0.000
 buttonminimaze.TextWrapped = true
 
--- === HITBOX LOGIC ===
+-- === STABLE HITBOX SYSTEM ===
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
 local HitboxEnabled = false
-local HitboxSizeValue = tonumber(HitboxSizetextbox.Text) or 10
-local HitboxTransparencyValue = tonumber(ApplyTransparencytextbox.Text) or 0
-local HitboxColorValue = Color3.fromRGB(255,0,0)
+local HitboxSizeValue = 10
+local HitboxTransparencyValue = 0
+local HitboxBrickColor = BrickColor.new("Really red")
 
--- Close button
+-- Close
 buttonclose.MouseButton1Click:Connect(function()
 	ScreenGui:Destroy()
 end)
@@ -346,7 +346,7 @@ Togglehitboxbutton.MouseButton1Click:Connect(function()
 	Togglehitboxbutton.Text = HitboxEnabled and "Hitbox ON" or "Hitbox OFF"
 end)
 
--- Apply Hitbox Size
+-- Apply Size
 applyhitboxsizebutton.MouseButton1Click:Connect(function()
 	local size = tonumber(HitboxSizetextbox.Text)
 	if size and size >= 2 and size <= 100 then
@@ -362,51 +362,63 @@ ApplyTransparencybutton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- HEX Color function
-local function HexToColor3(hex)
+-- HEX → BrickColor
+local function HexToBrickColor(hex)
 	hex = hex:gsub("#","")
 	if #hex ~= 6 then return end
-	return Color3.fromRGB(
+	return BrickColor.new(Color3.fromRGB(
 		tonumber(hex:sub(1,2),16),
 		tonumber(hex:sub(3,4),16),
 		tonumber(hex:sub(5,6),16)
-	)
+		))
 end
 
 -- Apply Color
 ApplyColorbutton.MouseButton1Click:Connect(function()
-	local color = HexToColor3(colorhitboxtextbox.Text)
-	if color then
-		HitboxColorValue = color
+	local bc = HexToBrickColor(colorhitboxtextbox.Text)
+	if bc then
+		HitboxBrickColor = bc
 	end
 end)
 
--- Hitbox Loop
+-- Create / Update Hitbox
+local function applyHitbox(char)
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if not hrp then return end
+
+	local hb = hrp:FindFirstChild("FakeHitbox")
+
+	if not hb then
+		hb = Instance.new("Part")
+		hb.Name = "FakeHitbox"
+		hb.Anchored = false
+		hb.CanCollide = false
+		hb.Massless = true
+		hb.Parent = hrp
+
+		local weld = Instance.new("WeldConstraint")
+		weld.Part0 = hb
+		weld.Part1 = hrp
+		weld.Parent = hb
+	end
+
+	hb.Size = Vector3.new(HitboxSizeValue, HitboxSizeValue, HitboxSizeValue)
+	hb.Transparency = HitboxTransparencyValue
+	hb.BrickColor = HitboxBrickColor
+	hb.Material = Enum.Material.Plastic
+end
+
+-- Main Loop
 RunService.RenderStepped:Connect(function()
 	for _, plr in pairs(Players:GetPlayers()) do
 		if plr ~= LocalPlayer and plr.Character then
 			local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
-
 			if hrp then
 				if HitboxEnabled then
-					hrp.Size = Vector3.new(HitboxSizeValue, HitboxSizeValue, HitboxSizeValue)
-					hrp.Transparency = HitboxTransparencyValue
-					hrp.Color = HitboxColorValue
-					hrp.Material = Enum.Material.Plastic
-					hrp.CanCollide = false
-
-					-- 🔥 THIS LINE FIXES SIZE RESET
-					if hrp:FindFirstChild("OriginalSize") then
-						hrp.OriginalSize = hrp.Size
-					end
+					applyHitbox(plr.Character)
 				else
-					hrp.Size = Vector3.new(2,2,1)
-					hrp.Transparency = 1
-					hrp.CanCollide = true
-
-					if hrp:FindFirstChild("OriginalSize") then
-						hrp.OriginalSize = hrp.Size
-					end
+					local hb = hrp:FindFirstChild("FakeHitbox")
+					if hb then hb:Destroy() end
 				end
 			end
 		end
