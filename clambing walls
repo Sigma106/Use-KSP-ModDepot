@@ -1,0 +1,187 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local Frame_2 = Instance.new("Frame")
+local Stopclambingonawallsbutton = Instance.new("TextButton")
+local Startclambingonawallsbutton = Instance.new("TextButton")
+local title = Instance.new("TextLabel")
+local buttonclose = Instance.new("TextButton")
+local uidrag = Instance.new("UIDragDetector")
+--Properties:
+
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(67, 67, 67)
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame.Position = UDim2.new(0.322712421, 0, 0.298629224, 0)
+Frame.Size = UDim2.new(0, 220, 0, 35)
+
+uidrag.Parent = Frame
+
+Frame_2.Parent = Frame
+Frame_2.BackgroundColor3 = Color3.fromRGB(111, 111, 111)
+Frame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame_2.Position = UDim2.new(0, 0, 1.00000036, 0)
+Frame_2.Size = UDim2.new(0, 220, 0, 100)
+
+Stopclambingonawallsbutton.Name = "Stop clambing on a walls button"
+Stopclambingonawallsbutton.Parent = Frame_2
+Stopclambingonawallsbutton.BackgroundColor3 = Color3.fromRGB(206, 0, 3)
+Stopclambingonawallsbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Stopclambingonawallsbutton.Position = UDim2.new(0.0668667853, 0, 0.135263368, 0)
+Stopclambingonawallsbutton.Size = UDim2.new(0, 189, 0, 69)
+Stopclambingonawallsbutton.Visible = false
+Stopclambingonawallsbutton.Font = Enum.Font.SourceSans
+Stopclambingonawallsbutton.Text = "Stop"
+Stopclambingonawallsbutton.TextColor3 = Color3.fromRGB(255, 255, 255)
+Stopclambingonawallsbutton.TextScaled = true
+Stopclambingonawallsbutton.TextSize = 14.000
+Stopclambingonawallsbutton.TextStrokeTransparency = 0.000
+Stopclambingonawallsbutton.TextWrapped = true
+
+Startclambingonawallsbutton.Name = "Start clambing on a walls button"
+Startclambingonawallsbutton.Parent = Frame_2
+Startclambingonawallsbutton.BackgroundColor3 = Color3.fromRGB(26, 206, 32)
+Startclambingonawallsbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Startclambingonawallsbutton.Position = UDim2.new(0.0668667853, 0, 0.135263368, 0)
+Startclambingonawallsbutton.Size = UDim2.new(0, 189, 0, 69)
+Startclambingonawallsbutton.Font = Enum.Font.SourceSans
+Startclambingonawallsbutton.Text = "Start"
+Startclambingonawallsbutton.TextColor3 = Color3.fromRGB(255, 255, 255)
+Startclambingonawallsbutton.TextScaled = true
+Startclambingonawallsbutton.TextSize = 14.000
+Startclambingonawallsbutton.TextStrokeTransparency = 0.000
+Startclambingonawallsbutton.TextWrapped = true
+
+title.Name = "title"
+title.Parent = Frame
+title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1.000
+title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+title.BorderSizePixel = 0
+title.Position = UDim2.new(0, 0, 1.30789624e-06, 0)
+title.Size = UDim2.new(0, 177, 0, 35)
+title.Font = Enum.Font.SourceSans
+title.Text = "wall climbing"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextScaled = true
+title.TextSize = 14.000
+title.TextStrokeTransparency = 0.000
+title.TextWrapped = true
+
+buttonclose.Name = "button close"
+buttonclose.Parent = Frame
+buttonclose.BackgroundColor3 = Color3.fromRGB(153, 0, 3)
+buttonclose.BackgroundTransparency = 1.000
+buttonclose.BorderColor3 = Color3.fromRGB(255, 0, 4)
+buttonclose.BorderSizePixel = 0
+buttonclose.Position = UDim2.new(0.85670805, 0, 0.0784676671, 0)
+buttonclose.Size = UDim2.new(0, 31, 0, 28)
+buttonclose.Font = Enum.Font.SourceSans
+buttonclose.Text = "X"
+buttonclose.TextColor3 = Color3.fromRGB(255, 0, 4)
+buttonclose.TextScaled = true
+buttonclose.TextSize = 14.000
+buttonclose.TextStrokeTransparency = 0.000
+buttonclose.TextWrapped = true
+
+--climbing on a walls
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+------------------------------------------------
+-- CHARACTER HANDLING
+------------------------------------------------
+local character, humanoid, root, animator
+
+local function setupCharacter(char)
+	character = char
+	humanoid = char:WaitForChild("Humanoid")
+	root = char:WaitForChild("HumanoidRootPart")
+
+	animator = humanoid:FindFirstChildOfClass("Animator")
+	if not animator then
+		animator = Instance.new("Animator", humanoid)
+	end
+end
+
+setupCharacter(player.Character or player.CharacterAdded:Wait())
+player.CharacterAdded:Connect(setupCharacter)
+
+local enabled = false
+local climbing = false
+local track = nil
+
+local climbAnim = Instance.new("Animation")
+climbAnim.AnimationId = "rbxassetid://507765644"
+
+local function loadAnimation()
+	if track then
+		track:Stop()
+		track:Destroy()
+	end
+	track = animator:LoadAnimation(climbAnim)
+end
+
+Startclambingonawallsbutton.MouseButton1Click:Connect(function()
+	if enabled then return end
+	enabled = true
+	loadAnimation()
+	Stopclambingonawallsbutton.Visible = true
+	Startclambingonawallsbutton.Visible = false
+
+end)
+
+Stopclambingonawallsbutton.MouseButton1Click:Connect(function()
+	enabled = false
+	climbing = false
+	if track then track:Stop() end
+	Stopclambingonawallsbutton.Visible = false
+	Startclambingonawallsbutton.Visible = true
+end)
+
+RunService.RenderStepped:Connect(function()
+	if not enabled or not root then
+		return
+	end
+
+	local params = RaycastParams.new()
+	params.FilterDescendantsInstances = {character}
+	params.FilterType = Enum.RaycastFilterType.Blacklist
+
+	local hit = workspace:Raycast(
+		root.Position,
+		root.CFrame.LookVector * 2,
+		params
+	)
+
+	if hit then
+		if not climbing then
+			climbing = true
+			if track then track:Play() end
+		end
+		root.AssemblyLinearVelocity = Vector3.new(0, 14, 0)
+	else
+		if climbing then
+			climbing = false
+			if track then track:Stop() end
+
+			local bv = Instance.new("BodyVelocity")
+			bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+			bv.Velocity = Vector3.new(0, 25, 0)
+			bv.Parent = root
+
+			task.delay(0.1, function()
+				if bv then bv:Destroy() end
+			end)
+		end
+	end
+end)
