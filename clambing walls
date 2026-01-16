@@ -185,3 +185,16 @@ RunService.RenderStepped:Connect(function()
 		end
 	end
 end)
+
+buttonclose.MouseButton1Click:Connect(function()
+	Frame.Visible = false
+end)
+
+-- Hover effect for close button
+buttonclose.MouseEnter:Connect(function()
+	TextButton.BackgroundTransparency = 0
+end)
+
+buttonclose.MouseLeave:Connect(function()
+	TextButton.BackgroundTransparency = 1
+end)
