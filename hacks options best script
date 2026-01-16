@@ -37,9 +37,10 @@ local esptab = Instance.new("ImageLabel")
 local Espgui = Instance.new("TextButton")
 local TextLabel_5 = Instance.new("TextLabel")
 local Trolltab = Instance.new("ImageLabel")
-local flingall = Instance.new("TextButton")
 local flingplayergui = Instance.new("TextButton")
 local TextLabel_6 = Instance.new("TextLabel")
+local flingall = Instance.new("TextButton")
+local flingtouchbutton = Instance.new("TextButton")
 local TextLabel_7 = Instance.new("TextLabel")
 local uidrag = Instance.new("UIDragDetector")
 --Properties:
@@ -485,27 +486,13 @@ Trolltab.Position = UDim2.new(0.0890151486, 0, 0.991724789, 0)
 Trolltab.Size = UDim2.new(0, 481, 0, 327)
 Trolltab.Visible = false
 
-flingall.Name = "fling all"
-flingall.Parent = Trolltab
-flingall.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-flingall.BorderColor3 = Color3.fromRGB(0, 0, 0)
-flingall.BorderSizePixel = 0
-flingall.Position = UDim2.new(0.0748440772, 0, 0.597114801, 0)
-flingall.Size = UDim2.new(0, 417, 0, 101)
-flingall.Font = Enum.Font.SourceSans
-flingall.Text = "Fling all"
-flingall.TextColor3 = Color3.fromRGB(255, 255, 255)
-flingall.TextScaled = true
-flingall.TextSize = 14.000
-flingall.TextWrapped = true
-
 flingplayergui.Name = "fling player gui"
 flingplayergui.Parent = Trolltab
 flingplayergui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 flingplayergui.BorderColor3 = Color3.fromRGB(0, 0, 0)
 flingplayergui.BorderSizePixel = 0
-flingplayergui.Position = UDim2.new(0.0748440772, 0, 0.224026084, 0)
-flingplayergui.Size = UDim2.new(0, 417, 0, 101)
+flingplayergui.Position = UDim2.new(0.0748440772, 0, 0.468674392, 0)
+flingplayergui.Size = UDim2.new(0, 417, 0, 66)
 flingplayergui.Font = Enum.Font.SourceSans
 flingplayergui.Text = "fling player gui"
 flingplayergui.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -526,6 +513,34 @@ TextLabel_6.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextLabel_6.TextScaled = true
 TextLabel_6.TextSize = 14.000
 TextLabel_6.TextWrapped = true
+
+flingall.Name = "fling all"
+flingall.Parent = Trolltab
+flingall.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+flingall.BorderColor3 = Color3.fromRGB(0, 0, 0)
+flingall.BorderSizePixel = 0
+flingall.Position = UDim2.new(0.0748440772, 0, 0.231342092, 0)
+flingall.Size = UDim2.new(0, 417, 0, 66)
+flingall.Font = Enum.Font.SourceSans
+flingall.Text = "Fling all"
+flingall.TextColor3 = Color3.fromRGB(255, 255, 255)
+flingall.TextScaled = true
+flingall.TextSize = 14.000
+flingall.TextWrapped = true
+
+flingtouchbutton.Name = "fling touch button"
+flingtouchbutton.Parent = Trolltab
+flingtouchbutton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+flingtouchbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+flingtouchbutton.BorderSizePixel = 0
+flingtouchbutton.Position = UDim2.new(0.0748440772, 0, 0.720638752, 0)
+flingtouchbutton.Size = UDim2.new(0, 417, 0, 66)
+flingtouchbutton.Font = Enum.Font.SourceSans
+flingtouchbutton.Text = "fling touch gui"
+flingtouchbutton.TextColor3 = Color3.fromRGB(255, 255, 255)
+flingtouchbutton.TextScaled = true
+flingtouchbutton.TextSize = 14.000
+flingtouchbutton.TextWrapped = true
 
 TextLabel_7.Parent = Frame
 TextLabel_7.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -726,4 +741,8 @@ end)
 
 carflyguibutton.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/car%20fly%20script'))()
+end)
+
+flingtouchbutton.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/fling1'))()
 end)
