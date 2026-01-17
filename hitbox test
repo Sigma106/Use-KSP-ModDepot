@@ -1,0 +1,336 @@
+-- SERVICES
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+-------------------------------------------------
+-- SETTINGS
+-------------------------------------------------
+local HitboxEnabled = false
+local HitboxSize = 10
+local HitboxColor = Color3.fromRGB(255,0,0)
+local HitboxTransparency = 0
+
+local ESPEnabled = false
+local ESPObjects = {}
+
+-------------------------------------------------
+-- GUI
+-------------------------------------------------
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "CleanHitboxESP"
+gui.ResetOnSpawn = false
+
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.new(0, 360, 0, 340)
+main.Position = UDim2.new(0.5, -180, 0.5, -170)
+main.BackgroundColor3 = Color3.fromRGB(30,30,30)
+main.Active = true
+main.Draggable = true
+
+-- TITLE
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1, -40, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.Text = "Hitbox / ESP / Player"
+title.TextColor3 = Color3.new(1,1,1)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- CLOSE
+local close = Instance.new("TextButton", main)
+close.Size = UDim2.new(0, 30, 0, 30)
+close.Position = UDim2.new(1, -30, 0, 0)
+close.Text = "X"
+close.BackgroundColor3 = Color3.fromRGB(60,60,60)
+close.TextColor3 = Color3.new(1,1,1)
+close.MouseButton1Click:Connect(function()
+	gui:Destroy()
+end)
+
+-------------------------------------------------
+-- TABS
+-------------------------------------------------
+local tabBar = Instance.new("Frame", main)
+tabBar.Position = UDim2.new(0, 0, 0, 35)
+tabBar.Size = UDim2.new(1, 0, 0, 30)
+tabBar.BackgroundTransparency = 1
+
+local function createTab(text, x)
+	local b = Instance.new("TextButton", tabBar)
+	b.Size = UDim2.new(0, 110, 1, 0)
+	b.Position = UDim2.new(0, x, 0, 0)
+	b.Text = text
+	b.BackgroundColor3 = Color3.fromRGB(45,45,45)
+	b.TextColor3 = Color3.new(1,1,1)
+	b.Font = Enum.Font.Gotham
+	b.TextSize = 14
+	return b
+end
+
+local hitboxTabBtn = createTab("Hitbox", 5)
+local visualTabBtn = createTab("Visuals", 125)
+local playerTabBtn = createTab("Player", 245)
+
+-------------------------------------------------
+-- PAGES
+-------------------------------------------------
+local function createPage()
+	local f = Instance.new("Frame", main)
+	f.Position = UDim2.new(0, 10, 0, 75)
+	f.Size = UDim2.new(1, -20, 1, -85)
+	f.BackgroundTransparency = 1
+	return f
+end
+
+local HitboxPage = createPage()
+local VisualPage = createPage()
+local PlayerPage = createPage()
+
+VisualPage.Visible = false
+PlayerPage.Visible = false
+
+local function showPage(p)
+	HitboxPage.Visible = false
+	VisualPage.Visible = false
+	PlayerPage.Visible = false
+	p.Visible = true
+end
+
+hitboxTabBtn.MouseButton1Click:Connect(function() showPage(HitboxPage) end)
+visualTabBtn.MouseButton1Click:Connect(function() showPage(VisualPage) end)
+playerTabBtn.MouseButton1Click:Connect(function() showPage(PlayerPage) end)
+
+-------------------------------------------------
+-- HITBOX PAGE (OLD SYSTEM)
+-------------------------------------------------
+local hitboxStatus = Instance.new("TextLabel", HitboxPage)
+hitboxStatus.Size = UDim2.new(1,0,0,20)
+hitboxStatus.Text = "Hitbox: OFF"
+hitboxStatus.TextColor3 = Color3.new(1,1,1)
+hitboxStatus.BackgroundTransparency = 1
+hitboxStatus.TextXAlignment = Enum.TextXAlignment.Left
+
+local toggleHitbox = Instance.new("TextButton", HitboxPage)
+toggleHitbox.Position = UDim2.new(0,0,0,25)
+toggleHitbox.Size = UDim2.new(1,0,0,30)
+toggleHitbox.Text = "Toggle Hitbox"
+
+toggleHitbox.MouseButton1Click:Connect(function()
+	HitboxEnabled = not HitboxEnabled
+	hitboxStatus.Text = "Hitbox: " .. (HitboxEnabled and "ON" or "OFF")
+end)
+
+-- SIZE
+local sizeBox = Instance.new("TextBox", HitboxPage)
+sizeBox.Position = UDim2.new(0,0,0,65)
+sizeBox.Size = UDim2.new(1,0,0,30)
+sizeBox.Text = tostring(HitboxSize)
+
+local applySize = Instance.new("TextButton", HitboxPage)
+applySize.Position = UDim2.new(0,0,0,100)
+applySize.Size = UDim2.new(1,0,0,25)
+applySize.Text = "Apply Size"
+
+applySize.MouseButton1Click:Connect(function()
+	local n = tonumber(sizeBox.Text)
+	if n then HitboxSize = math.clamp(n,2,100) end
+end)
+
+-- COLOR
+local colorBox = Instance.new("TextBox", HitboxPage)
+colorBox.Position = UDim2.new(0,0,0,135)
+colorBox.Size = UDim2.new(1,0,0,30)
+colorBox.Text = "#FF0000"
+
+local function hexToColor3(hex)
+	hex = hex:gsub("#","")
+	if #hex ~= 6 then return end
+	return Color3.fromRGB(
+		tonumber(hex:sub(1,2),16),
+		tonumber(hex:sub(3,4),16),
+		tonumber(hex:sub(5,6),16)
+	)
+end
+
+local applyColor = Instance.new("TextButton", HitboxPage)
+applyColor.Position = UDim2.new(0,0,0,170)
+applyColor.Size = UDim2.new(1,0,0,25)
+applyColor.Text = "Apply Color"
+
+applyColor.MouseButton1Click:Connect(function()
+	local c = hexToColor3(colorBox.Text)
+	if c then HitboxColor = c end
+end)
+
+-- TRANSPARENCY
+local transBox = Instance.new("TextBox", HitboxPage)
+transBox.Position = UDim2.new(0,0,0,205)
+transBox.Size = UDim2.new(1,0,0,30)
+transBox.Text = tostring(HitboxTransparency)
+
+local applyTrans = Instance.new("TextButton", HitboxPage)
+applyTrans.Position = UDim2.new(0,0,0,240)
+applyTrans.Size = UDim2.new(1,0,0,25)
+applyTrans.Text = "Apply Transparency"
+
+applyTrans.MouseButton1Click:Connect(function()
+	local t = tonumber(transBox.Text)
+	if t then HitboxTransparency = math.clamp(t,0,1) end
+end)
+
+-------------------------------------------------
+-- VISUALS (ESP FIXED)
+-------------------------------------------------
+local espButton = Instance.new("TextButton", VisualPage)
+espButton.Size = UDim2.new(1,0,0,35)
+espButton.Text = "ESP OFF"
+
+local function applyESP(plr)
+	if plr == LocalPlayer then return end
+
+	local function onChar(char)
+		if not ESPEnabled then return end
+		if ESPObjects[plr] then ESPObjects[plr]:Destroy() end
+
+		local h = Instance.new("Highlight")
+		h.Name = "SkeletonESP"
+		h.Parent = char
+		h.FillTransparency = 1
+		h.OutlineTransparency = 0
+		h.OutlineColor = Color3.fromRGB(255,255,255)
+
+		ESPObjects[plr] = h
+	end
+
+	if plr.Character then onChar(plr.Character) end
+	plr.CharacterAdded:Connect(onChar)
+end
+
+local function clearESP()
+	for _,v in pairs(ESPObjects) do
+		if v then v:Destroy() end
+	end
+	ESPObjects = {}
+end
+
+espButton.MouseButton1Click:Connect(function()
+	ESPEnabled = not ESPEnabled
+	espButton.Text = ESPEnabled and "ESP ON" or "ESP OFF"
+
+	clearESP()
+
+	if ESPEnabled then
+		for _,plr in pairs(Players:GetPlayers()) do
+			applyESP(plr)
+		end
+	end
+end)
+
+-------------------------------------------------
+-- PLAYER TAB
+-------------------------------------------------
+local flyBtn = Instance.new("TextButton", PlayerPage)
+flyBtn.Size = UDim2.new(1,0,0,35)
+flyBtn.Text = "Load Fly GUI"
+
+flyBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+end)
+
+local noclipBtn = Instance.new("TextButton", PlayerPage)
+noclipBtn.Position = UDim2.new(0,0,0,45)
+noclipBtn.Size = UDim2.new(1,0,0,35)
+noclipBtn.Text = "Load Noclip"
+
+noclipBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/efeefefewewfewfefffffffffffffffffff"))()
+end)
+
+local speedBtn = Instance.new("TextButton", PlayerPage)
+speedBtn.Position = UDim2.new(0,0,0,90)
+speedBtn.Size = UDim2.new(1,0,0,35)
+speedBtn.Text = "Load Speed boost"
+
+speedBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Sigma106/Use-KSP-ModDepot/refs/heads/main/speed%20gui%20script"))()
+end)
+
+local teamColorBtn = Instance.new("TextButton", VisualPage)
+teamColorBtn.Position = UDim2.new(0,0,0,45)
+teamColorBtn.Size = UDim2.new(1,0,0,35)
+teamColorBtn.Text = "Team Colors: OFF"
+
+if TeamColorESP and plr.Team then
+	h.OutlineColor = plr.Team.TeamColor.Color
+else
+	h.OutlineColor = Color3.fromRGB(255,255,255)
+end
+
+
+teamColorBtn.MouseButton1Click:Connect(function()
+	TeamColorESP = not TeamColorESP
+	teamColorBtn.Text = "Team Colors: " .. (TeamColorESP and "ON" or "OFF")
+
+	-- Refresh ESP
+	if ESPEnabled then
+		clearESP()
+		for _,plr in pairs(Players:GetPlayers()) do
+			applyESP(plr)
+		end
+	end
+end)
+
+
+local tptoolBtn = Instance.new("TextButton", PlayerPage)
+tptoolBtn.Position = UDim2.new(0,0,0,135)
+tptoolBtn.Size = UDim2.new(1,0,0,35)
+tptoolBtn.Text = "tptool"
+
+
+tptoolBtn.MouseButton1Click:Connect(function()
+	local Tele = Instance.new("Tool", game.Players.LocalPlayer.Backpack)
+	Tele.RequiresHandle = false
+	Tele.RobloxLocked = true
+	Tele.Name = "TPTool"
+	Tele.ToolTip = "Teleport Tool"
+	Tele.Equipped:connect(function(Mouse)
+		Mouse.Button1Down:connect(function()
+			if Mouse.Target then
+				game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name).HumanoidRootPart.CFrame = (CFrame.new(Mouse.Hit.x, Mouse.Hit.y + 5, Mouse.Hit.z))
+			end
+		end)
+	end)
+end)
+
+local btoolsBtn = Instance.new("TextButton", PlayerPage)
+btoolsBtn.Position = UDim2.new(0,0,0,180)
+btoolsBtn.Size = UDim2.new(1,0,0,35)
+btoolsBtn.Text = "btools"
+
+btoolsBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://cdn.wearedevs.net/scripts/BTools.txt"))()
+end)
+
+-------------------------------------------------
+-- HITBOX LOOP (OLD & STABLE)
+-------------------------------------------------
+RunService.RenderStepped:Connect(function()
+	for _,plr in pairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+			local hrp = plr.Character.HumanoidRootPart
+			if HitboxEnabled then
+				hrp.Size = Vector3.new(HitboxSize,HitboxSize,HitboxSize)
+				hrp.Color = HitboxColor
+				hrp.Transparency = HitboxTransparency
+				hrp.CanCollide = false
+			else
+				hrp.Size = Vector3.new(2,2,1)
+				hrp.Transparency = 1
+				hrp.CanCollide = true
+			end
+		end
+	end
+end)
