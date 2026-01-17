@@ -1,0 +1,194 @@
+--[[
+    Noclip Teleport Gun Tool
+    ✅ Gun model attached to hand
+    ✅ Shoot teleport/fling fireballs
+    ✅ Noclip while fling active
+]]
+
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local Debris = game:GetService("Debris")
+local Players = game:GetService("Players")
+
+-- Create Tool
+local tool = Instance.new("Tool")
+tool.RequiresHandle = false
+tool.Name = "Noclip Teleport Gun"
+tool.Parent = player.Backpack
+
+-- State variables
+local holding = false
+local gunModel = nil
+local flingActive = false
+local flingTarget = nil
+local flingThread = nil
+
+-- Enable/Disable noclip
+local function setNoclip(state)
+	local char = player.Character
+	if char then
+		for _, part in pairs(char:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.CanCollide = not state
+			end
+		end
+	end
+end
+
+-- Fling function
+local function startFling(targetPlayer)
+	if flingActive then return end
+	flingActive = true
+	flingTarget = targetPlayer
+
+	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	flingThread = coroutine.create(function()
+		local movel = 0.1
+		while flingActive and root and flingTarget do
+			local targetRoot = flingTarget.Character and flingTarget.Character:FindFirstChild("HumanoidRootPart")
+			if targetRoot then
+				local originalPos = root.CFrame
+				-- TELEPORT to target
+				root.CFrame = targetRoot.CFrame
+				-- Apply fling motion
+				root.Velocity = Vector3.new(0,500,0)
+				task.wait(0.1)
+				-- TELEPORT back
+				root.CFrame = originalPos
+			end
+			RunService.Heartbeat:Wait()
+		end
+	end)
+	coroutine.resume(flingThread)
+end
+
+local function stopFling()
+	flingActive = false
+	flingTarget = nil
+end
+
+-- Create gun model and attach to hand
+local function createGun(character)
+	local hand = character:FindFirstChild("RightHand") or character:FindFirstChild("Right Arm")
+	if not hand then return end
+
+	-- Simple gun model
+	local gun = Instance.new("Part")
+	gun.Size = Vector3.new(1,1,3)
+	gun.Color = Color3.fromRGB(50,50,50)
+	gun.Material = Enum.Material.Metal
+	gun.Anchored = false
+	gun.CanCollide = false
+	gun.Parent = Workspace
+
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = hand
+	weld.Part1 = gun
+	weld.Parent = gun
+
+	gunModel = gun
+end
+
+-- Shoot fireball
+local function shootFire(targetPos)
+	local char = player.Character
+	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+	local root = char.HumanoidRootPart
+
+	local spawnPos = root.Position + root.CFrame.LookVector * 3 + Vector3.new(0,2,0)
+	local firePart = Instance.new("Part")
+	firePart.Size = Vector3.new(1,1,1)
+	firePart.Shape = Enum.PartType.Ball
+	firePart.Color = Color3.fromRGB(255,100,0)
+	firePart.Material = Enum.Material.Neon
+	firePart.Anchored = false
+	firePart.CanCollide = false
+	firePart.Position = spawnPos
+	firePart.Parent = Workspace
+
+	local fire = Instance.new("Fire")
+	fire.Size = 5
+	fire.Heat = 10
+	fire.Parent = firePart
+
+	local direction = (targetPos - spawnPos).Unit
+	local speed = 100
+	local bodyVel = Instance.new("BodyVelocity")
+	bodyVel.Velocity = direction * speed
+	bodyVel.MaxForce = Vector3.new(1e5,1e5,1e5)
+	bodyVel.Parent = firePart
+
+	-- On hit: fling target player
+	firePart.Touched:Connect(function(hit)
+		local hitPlayer = Players:GetPlayerFromCharacter(hit.Parent)
+		if hitPlayer and hitPlayer ~= player then
+			startFling(hitPlayer)
+			setNoclip(true)
+
+			task.delay(1, function()
+				stopFling()
+				setNoclip(false)
+			end)
+
+			firePart:Destroy()
+		end
+	end)
+
+	Debris:AddItem(firePart,3)
+end
+
+-- Tool events
+tool.Equipped:Connect(function()
+	holding = true
+	local char = player.Character
+	if char then
+		createGun(char)
+	end
+end)
+
+tool.Unequipped:Connect(function()
+	holding = false
+	if gunModel then gunModel:Destroy() gunModel = nil end
+	setNoclip(false)
+	stopFling()
+end)
+
+tool.Activated:Connect(function()
+	if holding then
+		shootFire(mouse.Hit.Position)
+	end
+end)
+
+-- Auto fling nearby players (optional)
+RunService.Heartbeat:Connect(function()
+	if player.Character and not flingActive then
+		for _, plr in pairs(Players:GetPlayers()) do
+			if plr ~= player and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+				local root = player.Character:FindFirstChild("HumanoidRootPart")
+				local targetRoot = plr.Character:FindFirstChild("HumanoidRootPart")
+				if root and targetRoot then
+					local dist = (root.Position - targetRoot.Position).Magnitude
+					if dist < 20 then
+						startFling(plr)
+						setNoclip(true)
+						task.delay(1, function()
+							stopFling()
+							setNoclip(false)
+						end)
+						break
+					end
+				end
+			end
+		end
+	end
+end)
+
+player.CharacterAdded:Connect(function()
+	stopFling()
+end)
+
+print("✅ Noclip Teleport Gun with gun model ready!")
