@@ -13,29 +13,57 @@ tool.Name = "Noclip Teleport Gun"
 tool.Parent = player.Backpack
 
 local holding = false
-local gunModel
-local flingActive = false
-local flingThread
+local gunModel = nil
 
--- Fling function (same as Touch Fling logic)
-local function startFling()
+-- Fling Variables
+local flingActive = false
+local flingTarget = nil
+local flingThread = nil
+
+-- Enable/Disable Noclip
+local function setNoclip(state)
+	local char = player.Character
+	if char then
+		for _, part in pairs(char:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.CanCollide = not state
+			end
+		end
+	end
+end
+
+-- Fling function
+local function startFling(targetPlayer)
 	if flingActive then return end
 	flingActive = true
-	local lp = player
+	flingTarget = targetPlayer
+
+	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
 	flingThread = coroutine.create(function()
 		local movel = 0.1
-		while flingActive do
-			RunService.Heartbeat:Wait()
-			local hrp = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
-			if hrp then
-				local vel = hrp.Velocity
-				hrp.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
+		while flingActive and root and flingTarget do
+			local targetRoot = flingTarget.Character and flingTarget.Character:FindFirstChild("HumanoidRootPart")
+			if targetRoot then
+				local originalPos = root.CFrame
+
+				-- TELEPORT to the target
+				root.CFrame = targetRoot.CFrame
+
+				-- Apply fling motion
+				local vel = root.Velocity
+				root.Velocity = vel * 10000 + Vector3.new(0,10000,0)
 				RunService.RenderStepped:Wait()
-				hrp.Velocity = vel
+				root.Velocity = vel
 				RunService.Stepped:Wait()
-				hrp.Velocity = vel + Vector3.new(0, movel, 0)
+				root.Velocity = vel + Vector3.new(0, movel, 0)
 				movel = -movel
+
+				-- TELEPORT back to original position
+				root.CFrame = originalPos
 			end
+			RunService.Heartbeat:Wait()
 		end
 	end)
 	coroutine.resume(flingThread)
@@ -43,6 +71,7 @@ end
 
 local function stopFling()
 	flingActive = false
+	flingTarget = nil
 end
 
 -- Create invisible gun for hand pose
@@ -65,19 +94,7 @@ local function createGun(character)
 	gunModel = gun
 end
 
--- Enable/Disable Noclip
-local function setNoclip(state)
-	local char = player.Character
-	if char then
-		for _, part in pairs(char:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.CanCollide = not state
-			end
-		end
-	end
-end
-
--- Shoot fireball and teleport
+-- Shoot fireball
 local function shootFire(targetPos)
 	local char = player.Character
 	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
@@ -112,26 +129,15 @@ local function shootFire(targetPos)
 	firePart.Touched:Connect(function(hit)
 		local hitPlayer = Players:GetPlayerFromCharacter(hit.Parent)
 		if hitPlayer and hitPlayer ~= player then
-			local hitHrp = hitPlayer.Character and hitPlayer.Character:FindFirstChild("HumanoidRootPart")
-			if hitHrp then
-				local originalPos = root.CFrame -- store your position
+			startFling(hitPlayer)
+			setNoclip(true)
 
-				-- TELEPORT INSIDE target
-				root.CFrame = hitHrp.CFrame
+			-- Stop fling after 1 second (you can adjust delay)
+			task.delay(1, function()
+				stopFling()
+				setNoclip(false)
+			end)
 
-				-- ENABLE noclip + fling
-				setNoclip(true)
-				startFling()
-
-				-- Wait before teleporting back
-				task.delay(1, function() -- adjust delay if needed
-					if root then
-						root.CFrame = originalPos
-						setNoclip(false)
-						stopFling()
-					end
-				end)
-			end
 			firePart:Destroy()
 		end
 	end)
@@ -161,4 +167,32 @@ tool.Activated:Connect(function()
 	end
 end)
 
-print("✅ Noclip Teleport Gun with automatic fling ready!")
+-- Continuous fling: if you want always fling while near target
+RunService.Heartbeat:Connect(function()
+	if player.Character and not flingActive then
+		for _, plr in pairs(Players:GetPlayers()) do
+			if plr ~= player and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+				local root = player.Character:FindFirstChild("HumanoidRootPart")
+				local targetRoot = plr.Character:FindFirstChild("HumanoidRootPart")
+				if root and targetRoot then
+					local dist = (root.Position - targetRoot.Position).Magnitude
+					if dist < 20 then -- only fling if close
+						startFling(plr)
+						setNoclip(true)
+						task.delay(1, function()
+							stopFling()
+							setNoclip(false)
+						end)
+						break
+					end
+				end
+			end
+		end
+	end
+end)
+
+player.CharacterAdded:Connect(function()
+	stopFling()
+end)
+
+print("✅ Noclip Teleport Gun with always-teleport fling ready!")
