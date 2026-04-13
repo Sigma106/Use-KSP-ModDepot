@@ -608,7 +608,7 @@ speedgui.MouseButton1Click:Connect(function()
 end)
 
 dexgui.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/memeenjoyer43/darkdex/refs/heads/main/script"))()
+	loadstring(game:HttpGet("https://obj.wearedevs.net/2/scripts/Dex%20Explorer.lua"))()
 end)
 
 walkonawallsnotrecomend.MouseButton1Click:Connect(function()
