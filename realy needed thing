@@ -1,11 +1,9 @@
---[[
-	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
-]]
 getgenv().Script = "Get Moon Stand for free at discord.gg/mfyCBWWExF"
+
 getgenv().Owner = "Ethanyland22"
 getgenv().DisableRendering = false
 getgenv().BlackScreen = false
 getgenv().FPSCap = 60
-getgenv().Guns = {"rifle", "aug"} -- rifle, aug, flintlock, lmg, db
+getgenv().Guns = {"rifle", "aug", "flamethrower"} -- rifle, aug, flintlock, lmg, db, flamethrower
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Mander120/MoonStandV1/refs/heads/main/MoonStandV1"))()
