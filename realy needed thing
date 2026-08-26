@@ -1,0 +1,67 @@
+getgenv()._=
+"Join discord.gg/msgabv2t9Q | discord.gg/stando to get latest update ok bai >.+ | If you pay for this script you get scammed, this script is completely free ok"
+--[[
+
+To get started in "getgenv().Owner" put the username you want to control.
+
+!! \\ MAKE SURE THE OWNER AND STAND ACCOUNT ARE IN SAME SERVER // !!
+
+--// Example \\
+Before --> getgenv().Owner = "OWNER_USERNAME_HERE"
+After  --> getgenv().Owner = "XK5NG"
+
+^^ --> This is just the example don't put the username here]]
+
+getgenv().Owner = "Ethanyland22"
+
+getgenv()._C = {
+['Fps'] = false, --Fps cap [if supported]
+['Msg'] = 'Yare Yare Daze.', --When You Say [/e msg] It Makes All The Alts Say That Message
+['AntiMod'] = true, --[ true | false ] Turn On Or Off Anti Mod [Prevents Mods From Kicking The Stand]
+['CrewID'] = 32570691, --Must join group to let the stand join the crew [ Optional ]
+['ChatCmds'] = true, --[ true | false ] if true stand talks to you
+['AutoMask'] = true, --[ true | false ] Auto Buy Mask When The Stand Respawn
+['AntiStomp'] = true, --[ true | false ] The Stand Will Cannot Be Stomped Or Grabbed
+['Smoothing'] = false, --[ true | false ] if true stand will follow you smoothly
+['Hidescreen'] = false, --[ true | false ] If you set it to true you will see white blank screen [ Save up gpu usage ]
+['LowGraphics'] = false, --[ true | false ] Turns graphics down so your stand doesnt lag too much
+['StandLeaveServerAfterOwnerLeft'] = false, --[ true | false ] true = Stand leave the server and back to roblox homepage | false = Stand stays in the server until the owner joined back
+
+['TPMode'] = 'Cart', --[Knock | Cart] --Teleport mode
+['GunMode'] = 'Aug, Rifle', --[LMG | Rifle | Aug | Aug, Rifle ] --Self explain [ THIS IS A FIXED OPTION, YOU CANT PUT OTHER GUNS EXCEPT FROM THE LIST ]
+['AuraRange'] = 250, --Range on how far will be the kill aura
+
+['FlyMode'] = 'Glide', --[Glide | FlyV1 | FlyV2 | Hover | Heaven | Star_Platinum_YBA | Star_Platinum_The_World_YBA | Killer_Queen_YBA | Golden_Experience_YBA | The_World_YBA | The_World_OverHeaven_YBA | D4C_YBA ]
+['StandMode'] = 'Star Platinum: The World', --[Star Platinum | Star Platinum : OverHeaven | Star Platinum: The World | Star Platinum, Za Warudo! | TheWorld | Cmoon | King Crimson | Killer Queen | MIH | D4C]
+['Position'] = 'Back', --[ Back | Left | Right | Mid | UpMid | UpLeft | UpRight | Walk ]
+
+['CustomName'] = 'Master', --Custom Name Text Default Is [ Master ] Example Of it 'Im Here, Master'
+['SummonPoses'] = 'Pose3', --[ false | Pose1 | Pose2 | Pose3 ]
+['CustomSummon'] = 'Summon!', --Custom [ Summon! ] Text
+['CustomPrefix'] = '.', --[ ! | / | . | ? | > | < | $ | ; | : ] Custom target prefix [ if you use ! it will be in front of command like knock! [plr] and others is the opposite like .knock [plr] ]
+
+['MaskMode'] = 'Riot', --[ Surgeon | Paintball | Skull | Pumpkin | Hockey | Ninja | Riot | Breathing ] The Stand Will Buy The Mask You Selected
+['AutoSaveLocation'] = 'DA_FURNITURE', --[ Downhill_Rooftop | Uphill_Rooftop | DA_FURNITURE ]
+
+
+--//------------------------------------------------------------------------------------------\\--
+--// This rarely used now, just keep this or edit it if you know what you're doing. \\--
+--\\ These are mostly melee attack configuration before gun is the main weapon in da hood now. \\--
+['Attack'] = 'Heavy', --[ Heavy | Light ] Heavy = Super Punch | Light = Spam Punch
+['AttackMode'] = 'Sky', --[ Sky | Under ] Sky = attack from above | Under = attack from below
+['AttackDistance'] = 75, --Attack distance for "Attack!, Stab!, Gkill!" max distance
+['AttackPrediction'] = 0.34, --Prediction For Attack Or Targetting
+['AttackAutoPrediction'] = 0.23, --Prediction For Attack Or Targetting
+['Resolver'] = false, --[ true | false ] Turn On Or Off Resolver If Someone Using Anti Lock [This only applied to melee attack only, gun doesnt need resolver ]
+['AutoPrediction'] = false, --[ true | false ] Turn On Or Off Auto Prediction 
+--//------------------------------------------------------------------------------------------\\--
+
+--//    ! Sounds !     \\--
+--\\ MUST HAVE BOOMBOX //--
+['Sounds'] = true, --[ true | false ]
+['CustomSong'] = 123456, --Enter A Song ID And Say 'Song!'
+['SummonMusic'] = true, --[ true | false ]
+['SummonMusicID'] = 'Default' -- Enter a Sound ID Put [Default] If You Would Like The Default Sound
+}
+
+loadstring(game:HttpGet("https://xk5ng.github.io/V6.0"))()
