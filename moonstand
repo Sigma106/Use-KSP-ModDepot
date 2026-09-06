@@ -1,6 +1,6 @@
 getgenv().Script = "Get Moon Stand for free at discord.gg/mkdFjTSZ7b"
 
-getgenv().Owner = "microneural57"
+getgenv().Owner = "peakxsnow"
 getgenv().DisableRendering = false
 getgenv().BlackScreen = false
 getgenv().FPSCap = 60
