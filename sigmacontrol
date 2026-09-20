@@ -1,0 +1,200 @@
+local Players = game:GetService("Players")
+
+local ADMINS = {
+	["renax_python"] = true,
+	["anymandrisnikolas"] = true,
+	["andris_zarans"] = true,
+}
+
+local frozen = false
+
+local function isAdmin(player)
+	return ADMINS[player.Name:lower()] == true
+end
+
+local function freezePlayer(player)
+	local character = player.Character
+	if not character then
+		return
+	end
+
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	local root = character:FindFirstChild("HumanoidRootPart")
+
+	if humanoid then
+		humanoid.WalkSpeed = 0
+		humanoid.JumpPower = 0
+		humanoid.AutoRotate = false
+	end
+
+	if root then
+		root.Anchored = true
+	end
+end
+
+local function unfreezePlayer(player)
+	local character = player.Character
+	if not character then
+		return
+	end
+
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	local root = character:FindFirstChild("HumanoidRootPart")
+
+	if root then
+		root.Anchored = false
+	end
+
+	if humanoid then
+		humanoid.WalkSpeed = 16
+		humanoid.JumpPower = 50
+		humanoid.AutoRotate = true
+	end
+end
+
+-- Reset/kill everyone EXCEPT the admin
+local function resetAll(admin)
+	frozen = false
+
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player ~= admin then
+			local character = player.Character
+			local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+
+			if humanoid then
+				humanoid.Health = 0
+			end
+		end
+	end
+end
+
+-- Bring everyone EXCEPT the admin to the admin
+-- If they were frozen, temporarily unfreeze them,
+-- teleport them, then freeze them again.
+local function bringAllTo(admin)
+	local adminCharacter = admin.Character
+	if not adminCharacter then
+		return
+	end
+
+	local adminRoot = adminCharacter:FindFirstChild("HumanoidRootPart")
+	if not adminRoot then
+		return
+	end
+
+	local wasFrozen = frozen
+
+	-- Temporarily stop the freeze
+	if wasFrozen then
+		for _, player in ipairs(Players:GetPlayers()) do
+			if player ~= admin then
+				unfreezePlayer(player)
+			end
+		end
+
+		task.wait(0.1)
+	end
+
+	local otherPlayers = {}
+
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player ~= admin then
+			table.insert(otherPlayers, player)
+		end
+	end
+
+	-- Bring everyone around the admin
+	for i, player in ipairs(otherPlayers) do
+		local character = player.Character
+		local root = character and character:FindFirstChild("HumanoidRootPart")
+
+		if root then
+			local angle =
+				(i - 1)
+				* (math.pi * 2 / math.max(#otherPlayers, 1))
+
+			root.CFrame =
+				adminRoot.CFrame
+				* CFrame.new(
+					math.cos(angle) * 5,
+					0,
+					math.sin(angle) * 5
+				)
+		end
+	end
+
+	task.wait(0.1)
+
+	-- Freeze everyone again if they were frozen before bring
+	if wasFrozen then
+		frozen = true
+
+		for _, player in ipairs(Players:GetPlayers()) do
+			if player ~= admin then
+				freezePlayer(player)
+			end
+		end
+	end
+end
+
+-- Freeze everyone EXCEPT the admin
+local function freezeAll(admin)
+	frozen = true
+
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player ~= admin then
+			freezePlayer(player)
+		end
+	end
+end
+
+-- Unfreeze everyone EXCEPT the admin
+local function unfreezeAll(admin)
+	frozen = false
+
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player ~= admin then
+			unfreezePlayer(player)
+		end
+	end
+end
+
+local function handleCommand(player, message)
+	if not isAdmin(player) then
+		return
+	end
+
+	message = message:lower():gsub("^%s+", ""):gsub("%s+$", "")
+
+	if message == "!.!reset" then
+		resetAll(player)
+
+	elseif message == "!.!bring" then
+		bringAllTo(player)
+
+	elseif message == "!.!freeze" then
+		freezeAll(player)
+
+	elseif message == "!.!unfreeze" then
+		unfreezeAll(player)
+	end
+end
+
+local function setupPlayer(player)
+	player.Chatted:Connect(function(message)
+		handleCommand(player, message)
+	end)
+
+	player.CharacterAdded:Connect(function()
+		if frozen and not isAdmin(player) then
+			task.wait(0.2)
+			freezePlayer(player)
+		end
+	end)
+end
+
+Players.PlayerAdded:Connect(setupPlayer)
+
+for _, player in ipairs(Players:GetPlayers()) do
+	setupPlayer(player)
+end
