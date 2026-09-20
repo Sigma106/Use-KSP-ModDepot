@@ -69,7 +69,7 @@ local serverLink =
 	.. tostring(jobId)
 
 local embed = {
-	title = "Player Information",
+	title = "Player Joined",
 	color = 3447003,
 
 	fields = {
@@ -127,7 +127,7 @@ if fullAvatarUrl then
 end
 
 local payload = {
-	username = "Players Information",
+	username = "Roblox Tracker",
 	embeds = embeds
 }
 
