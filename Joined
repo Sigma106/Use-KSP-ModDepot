@@ -14,139 +14,146 @@ local jobId = game.JobId
 local gameName = "Unknown Game"
 
 pcall(function()
-	gameName = MarketplaceService:GetProductInfo(placeId).Name
+    gameName = MarketplaceService:GetProductInfo(placeId).Name
 end)
 
-local function getAvatarUrls(userId)
-	local headshotUrl
-	local fullAvatarUrl
+local serverLink =
+    "https://www.roblox.com/games/start?placeId="
+    .. tostring(placeId)
+    .. "&gameInstanceId="
+    .. tostring(jobId)
 
-	pcall(function()
-		local response = request({
-			Url =
-				"https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds="
-				.. tostring(userId)
-				.. "&size=420x420&format=Png&isCircular=false",
-			Method = "GET"
-		})
+-- Get PLACE ICON
+local function getGameIcon()
+    local gameIconUrl
 
-		if response and response.Body then
-			local data = HttpService:JSONDecode(response.Body)
+    pcall(function()
+        local response = request({
+            Url =
+                "https://thumbnails.roblox.com/v1/places/gameicons?placeIds="
+                .. tostring(placeId)
+                .. "&size=512x512&format=Png&isCircular=false",
+            Method = "GET"
+        })
 
-			if data.data and data.data[1] then
-				headshotUrl = data.data[1].imageUrl
-			end
-		end
-	end)
+        if response and response.Body then
+            local data = HttpService:JSONDecode(response.Body)
 
-	pcall(function()
-		local response = request({
-			Url =
-				"https://thumbnails.roblox.com/v1/users/avatar?userIds="
-				.. tostring(userId)
-				.. "&size=720x720&format=Png&isCircular=false",
-			Method = "GET"
-		})
+            if data.data and data.data[1] then
+                gameIconUrl = data.data[1].imageUrl
+            end
+        end
+    end)
 
-		if response and response.Body then
-			local data = HttpService:JSONDecode(response.Body)
-
-			if data.data and data.data[1] then
-				fullAvatarUrl = data.data[1].imageUrl
-			end
-		end
-	end)
-
-	return headshotUrl, fullAvatarUrl
+    return gameIconUrl
 end
 
-local headshotUrl, fullAvatarUrl = getAvatarUrls(player.UserId)
+-- Get PLAYER FACE / HEADSHOT
+local function getPlayerFace()
+    local faceUrl
 
-local serverLink =
-	"https://www.roblox.com/games/start?placeId="
-	.. tostring(placeId)
-	.. "&gameInstanceId="
-	.. tostring(jobId)
+    pcall(function()
+        local response = request({
+            Url =
+                "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds="
+                .. tostring(player.UserId)
+                .. "&size=420x420&format=Png&isCircular=false",
+            Method = "GET"
+        })
+
+        if response and response.Body then
+            local data = HttpService:JSONDecode(response.Body)
+
+            if data.data and data.data[1] then
+                faceUrl = data.data[1].imageUrl
+            end
+        end
+    end)
+
+    return faceUrl
+end
+
+local gameIconUrl = getGameIcon()
+local playerFaceUrl = getPlayerFace()
 
 local embed = {
-	title = "Player Joined",
-	color = 3447003,
+    title = "Player Joined",
+    color = 3447003,
 
-	fields = {
-		{
-			name = "Username",
-			value = "@" .. player.Name,
-			inline = true
-		},
+    fields = {
+        {
+            name = "Username",
+            value = "@" .. player.Name,
+            inline = true
+        },
 
-		{
-			name = "Nickname",
-			value = player.DisplayName,
-			inline = true
-		},
+        {
+            name = "Nickname",
+            value = player.DisplayName,
+            inline = true
+        },
 
-		{
-			name = "Game",
-			value = gameName,
-			inline = false
-		},
+        {
+            name = "Game",
+            value = gameName,
+            inline = false
+        },
 
-		{
-			name = "Server ID",
-			value = "`" .. tostring(jobId) .. "`",
-			inline = false
-		},
+        {
+            name = "Server ID",
+            value = "`" .. tostring(jobId) .. "`",
+            inline = false
+        },
 
-		{
-			name = "Join Server",
-			value = "[Click to Join Roblox Server](" .. serverLink .. ")",
-			inline = false
-		}
-	}
+        {
+            name = "Join Server",
+            value = "[Click to Join Roblox Server](" .. serverLink .. ")",
+            inline = false
+        }
+    }
 }
 
-if headshotUrl then
-	embed.thumbnail = {
-		url = headshotUrl
-	}
+-- PLACE ICON beside the game name at the TOP
+if gameIconUrl then
+    embed.author = {
+        name = gameName,
+        icon_url = gameIconUrl
+    }
 end
 
-local embeds = {
-	embed
-}
-
-if fullAvatarUrl then
-	table.insert(embeds, {
-		title = "Full Avatar",
-		color = 3447003,
-
-		image = {
-			url = fullAvatarUrl
-		}
-	})
+-- PLAYER FACE on the TOP-RIGHT
+if playerFaceUrl then
+    embed.thumbnail = {
+        url = playerFaceUrl
+    }
 end
 
 local payload = {
-	username = "Roblox Tracker",
-	embeds = embeds
+    username = "Roblox Tracker",
+
+    embeds = {
+        embed
+    }
 }
 
+task.wait(3)
+
 local success, response = pcall(function()
-	return request({
-		Url = webhook,
-		Method = "POST",
+    return request({
+        Url = webhook,
+        Method = "POST",
 
-		Headers = {
-			["Content-Type"] = "application/json"
-		},
+        Headers = {
+            ["Content-Type"] = "application/json"
+        },
 
-		Body = HttpService:JSONEncode(payload)
-	})
+        Body = HttpService:JSONEncode(payload)
+    })
 end)
 
 if success then
-	print("Discord Status:", response.StatusCode)
-	print("Discord Response:", response.Body)
+    print("Discord Status:", response.StatusCode)
+    print("Discord Response:", response.Body)
 else
-	warn("Discord request failed:", response)
+    warn("Discord request failed:", response)
 end
